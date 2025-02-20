@@ -1,0 +1,107 @@
+/* Fondo de la página */
+body {
+    background: linear-gradient(45deg, #4a90e2, #50e3c2); /* Gradiente de color */
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para el título principal */
+h1 {
+    font-size: 4em;
+    text-align: center;
+    font-weight: bold;
+    color: #3498db;
+    text-shadow: 4px 4px 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Efecto al pasar el ratón sobre el título */
+h1:hover {
+    color: #fff;
+    text-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8), 0px 0px 30px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05);
+}
+
+/* Contenedor del formulario */
+form {
+    background: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+    border-radius: 15px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+}
+
+/* Estilo para etiquetas */
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+
+/* Estilo para los campos de entrada y el textarea */
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    margin-top: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* Radio buttons */
+input[type="radio"] {
+    margin-right: 5px;
+}
+
+/* Checkbox */
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Botones */
+input[type="submit"],
+input[type="reset"] {
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+input[type="submit"] {
+    background-color: #3498db;
+    color: white;
+}
+
+input[type="submit"]:hover {
+    background-color: #217dbb;
+    transform: scale(1.05);
+}
+
+input[type="reset"] {
+    background-color: #e74c3c;
+    color: white;
+}
+
+input[type="reset"]:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+/* Enlace para volver */
+p a {
+    color: #50e3c2;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
