@@ -1,0 +1,7 @@
+<% if (session && session.esAdmin) { %>
+    <h1>Bienvenido a la Consola de Administración</h1>
+    <p>Aquí es donde se encuentran los controles de administración.</p>
+<% } else { %>
+    <h1>Acceso Denegado</h1>
+    <p>No tienes permisos para administrar la web.</p>
+<% } %>

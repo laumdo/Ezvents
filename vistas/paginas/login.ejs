@@ -1,0 +1,57 @@
+<h1>Acceso al sistema</h1>
+
+<% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+
+<div class="login-box">
+    <span class="tooltip">Usuario y contraseña</span>
+    <form action="/usuarios/login" method="POST">
+        <label for="username">Nombre:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Enter</button>
+    </form>
+</div>
+
+<style>
+    .login-box {
+        border: 1px solid black;
+        padding: 10px;
+        display: inline-block;
+        text-align: left;
+        position: relative;
+        width: 250px;
+    }
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+    }
+    input[type="text"], input[type="password"] {
+        width: 95%;
+        padding: 5px;
+        margin: 5px 0;
+    }
+    .tooltip {
+        background-color: black;
+        color: white;
+        font-size: 12px;
+        padding: 3px 8px;
+        border-radius: 0px;
+        position: absolute;
+        top: -10px;
+        left: 10;
+    }
+    .error-message {
+        color: red;
+        font-size: 14px;
+    }
+    button {
+        margin-top: 10px;
+        padding: 5px 15px;
+    }
+</style>
