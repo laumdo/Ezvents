@@ -1,2 +1,13 @@
-<h1>Página principal</h1>
-<p> Aquí está el contenido público, visible para todos los usuarios. </p>
+<main>
+    <h2>Próximos Eventos</h2>
+    <div class="eventos">
+        <% eventos.forEach(evento => { %>
+            <div class="evento">
+                <img src="<%= evento.imagen %>" alt="Imagen de <%= evento.titulo %>">
+                <h3><%= evento.titulo %></h3>
+                <p><%= evento.fecha %> - <%= evento.lugar %></p>
+                <a href="/eventos/<%= evento.id %>">Ver más</a>
+            </div>
+        <% }) %>
+    </div>
+</main>
