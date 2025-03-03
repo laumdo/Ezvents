@@ -53,7 +53,8 @@ export function crearTablaEventos(){
             lugar TEXT NOT NULL,
             precio REAL NOT NULL,
             aforo_maximo INTEGER NOT NULL,
-            entradas_vendidas INTEGER DEFAULT 0
+            entradas_vendidas INTEGER DEFAULT 0,
+            imagen TEXT DEFAULT 'default.png'
         )
     `);
 }

@@ -9,21 +9,21 @@ export class Evento {
         // Preparar sentencias SQL para la base de datos
         this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
         this.#insertStmt = db.prepare(`
-            INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo) 
-            VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo)
+            INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen) 
+            VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @imagen)
         `);
         this.#updateStmt = db.prepare(`
             UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
-            lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo 
+            lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
             WHERE id = @id
         `);
     }
 
-    static getEventoById(id) {
-        const evento = this.#getByIdStmt.get({ id });
+    static getEventoById(idEvento) {
+        const evento = this.#getByIdStmt.get({ idEvento });
         if (evento === undefined) throw new EventoNoEncontrado(id);
-        const {id, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas} = evento;
-        return new Evento(id, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas);
+        const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendida, imagen} = evento;
+        return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
     }
 
     static #insert(evento) {
@@ -35,7 +35,8 @@ export class Evento {
                 fecha: evento.fecha,
                 lugar: evento.lugar,
                 precio: evento.precio,
-                aforo_maximo: evento.aforo_maximo
+                aforo_maximo: evento.aforo_maximo,
+                imagen: evento.imagen
             };
 
             result = this.#insertStmt.run(datos);
@@ -74,8 +75,9 @@ export class Evento {
     precio;
     aforo_maximo;
     entradas_vendidas;
+    imagen;
     // id = null ??????????????????????
-    constructor(id = null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0) {
+    constructor(id = null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
         this.#id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -84,6 +86,7 @@ export class Evento {
         this.precio = precio;
         this.aforo_maximo = aforo_maximo;
         this.entradas_vendidas = entradas_vendidas;
+        this.imagen = imagen;
     }
 
     get id() {
