@@ -1,12 +1,19 @@
 <!-- Imagen principal del evento -->
-<img src="/static/img/image1.png" alt="EZVENTS Logo">
+ <header>
+ <img src="./img/concierto.jpg" alt="EZVENTS Logo" class="logo1">
+ <img src="./img/festiva.jpg" alt="EZVENTS Logo" class="logo2">
+ <img src="./img/entradaEventos.jpg" alt="EZVENTS Logo" class="logo3">
+
+ 
 <h1>EZVENTS</h1>
+</header>
+<hr class="separador">
 
 <div class="saludo">
 <% if(session && session.login) { %>
     Hola, <%=session.nombre%> | <a href='/usuarios/logout'>Cerrar sesion</a>
     <% if (session.rol === 'usuario') { %>
-        <a href="/vistas/paginas/carrito"><img src="/static/carrito.jpg" alt="Carrito" class="icono-carrito"></a>
+        <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
     <% } %>
     <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>

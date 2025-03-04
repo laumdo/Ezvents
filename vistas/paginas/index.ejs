@@ -1,13 +1,6 @@
 <main>
     <h2>Próximos Eventos</h2>
     <div class="eventos">
-        <% eventos.forEach(evento => { %>
-            <div class="evento">
-                <img src="<%= evento.imagen %>" alt="Imagen de <%= evento.titulo %>">
-                <h3><%= evento.titulo %></h3>
-                <p><%= evento.fecha %> - <%= evento.lugar %></p>
-                <a href="/vistas/paginas/eventos.ejs<%= evento.id %>">Ver más</a>
-            </div>
-        <% }) %>
+        
     </div>
 </main>

@@ -20,6 +20,18 @@ app.get('/', (req, res) => {
         session: req.session // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
     }
     res.render('pagina', params);
-})
+});
+
+
+
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
+
+app.get('/contacto', (req, res) => {
+    const params = {
+        contenido: 'paginas/contacto', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session
+    };
+    res.render('pagina', params);
+});
+
