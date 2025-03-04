@@ -1,5 +1,5 @@
 <!-- Imagen principal del evento -->
-<img src="/static/img/image1.png" alt="EZVENTS Logo">
+<img src="./img/image1.png" alt="EZVENTS Logo">
 <h1>EZVENTS</h1>
 
 <div class="saludo">
@@ -9,6 +9,14 @@
     Usuario desconocido. <a href='/usuarios/login'>Login</a>
 <% } %>
 </div>
+
+
+    <% if(session && session.esAdmin) { %>
+        <a href='creaNoticias.ejs'>Crear noticia</a> | <button onclick =  "window.location.href='creaEventos'">Crear Evento<!--<img src="./img/antonio.jpeg" alt="Eventos">--></button>
+    <% } else if(session && !session.esAdmin){ %>
+        <a href='/carrito'><img src="/static/img/antonio.jpeg" alt="Carrito"></a>
+    <% } %>
+
 
 <nav>
     <a href="/">Inicio</a>

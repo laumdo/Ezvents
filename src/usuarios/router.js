@@ -1,5 +1,5 @@
 import express from 'express';
-import { viewLogin, doLogin, doLogout } from './controllers.js';
+import { viewLogin, doLogin, doLogout} from './controllers.js';
 
 const usuariosRouter = express.Router();
 

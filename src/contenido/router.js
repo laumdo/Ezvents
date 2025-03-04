@@ -24,4 +24,11 @@ contenidoRouter.get('/admin', (req, res) => {
     });
 });
 
+// Nueva ruta para gestionar eventos
+contenidoRouter.get('/creaEventos', (req, res) => {
+    let contenido ='paginas/creaEventos';
+    res.render('pagina', { contenido, session: req.session });
+});
+
+
 export default contenidoRouter;

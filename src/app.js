@@ -20,6 +20,15 @@ app.get('/', (req, res) => {
         session: req.session // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
     }
     res.render('pagina', params);
-})
+});
+
+app.get('/creaEventos', (req, res) => {
+    const params = {
+        contenido: 'paginas/creaEventos', // fichero ejs que tiene el contenido específico para esta vista
+        session: req.session // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
+    };
+    res.render('pagina', params);
+});
+
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
