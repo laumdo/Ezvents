@@ -35,3 +35,11 @@ app.get('/contacto', (req, res) => {
     res.render('pagina', params);
 });
 
+app.get('/crearCuenta', (req, res) => {
+    const params = {
+        contenido: 'paginas/crearCuenta', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session
+    };
+    res.render('pagina', params);
+});
+

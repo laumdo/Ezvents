@@ -1,0 +1,54 @@
+<h1>Acceso al sistema</h1>
+
+<% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } %>
+
+<form action="baseDeDatos????" method="POST">
+    <fieldset>
+        <legend>Datos a rellenar:</legend>
+
+        <!--Nombre del usuario-->
+        <label for="nombre">Nombre:</label>
+        <input id="nombre" type="text" name="nombre" value="" />
+
+        <!--Apellidos del Usuario-->
+        <label for="apellidos">Apellidos:</label>
+        <input id="apellidos" type="text" name="apellidos" value="" />
+        
+        <!--direccion email-->
+        <p>
+        <label for="email">Dirección de email de contacto:</label>
+        <input id="email" type="text" name="email" value="" />
+        </p>
+
+        <!--Usuario-->
+        <label for="usuario">Usuario:</label>
+        <input id="usuario" type="text" name="usuario" value="" />
+
+        <!--Contraseña-->
+        <label for="contraseña">Contraseña:</label>
+        <input id="password" type="password" name="password" value="" />
+
+        <!--checkbox-->
+        <p>
+        <input name="terminos" type="checkbox" value="marcado"/>
+        Marque esta casilla para verificar que ha leído nuestros términos y condiciones del servicio.
+        </p>
+            
+        </textarea>
+
+        <!--Botón para enviar el formulario-->
+        <p>
+        <input type="submit" name="enviar" value="Enviar"/>
+        </p>
+
+        <!--Botón para ressetear los datos del formulario-->
+        <p>
+        <input type="reset" name="borrar" value="Borrar datos"/>
+        </p>
+
+        <!--<label for="consulta">Consulta:</label>
+        <input id="consulta" type="text" name="consulta" value=""/>-->
+    </fieldset>
+</form>
