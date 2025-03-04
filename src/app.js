@@ -4,7 +4,7 @@ import { config } from './config.js';
 import usuariosRouter from './usuarios/router.js';
 import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
-
+import {Evento} from './eventos/Evento.js';
 export const app = express();
 
 app.set('view engine', 'ejs');
@@ -16,9 +16,11 @@ app.use(session(config.session));
 app.use('/', express.static(config.recursos));
 app.get('/', (req, res) => {
     // Parámetros que estarán disponibles en la plantilla
+    const eventos=Evento.getAll();
     const params = {
         contenido: 'paginas/index', // fichero ejs que tiene el contenido específico para esta vista
-        session: req.session // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
+        session: req.session, // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
+        eventos
     }
     res.render('pagina', params);
 })
