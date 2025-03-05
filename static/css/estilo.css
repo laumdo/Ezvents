@@ -29,13 +29,6 @@ header {
     gap: 20px; /* Espaciado entre los elementos */
 }
 
-header .imagenes {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-
 header a, header a:visited {
     color: white;
     font-weight: bold;
@@ -99,19 +92,26 @@ footer {
 }
 
 div.saludo {
-    width: 100%;
+    width: auto;
     text-align: right;
     padding-right: 20px;
+    font-size: 10px;
 }
 
 fieldset {
     border: 1px solid #ff5e62;
     width: 80%;
+    text-align: center;
     max-width: 500px;
     margin: 20px auto;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.submit-register{
+    text-align: center;
+    margin-top: 30px;
 }
 
 legend {
@@ -143,21 +143,8 @@ button:hover {
 }
 
 img.logo1 {
-    width: 350px; /* Ajusta el tamaño según lo que necesites */
+    width: 50px; /* Ajusta el tamaño según lo que necesites */
     height: auto; /* Mantiene la proporción */
-}
-
-img.logo2 {
-    width: 350px; /* Ajusta el tamaño según lo que necesites */
-    height: auto; /* Mantiene la proporción */
-	float: right; /* Mueve la imagen a la derecha */
-	
-}
-
-img.logo3{
-	width: 350px; /* Ajusta el tamaño según lo que necesites */
-    height: auto; /* Mantiene la proporción */
-		
 }
 
 h1{
@@ -239,4 +226,8 @@ hr.separador {
 
 .evento-boton:hover {
     background: #0056b3;
+}
+
+.redes-sociales img {
+    width: 40px;
 }

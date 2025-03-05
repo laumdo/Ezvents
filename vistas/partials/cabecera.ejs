@@ -1,13 +1,8 @@
 <!-- Imagen principal del evento -->
  <header>
- <img src="./img/concierto.jpg" alt="EZVENTS Logo" class="logo1">
- <img src="./img/festiva.jpg" alt="EZVENTS Logo" class="logo2">
- <img src="./img/entradaEventos.jpg" alt="EZVENTS Logo" class="logo3">
-
+    <a href="/"><img src="/img/image1.png" alt="EZVENTS Logo" class="logo1"></a>
  
 <h1>EZVENTS</h1>
-</header>
-<hr class="separador">
 
 <div class="saludo">
 <% if(session && session.login) { %>
@@ -19,14 +14,18 @@
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
 <% } else { %>
-    Usuario desconocido. <a href='/usuarios/login'>Login</a>
-    <button onclick="window.location.href='/crearCuenta'">Crear Cuenta</button>
+    Usuario desconocido.
+    <button onclick="window.location.href='/usuarios/login'">Acceder</button>
 <% } %>
 </div>
 
+</header>
+
+
+<hr class="separador">
+
 <nav>
     <a href="/">Inicio</a>
-    <a href="/eventos">Eventos</a>
     <a href="/noticias">Noticias</a>
     <a href="/puntos">Puntos</a>
     <a href="/foro">Foro</a>

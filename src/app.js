@@ -12,6 +12,7 @@ app.set('views', config.vistas);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(session(config.session));
+app.use(express.json());
 
 app.use('/', express.static(config.recursos));
 
@@ -38,12 +39,3 @@ app.get('/contacto', (req, res) => {
     };
     res.render('pagina', params);
 });
-
-app.get('/crearCuenta', (req, res) => {
-    const params = {
-        contenido: 'paginas/crearCuenta', // Se asume que la vista está en views/paginas/contacto.ejs
-        session: req.session
-    };
-    res.render('pagina', params);
-});
-
