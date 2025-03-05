@@ -1,27 +1,25 @@
-<!-- Imagen principal del evento -->
- <header>
- <img src="./img/concierto.jpg" alt="EZVENTS Logo" class="logo1">
- <img src="./img/festiva.jpg" alt="EZVENTS Logo" class="logo2">
- <img src="./img/entradaEventos.jpg" alt="EZVENTS Logo" class="logo3">
+<header>
+    <img src="./img/concierto.jpg" alt="EZVENTS Logo" class="logo1">
+    <img src="./img/festiva.jpg" alt="EZVENTS Logo" class="logo2">
+    <img src="./img/entradaEventos.jpg" alt="EZVENTS Logo" class="logo3">
 
- 
-<h1>EZVENTS</h1>
+    <h1>EZVENTS</h1>
 </header>
 <hr class="separador">
 
 <div class="saludo">
-<% if(session && session.login) { %>
-    Hola, <%=session.nombre%> | <a href='/usuarios/logout'>Cerrar sesion</a>
-    <% if (session.rol === 'usuario') { %>
-        <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
+    <% if(session && session.login) { %>
+        Hola, <%=session.nombre%> | <a href='/usuarios/logout'>Cerrar sesion</a>
+        <% if (session.rol === 'usuario') { %>
+            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
+        <% } %>
+        <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
+            <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
+        <% } %>
+    <% } else { %>
+        Usuario desconocido. <a href='/usuarios/login'>Login</a>
+        <button onclick="window.location.href='/crearCuenta'">Crear Cuenta</button>
     <% } %>
-    <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
-        <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
-    <% } %>
-<% } else { %>
-    Usuario desconocido. <a href='/usuarios/login'>Login</a>
-    <button onclick="window.location.href='/crearCuenta'">Crear Cuenta</button>
-<% } %>
 </div>
 
 <nav>
@@ -31,3 +29,9 @@
     <a href="/puntos">Puntos</a>
     <a href="/foro">Foro</a>
 </nav>
+
+<!-- Formulario de búsqueda -->
+<form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
+    <input type="text" name="nombre" placeholder="Buscar evento..." required>
+    <button type="submit">Buscar</button>
+</form>

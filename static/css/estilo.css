@@ -240,3 +240,42 @@ hr.separador {
 .evento-boton:hover {
     background: #0056b3;
 }
+
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre elementos */
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: white;
+    padding: 5px;
+    width: 60px; /* Espacio para "Buscar" */
+    transition: width 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 14px;
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+
+
