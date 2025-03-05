@@ -1,3 +1,6 @@
+
+import { getConnection } from '../db.js'; // Asegúrate de que la ruta es correcta
+
 export class Evento {
     static #getByIdStmt = null;
     static #insertStmt = null;
@@ -25,6 +28,13 @@ export class Evento {
         const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendida, imagen} = evento;
         return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
     }
+
+    static getAll() {
+        const db = getConnection();  // Obtiene la conexión a la base de datos
+        return db.prepare('SELECT * FROM eventos').all();
+        //return db.prepare('SELECT * FROM eventos').all();
+    }
+    
 
     static #insert(evento) {
         let result = null;
