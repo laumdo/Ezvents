@@ -12,6 +12,7 @@ app.set('views', config.vistas);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(session(config.session));
+app.use(express.static('public'));
 
 app.use('/', express.static(config.recursos));
 
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
+app.use('/eventos', eventosRouter);
 
 app.get('/contacto', (req, res) => {
     const params = {
@@ -47,3 +49,13 @@ app.get('/crearCuenta', (req, res) => {
     res.render('pagina', params);
 });
 
+
+app.get('/evento', (req, res) => {
+    const evento=Evento.getEventoById();
+    const params = {
+        contenido: 'paginas/evento', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session,
+        evento
+    };
+    res.render('pagina', params);
+});

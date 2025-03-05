@@ -5,8 +5,8 @@
 <p>Precio: <%= evento.precio %>€</p>
 <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
 
-<form action="/eventos/<%= evento.id %>/comprar" method="POST">
+<!--<form action="/eventos/<%= evento.id %>/comprar" method="POST">
     <button type="submit" <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %> disabled <% } %>>
         Comprar Entrada
     </button>
-</form>
+</form>-->
