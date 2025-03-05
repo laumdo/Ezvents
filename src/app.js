@@ -23,7 +23,26 @@ app.get('/', (req, res) => {
         eventos
     }
     res.render('pagina', params);
-})
+});
+
+
+
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
-app.use('/eventos',eventosRouter);
+
+app.get('/contacto', (req, res) => {
+    const params = {
+        contenido: 'paginas/contacto', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session
+    };
+    res.render('pagina', params);
+});
+
+app.get('/crearCuenta', (req, res) => {
+    const params = {
+        contenido: 'paginas/crearCuenta', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session
+    };
+    res.render('pagina', params);
+});
+
