@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
         eventos
     }
     res.render('pagina', params);
-});
+})
 
 
 

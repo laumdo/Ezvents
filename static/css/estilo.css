@@ -178,3 +178,65 @@ hr.separador {
     background: #ff5e62; /* Color de la línea */
     margin: 10px 0;
 }
+
+/*Para mostrar los eventos*/
+.eventos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.evento {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 600px;
+}
+
+.evento-img {
+    width: 180px;  /* Ancho fijo para todas las imágenes */
+    height: 180px; /* Alto fijo para todas las imágenes */
+    object-fit: cover; /* Recorta la imagen para que se ajuste sin deformarse */
+    border-radius: 8px; /* Bordes redondeados */
+    margin-right: 20px;
+}
+
+.evento-info {
+    flex: 1;
+    padding-left: 30px; /* Agrega espacio entre la imagen y el texto */
+}
+
+
+.evento-titulo {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.evento-descripcion {
+    font-size: 1em;
+    color: #444;
+}
+
+.evento-fecha {
+    font-size: 1em;
+    color: #777;
+    margin-top: 10px;
+}
+
+.evento-boton {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.evento-boton:hover {
+    background: #0056b3;
+}
