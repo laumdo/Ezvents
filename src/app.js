@@ -14,16 +14,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(session(config.session));
 
 app.use('/', express.static(config.recursos));
+
 app.get('/', (req, res) => {
     // Parámetros que estarán disponibles en la plantilla
     const eventos=Evento.getAll();
     const params = {
         contenido: 'paginas/index', // fichero ejs que tiene el contenido específico para esta vista
-        session: req.session, // Neesario para (entre otras cosas) utilizarlo en mostrarSaludo de cabecera.ejs
+        session: req.session, 
         eventos
     }
     res.render('pagina', params);
-});
+})
 
 
 
