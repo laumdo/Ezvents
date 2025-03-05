@@ -1,105 +1,180 @@
-body {
-	background-color: #CDCDCD;
+body { 
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #ff9966, #ff5e62);
+    margin: 0;
+    padding: 0;
 }
 
 div#contenedor {
-	width: 900px;
-	margin: auto;
-	border: 1px solid black;
-	background-color: #aaaaaa;
-	margin-top: 30px;
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    overflow: hidden;
 }
 
 header {
-	padding: 30px;
-	height: 100px;
-	background-color: #303030;
-	color: white;
+    padding: 20px;
+    background: #222;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra los elementos */
+    gap: 20px; /* Espaciado entre los elementos */
 }
 
+header .imagenes {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
 header a, header a:visited {
-	color: white;
-	font-weight: bold;
-	text-decoration: none;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
 } 
 
 header a:hover {
-	color: red;
-	font-weight: bold;
-	text-decoration: underline;
+    color: #ff9966;
+    text-decoration: underline;
 } 
 
-
 nav {
-	padding: 10px;
-	float: left;
-	width: 170px;
-	height: 400px;
-	background-color: #dddddd;
+    padding: 15px;
+    width: 200px;
+    height: auto;
+    background: #444;
+    color: white;
+    float: left;
+    border-radius: 10px;
 }
 
 nav a, nav a:visited {
-	color: red;
-	font-weight: bold;
-	text-decoration: none;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    transition: background 0.3s;
 } 
 
 nav a:hover {
-	color: red;
-	text-decoration: underline;
+    background: #ff5e62;
+    border-radius: 5px;
 } 
 
-
 aside {
-	padding: 10px;
-	float: right;
-	width: 170px;
-	height: 400px;
-	background-color: #dddddd;
+    padding: 15px;
+    float: right;
+    width: 200px;
+    background: #eee;
+    border-radius: 10px;
 }
 
 main {
-	padding: 10px;
-	float: left;
-	min-height: 600px;
-	width: 500px;
-	background-color: white;
+    padding: 20px;
+    min-height: 600px;
+    width: calc(100% - 450px);
+    float: left;
+    background: white;
+    border-radius: 10px;
 }
 
-footer	 {
-	clear: both;
-	padding: 20px;
-	background-color: #303030;
-	color: white;
-	text-align: center;
+footer {
+    clear: both;
+    padding: 20px;
+    background: #222;
+    color: white;
+    text-align: center;
+    border-radius: 0 0 10px 10px;
 }
 
 div.saludo {
-	width: 100%;
-	text-align: right;
+    width: 100%;
+    text-align: right;
+    padding-right: 20px;
 }
 
 fieldset {
-	border: 1px solid black;
-	width: 15em;
-	margin: 0 auto;
+    border: 1px solid #ff5e62;
+    width: 80%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 legend {
-	color: #fff;
-	background: #303030;
-	border: 1px solid black;
-	padding: 2px 6px;
+    color: white;
+    background: #ff5e62;
+    border-radius: 5px;
+    padding: 5px 10px;
 } 
 
 label {
-	width: 4em;
-	float: left;
-	text-align: right;
-	margin-right: 0.5em;
-	display: block;
+    width: auto;
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
 }
 
 button {
-	margin-left: 100px;
+    background: #ff5e62;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
 } 
+
+button:hover {
+    background: #ff9966;
+}
+
+img.logo1 {
+    width: 350px; /* Ajusta el tamaño según lo que necesites */
+    height: auto; /* Mantiene la proporción */
+}
+
+img.logo2 {
+    width: 350px; /* Ajusta el tamaño según lo que necesites */
+    height: auto; /* Mantiene la proporción */
+	float: right; /* Mueve la imagen a la derecha */
+	
+}
+
+img.logo3{
+	width: 350px; /* Ajusta el tamaño según lo que necesites */
+    height: auto; /* Mantiene la proporción */
+		
+}
+
+h1{
+	flex-grow: 1; /* Hace que el título ocupe el espacio central */
+    text-align: center;
+    font-size: 36px;
+    color: #ff5e62;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+
+}
+
+hr.separador {
+    border: none;
+    height: 4px;
+    background: #ff5e62; /* Color de la línea */
+    margin: 10px 0;
+}

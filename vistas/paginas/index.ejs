@@ -1,14 +1,13 @@
-<h2>Próximos Eventos</h2>
-<div class="eventos">
-    <% if (eventos && eventos.length > 0) { %>
-        <% eventos.forEach(evento => { %>
+<main>
+    <h2>Próximos Eventos</h2>
+    <div class="eventos">
+        <% eventos.forEach(evento => {
             <div class="evento">
-                <img src="/static/uploads/<%= evento.imagen %>" alt="Imagen de <%= evento.nombre %>">
+                <img src="<%= evento.imagen %>" alt ="Imagen de <%= evento.titulo %>">
                 <h3><%= evento.nombre %></h3>
-                <p><%= evento.descripcion %></p>
+                <p><%= evento.fecha%> - <%= evento.lugar%> <%= eventos.precio%></p>
+                <a href ="/vistas/paginas/eventos.ejs<%= evento.id%>">Ver mas</a>
             </div>
-        <% }) %>
-    <% } else { %>
-        <p>No hay eventos disponibles.</p>
-    <% } %>
-</div>
+        })
+    </div>
+</main>
