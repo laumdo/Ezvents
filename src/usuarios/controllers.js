@@ -1,4 +1,5 @@
 import { body, validationResult } from 'express-validator';
+import { RolesEnum } from './Usuario';
 //import { Usuario, RolesEnum } from './Usuario.js';
 
 export function viewLogin(req, res) {
@@ -25,6 +26,7 @@ export function doLogin(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
+        req.session.esEmpresa = usuario.rol ===RolesEnum.EMPRESA;
 
         return res.render('pagina', {
             contenido: 'paginas/index',
@@ -47,6 +49,7 @@ export function doLogout(req, res, next) {
     req.session.login = null
     req.session.nombre = null;
     req.session.esAdmin = null;
+    req.session.esEmpresa=null;
     req.session.save((err) => {
         if (err) next(err);
 

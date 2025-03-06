@@ -15,7 +15,7 @@
     <% if (session.rol === 'usuario') { %>
         <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
     <% } %>
-    <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
+    <% if (session.esEmpresa || session.esAdmin) { %>
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
 <% } else { %>
