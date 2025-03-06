@@ -1,4 +1,4 @@
-
+import { ErrorDatos } from "../db.js";
 import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
@@ -27,9 +27,9 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
-        const { password, rol, nombre, id } = usuario;
+        const { password, rol, nombre, apellidos, email, id } = usuario;
 
-        return new Usuario(username, password, nombre, rol, id);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id);
     }
 
     static #insert(usuario) {
@@ -39,7 +39,9 @@ export class Usuario {
             const password = usuario.#password;
             const nombre = usuario.nombre;
             const rol = usuario.rol;
-            const datos = {username, password, nombre, rol};
+            const apellidos = usuario.apellidos;
+            const email = usuario.email;
+            const datos = {username, password, nombre, apellidos, email, rol};
 
             result = this.#insertStmt.run(datos);
 
@@ -58,7 +60,9 @@ export class Usuario {
         const password = usuario.#password;
         const nombre = usuario.nombre;
         const rol = usuario.rol;
-        const datos = {username, password, nombre, rol};
+        const apellidos = usuario.apellidos;
+        const email = usuario.email;
+        const datos = {username, password, nombre, apellidos, email, rol};
 
         const result = this.#updateStmt.run(datos);
         if (result.changes === 0) throw new UsuarioNoEncontrado(username);
@@ -90,12 +94,16 @@ export class Usuario {
     #password;
     rol;
     nombre;
+    apellidos;
+    email;
 
-    constructor(username, password, nombre, rol = RolesEnum.USUARIO, id = null) {
+    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null) {
         this.#username = username;
         this.#password = password;
         this.nombre = nombre;
         this.rol = rol;
+        this.apellidos = apellidos;
+        this.email = email;
         this.#id = id;
     }
 

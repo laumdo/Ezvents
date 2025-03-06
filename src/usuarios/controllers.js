@@ -1,6 +1,8 @@
 import { body, validationResult } from 'express-validator';
 //import { RolesEnum, Usuario } from './Usuario';
 import { Usuario, RolesEnum } from './Usuario.js';
+import bcrypt from "bcryptjs";
+
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/login';
@@ -92,4 +94,42 @@ export function eliminarUsuario(req, res){
     }catch(error){
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el un usuario.' });
     }
+}
+
+export function viewRegister(req, res){
+    res.render('pagina', {contenido: 'paginas/register', session: req.session, error: null});
+}
+
+export function doRegister(req, res){
+    body('username').escape();
+    body('password').escape();
+    body('nombre').escape();
+    body('apellidos').escape();
+    body('email').escape();
+    //Poner mas
+
+    const username = req.body.username.trim();
+    const password = req.body. password.trim();
+    const nombre = req.body.nombre.trim();
+    const apellidos = req.body.apellidos.trim();
+    const email = req.body.email.trim();
+
+    //Ver si usuario existe
+    try{
+        Usuario.getUsuarioByUsername(username);
+        return res.render('pagina', {contenido: 'paginas/register', error: 'El usuario ya existe'});
+    }catch(e){
+        //ver
+
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10);//10?
+    const nuevoUsuario = new Usuario(username, hashedPassword, nombre, apellidos, email, RolesEnum.USUARIO);//Tipo normal predeterminado
+    nuevoUsuario.persist();
+
+    req.session.login = true;
+    req.session.nombre = nuevoUsuario.nombre;
+    req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
+
+    return res.redirect('/');
 }

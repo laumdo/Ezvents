@@ -1,7 +1,7 @@
 <h2>Próximos Eventos</h2>
 <div class="eventos">
-    <% if (eventos && eventos.length > 0) { %>
-        <% eventos.forEach(evento => { %>
+    <% if (locals.eventos && locals.eventos.length > 0) { %>
+        <% locals.eventos.forEach(evento => { %>
             <div class="evento">
                 <img src="./img/<%= evento.imagen %>">
                 <div class="evento-info">

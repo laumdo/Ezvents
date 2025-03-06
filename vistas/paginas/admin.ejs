@@ -15,3 +15,78 @@
         <button type="submit">Eliminar Usuario</button>
     </form>
 </div>
+<h1>Bienvenido, tienes los permisos necesarios para administrar eventos.</h1>
+<p>Aquí puedes gestionar los eventos. Selecciona una opción:</p>
+
+<!-- Menú de opciones -->
+<div class="admin-menu">
+    <button onclick="mostrarFormulario('add')">Añadir Evento</button>
+    <button onclick="mostrarFormulario('delete')">Eliminar Evento</button>
+    <button onclick="mostrarFormulario('edit')">Modificar Evento</button>
+</div>
+
+<!-- Contenedor de formularios -->
+<div class="admin-forms">
+    <!-- Formulario para añadir evento -->
+    <div id="form-add" class="admin-form oculto">
+        <h2>Añadir Evento</h2>
+        <form action="/eventos/agregar" method="POST">
+            <label>Nombre:</label>
+            <input type="text" name="nombre" required>
+            
+            <label>Descripción:</label>
+            <textarea name="descripcion" required></textarea>
+            
+            <label>Fecha:</label>
+            <input type="date" name="fecha" required>
+            
+            <label>Lugar:</label>
+            <input type="text" name="lugar" required>
+            
+            <label>Precio:</label>
+            <input type="number" step="0.01" name="precio" required>
+            
+            <label>Aforo Máximo:</label>
+            <input type="number" name="aforo_maximo" required>
+
+            <label>Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+
+            <button type="submit">Añadir Evento</button>
+        </form>
+    </div>
+
+    <!-- Formulario para eliminar evento -->
+    <div id="form-delete" class="admin-form oculto">
+        <h2>Eliminar Evento</h2>
+        <form action="/eventos/eliminar" method="POST">
+            <label>ID del evento:</label>
+            <input type="number" name="id" required>
+            <button type="submit">Eliminar Evento</button>
+        </form>
+    </div>
+
+    <!-- Formulario para modificar evento -->
+    <div id="form-edit" class="admin-form oculto">
+        <h2>Modificar Evento</h2>
+        <form action="/eventos/modificar" method="POST">
+            <label>ID del evento:</label>
+            <input type="number" name="id" required>
+
+            <label>Nuevo Nombre:</label>
+            <input type="text" name="nombre">
+            
+            <label>Nueva Descripción:</label>
+            <textarea name="descripcion"></textarea>
+            
+            <label>Nueva Fecha:</label>
+            <input type="date" name="fecha">
+            
+            <label>Nuevo Lugar:</label>
+            <input type="text" name="lugar">
+            
+            <label>Nuevo Precio:</label>
+            <input type="number" step="0.01" name="precio">
+            
+            <label>Nuevo Aforo Máximo:</label>
+            <input type="number" name="aforo_maximo">

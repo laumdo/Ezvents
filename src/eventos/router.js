@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { viewEventos, viewEvento, agregarEvento/*, comprarEntrada */} from './controllers.js';
+import { viewEventos, viewEvento, agregarEvento, eliminarEvento, modificarEvento/*, comprarEntrada */} from './controllers.js';
 
 const eventosRouter = express.Router();
 
@@ -25,5 +25,13 @@ eventosRouter.get('/:id', viewEvento);
 
 // Comprar una entrada para un evento
 //eventosRouter.post('/:id/comprar', comprarEntrada);
+// Ruta para crear un evento
+//eventosRouter.post('/crear', crearEvento);
+
+// Ruta para eliminar un evento
+eventosRouter.post('/eliminar', eliminarEvento);
+
+// Ruta para modificar un evento
+eventosRouter.post('/modificar', modificarEvento);
 
 export default eventosRouter;

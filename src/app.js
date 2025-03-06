@@ -13,6 +13,7 @@ app.set('views', config.vistas);
 app.use(express.urlencoded({ extended: false }));
 app.use(session(config.session));
 app.use(express.static('public'));
+app.use(express.json());
 
 app.use('/', express.static(config.recursos));
 
