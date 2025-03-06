@@ -1,11 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-<<<<<<< HEAD
-import { viewEventos, viewEvento, agregarEvento, eliminarEvento, modificarEvento/*, comprarEntrada */} from './controllers.js';
-=======
+import { viewEventos, viewEvento, agregarEvento, eliminarEvento, modificarEvento,buscarEvento/*, comprarEntrada */} from './controllers.js';
 
-import { viewEventos, viewEvento, agregarEvento, buscarEvento/*, comprarEntrada */} from './controllers.js';
->>>>>>> Antonio
 
 const eventosRouter = express.Router();
 

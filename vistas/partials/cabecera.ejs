@@ -1,19 +1,8 @@
-<<<<<<< HEAD
 <!-- Imagen principal del evento -->
  <header>
     <a href="/"><img src="/img/image1.png" alt="EZVENTS Logo" class="logo1"></a>
  
 <h1>EZVENTS</h1>
-=======
-<header>
-    <img src="./img/concierto.jpg" alt="EZVENTS Logo" class="logo1">
-    <img src="./img/festiva.jpg" alt="EZVENTS Logo" class="logo2">
-    <img src="./img/entradaEventos.jpg" alt="EZVENTS Logo" class="logo3">
-
-    <h1>EZVENTS</h1>
-</header>
-<hr class="separador">
->>>>>>> Antonio
 
 <div class="saludo">
     <% if(session && session.login) { %>
@@ -21,14 +10,6 @@
         <% if (session.rol === 'usuario') { %>
             <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
         <% } %>
-        <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
-            <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
-        <% } %>
-    <% } else { %>
-        Usuario desconocido. <a href='/usuarios/login'>Login</a>
-        <button onclick="window.location.href='/crearCuenta'">Crear Cuenta</button>
-    <% } %>
-<<<<<<< HEAD
     <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
@@ -36,8 +17,6 @@
     Usuario desconocido.
     <button onclick="window.location.href='/usuarios/login'">Acceder</button>
 <% } %>
-=======
->>>>>>> Antonio
 </div>
 
 </header>
