@@ -9,7 +9,7 @@ usuariosRouter.post('/login', doLogin);
 // /usuarios/logout
 usuariosRouter.get('/logout', doLogout);
 // Ruta para eliminar un evento
-usuariosRouter.post('/eliminar', eliminarUsuario);
+usuariosRouter.post('/eliminarUsuario', eliminarUsuario);
 // /usuarios/register
 usuariosRouter.get('/register', viewRegister);
 usuariosRouter.post('/register', doRegister);

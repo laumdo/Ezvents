@@ -1,28 +1,18 @@
 <% if (session && session.esAdmin) { %>
     <h1>Bienvenido a la Consola de Administración</h1>
-    <p>Aquí es donde se encuentran los controles de administración.</p>
+    <p>Tienes los permisos necesarios para administrar eventos.</p>
+    <p>Aquí puedes gestionar los eventos. Selecciona una opción:</p>
 <% } else { %>
     <h1>Acceso Denegado</h1>
     <p>No tienes permisos para administrar la web.</p>
 <% } %>
-
-<!-- Formulario para eliminar evento -->
-<div id="form-delete-user" class="admin-form oculto">
-    <h2>Eliminar Usuario</h2>
-    <form action="/usuarios/eliminar" method="POST">
-        <label>Nombre del usuario:</label>
-        <input type="text" name="nombre" required>
-        <button type="submit">Eliminar Usuario</button>
-    </form>
-</div>
-<h1>Bienvenido, tienes los permisos necesarios para administrar eventos.</h1>
-<p>Aquí puedes gestionar los eventos. Selecciona una opción:</p>
 
 <!-- Menú de opciones -->
 <div class="admin-menu">
     <button onclick="mostrarFormulario('add')">Añadir Evento</button>
     <button onclick="mostrarFormulario('delete')">Eliminar Evento</button>
     <button onclick="mostrarFormulario('edit')">Modificar Evento</button>
+    <button onclick ="mostrarFormulario('deleteuser')">Eliminar Usuario</button>
 </div>
 
 <!-- Contenedor de formularios -->
@@ -30,7 +20,7 @@
     <!-- Formulario para añadir evento -->
     <div id="form-add" class="admin-form oculto">
         <h2>Añadir Evento</h2>
-        <form action="/eventos/agregar" method="POST">
+        <form action="/eventos/agregarEvento" method="POST">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
             
@@ -59,7 +49,7 @@
     <!-- Formulario para eliminar evento -->
     <div id="form-delete" class="admin-form oculto">
         <h2>Eliminar Evento</h2>
-        <form action="/eventos/eliminar" method="POST">
+        <form action="/eventos/eliminarEvento" method="POST">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
             <button type="submit">Eliminar Evento</button>
@@ -69,7 +59,7 @@
     <!-- Formulario para modificar evento -->
     <div id="form-edit" class="admin-form oculto">
         <h2>Modificar Evento</h2>
-        <form action="/eventos/modificar" method="POST">
+        <form action="/eventos/modificarEvento" method="POST">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
 
@@ -90,3 +80,31 @@
             
             <label>Nuevo Aforo Máximo:</label>
             <input type="number" name="aforo_maximo">
+
+            <button type="submit">Modificar Evento</button>
+        </form>
+    </div>
+
+    <!-- Formulario para eliminar usuario -->
+<div id="form-deleteuser" class="admin-form oculto">
+    <h2>Eliminar Usuario</h2>
+    <form action="/usuarios/eliminarUsuario" method="POST">
+        <label>Nombre del usuario:</label>
+        <input type="text" name="nombre" required>
+        <button type="submit">Eliminar Usuario</button>
+    </form>
+</div>
+
+    <!-- Script para manejar el formulario -->
+<script>
+    function mostrarFormulario(id) {
+        document.getElementById('form-' + id).classList.toggle('oculto');
+    }
+</script>
+
+<style>
+    .oculto { display: none; }
+    .empresa-menu { margin-bottom: 20px; }
+    .evento { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+</style>
+

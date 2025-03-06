@@ -2,6 +2,7 @@ import { body, validationResult } from 'express-validator';
 //import { RolesEnum, Usuario } from './Usuario';
 import { Usuario, RolesEnum } from './Usuario.js';
 import bcrypt from "bcryptjs";
+import session from 'express-session';
 
 
 export function viewLogin(req, res) {
@@ -30,14 +31,30 @@ export function doLogin(req, res) {
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
         req.session.esEmpresa = usuario.rol ===RolesEnum.EMPRESA;
 
-        return res.render('pagina', {
-            contenido: 'paginas/index',
-            session: req.session
-        });
+        if(req.session.esEmpresa){
+            //const eventos = Evento.getEventoById(usuario.id);
+            return res.render('pagina', {
+                contenido: 'paginas/empresa', // Vista de empresa
+                session: req.session
+            });
+        }
+        else if(req.session.esAdmin){
+            return res.render('pagina',{ //vista de admin
+                contenido: 'paginas/admin',
+                session: req.session
+            });
+        }
+        else{
+            return res.render('pagina', {
+                contenido: 'paginas/index',
+                session: req.session
+            });
+        }
 
     } catch (e) {
         res.render('pagina', {
             contenido: 'paginas/login',
+            session: req.session,
             error: 'El usuario o contraseña no son válidos'
         })
     }
@@ -89,10 +106,14 @@ export function eliminarUsuario(req, res){
 
         Usuario.delete(nombre);
 
-        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Usuario eliminado con éxito' });
+        res.render('pagina', { contenido: 'paginas/admin', 
+            session: req.session,
+            mensaje: 'Usuario eliminado con éxito' });
 
     }catch(error){
-        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el un usuario.' });
+        res.render('pagina', { contenido: 'paginas/admin', 
+            session: req.session,
+            error: 'Error al eliminar el un usuario.' });
     }
 }
 
@@ -117,7 +138,10 @@ export function doRegister(req, res){
     //Ver si usuario existe
     try{
         Usuario.getUsuarioByUsername(username);
-        return res.render('pagina', {contenido: 'paginas/register', error: 'El usuario ya existe'});
+        return res.render('pagina', {
+            contenido: 'paginas/register', 
+            session: req.session,
+            error: 'El usuario ya existe'});
     }catch(e){
         //ver
 
@@ -130,6 +154,7 @@ export function doRegister(req, res){
     req.session.login = true;
     req.session.nombre = nuevoUsuario.nombre;
     req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
+    req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;
 
     return res.redirect('/');
 }

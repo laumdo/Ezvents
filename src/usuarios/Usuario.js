@@ -5,7 +5,6 @@ export const RolesEnum = Object.freeze({
     USUARIO: 'U',
     ADMIN: 'A',
     EMPRESA: 'E'
-
 });
 
 export class Usuario {

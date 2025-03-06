@@ -36,7 +36,10 @@ export function agregarEvento(req, res) {
         const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
         nuevoEvento.persist();
 
-        res.redirect('/eventos'); // Redirigir a la lista de eventos
+        res.render('pagina', { 
+            contenido: 'paginas/index', 
+            session: req.session,
+            mensaje: 'Evento modificado con éxito' });
     } catch (error) {
         res.status(400).send("Error al agregar el evento.");
     }
@@ -61,7 +64,10 @@ export function modificarEvento(req, res) {
         // Guardar cambios en la base de datos
         evento.persist(); // Esto llamará a Evento.#update(evento)
 
-        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Evento modificado con éxito' });
+        res.render('pagina', { 
+            contenido: 'paginas/admin', 
+            session: req.session,
+            mensaje: 'Evento modificado con éxito' });
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al modificar el evento' });
     }
@@ -69,15 +75,18 @@ export function modificarEvento(req, res) {
 
 export function eliminarEvento(req, res) {
     try {
-        const { id } = req.body;
 
-        // Verificar si el evento existe
-        Evento.getEventoById(id); // Lanza error si no existe
+        const { id } = req.body;
+        Evento.getEventoById(id);
+        //if (!evento) throw new EventoNoEncontrado(id);
 
         // Eliminar evento
         Evento.delete(id);
 
-        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Evento eliminado con éxito' });
+        res.render('pagina', { 
+            contenido: 'paginas/admin',
+            session: req.session, 
+            mensaje: 'Evento eliminado con éxito' });
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
     }
