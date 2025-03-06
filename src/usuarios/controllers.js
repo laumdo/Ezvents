@@ -25,6 +25,7 @@ export function doLogin(req, res) {
         const usuario = Usuario.login(username, password);
         req.session.login = true;
         req.session.nombre = usuario.nombre;
+        req.session.username = usuario.username;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
 
         return res.render('pagina', {
@@ -63,6 +64,24 @@ export function doLogout(req, res, next) {
 export function viewRegister(req, res){
     res.render('pagina', {contenido: 'paginas/register', session: req.session, error: null});
 }
+
+export function viewDatos(req, res) {
+    if (!req.session || !req.session.username) {
+        return res.redirect('/usuarios/login'); // Redirigir si no está logueado
+    }
+
+    let usuario = null;
+    try {
+        console.log(req.session.username);
+        usuario = Usuario.getUsuarioByUsername(req.session.username);
+    } catch (e) {
+        console.error("Error obteniendo usuario:", e);
+        usuario = null; // Asegurar que no crashee la vista
+    }
+
+    res.render('pagina', { contenido: 'paginas/datos', session: req.session, usuario });
+}
+
 
 export function doRegister(req, res){
     body('username').escape();

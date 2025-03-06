@@ -7,6 +7,9 @@
 <div class="saludo">
     <% if(session && session.login) { %>
         Hola, <%=session.nombre%> | <a href='/usuarios/logout'>Cerrar sesion</a>
+        <a href="/usuarios/datos">
+            <img src="/img/perfil.png" class="logo1">
+        </a>
         <% if (session.rol === 'usuario') { %>
             <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
         <% } %>
@@ -14,7 +17,7 @@
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
 <% } else { %>
-    Usuario desconocido.
+    Usuario desconocido
     <button onclick="window.location.href='/usuarios/login'">Acceder</button>
 <% } %>
 </div>
@@ -31,8 +34,3 @@
     <a href="/foro">Foro</a>
 </nav>
 
-<!-- Formulario de búsqueda -->
-<form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
-    <input type="text" name="nombre" placeholder="Buscar evento..." required>
-    <button type="submit">Buscar</button>
-</form>

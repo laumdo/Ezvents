@@ -8,6 +8,7 @@
                 <p><strong>Fecha:</strong> <%= evento.fecha %></p>
                 <p><strong>Lugar:</strong> <%= evento.lugar %></p>
             </div>
+            <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
         <% }) %>
     <% } else { %>
         <p>No se encontraron eventos.</p>

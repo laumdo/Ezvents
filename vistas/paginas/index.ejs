@@ -1,5 +1,10 @@
 <h2>Próximos Eventos</h2>
 <div class="eventos">
+        <!-- Formulario de búsqueda -->
+    <form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
+        <input type="text" name="nombre" placeholder="Buscar evento..." required>
+        <button type="submit">Buscar</button>
+    </form>
     <% if (locals.eventos && locals.eventos.length > 0) { %>
         <% locals.eventos.forEach(evento => { %>
             <div class="evento">
