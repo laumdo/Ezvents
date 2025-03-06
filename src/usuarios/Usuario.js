@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
     USUARIO: 'U',
+    EMPRESA: 'E',
     ADMIN: 'A'
 });
 

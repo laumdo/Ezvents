@@ -5,7 +5,7 @@ const contenidoRouter = express.Router();
 contenidoRouter.get('/normal', (req, res) => {
     let contenido = 'paginas/noPermisos';
     if (req.session && req.session.login) {
-        contenido = 'paginas/normal';
+        contenido = 'paginas/index';
     }
     res.render('pagina', {
         contenido,
