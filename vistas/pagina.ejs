@@ -5,14 +5,12 @@
 </head>
 
 <body>
-
  <div id="contenedor">
   <%- include('./partials/cabecera.ejs', { session: locals.session }) %>
 
-
   <main>
     <article>
-    <%- include(contenido) %>
+    <%- include(contenido, { eventos: locals.eventos }) %>
     </article>
   </main>
 

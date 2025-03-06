@@ -1,6 +1,11 @@
 import express from 'express';
 import multer from 'multer';
+<<<<<<< HEAD
 import { viewEventos, viewEvento, agregarEvento, eliminarEvento, modificarEvento/*, comprarEntrada */} from './controllers.js';
+=======
+
+import { viewEventos, viewEvento, agregarEvento, buscarEvento/*, comprarEntrada */} from './controllers.js';
+>>>>>>> Antonio
 
 const eventosRouter = express.Router();
 
@@ -20,8 +25,16 @@ eventosRouter.post('/agregar', upload.single('imagen'), agregarEvento);
 // Mostrar la lista de eventos
 eventosRouter.get('/', viewEventos);
 
-// Ver detalles de un evento específico
+// 1. Primero la ruta de búsqueda
+eventosRouter.get('/buscarEvento', buscarEvento);
+
+// 2. Luego la ruta para ID
 eventosRouter.get('/:id', viewEvento);
+
+
+// Ver detalles de un evento específico
+//eventosRouter.get('/:id', viewEvento);
+
 
 // Comprar una entrada para un evento
 //eventosRouter.post('/:id/comprar', comprarEntrada);
