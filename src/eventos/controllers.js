@@ -43,8 +43,9 @@ export function agregarEvento(req, res) {
 }
 
 export function buscarEvento(req, res) {
-    const nombreEvento = req.query.nombre;
-
+    console.log("GOALWGALWAWLFAFAFA");
+    const nombreEvento = req.query.nombre;   
+    console.log("GOALWGALWAWLFAFAFA");
     // Validación simple
     if (!nombreEvento || nombreEvento.trim() === '') {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'Nombre de evento no puede estar vacío.' });
@@ -53,13 +54,14 @@ export function buscarEvento(req, res) {
     try {
         const eventos = Evento.getAll();
 
+
         // Filtra los eventos que coinciden con el nombre proporcionado
         const eventosFiltrados = eventos.filter(evento =>
             evento.nombre.toLowerCase().includes(nombreEvento.toLowerCase())
         );
 
         // Renderiza la vista con los eventos filtrados
-        res.render('pagina', { contenido: 'resultadosBusqueda', eventos: eventosFiltrados, session: req.session });
+        res.render('pagina', { contenido: 'paginas/resultadosBusqueda', eventos: eventosFiltrados, session: req.session });
     } catch (error) {
         console.error('Error al buscar eventos:', error);
         res.status(500).send('Error al buscar eventos');
