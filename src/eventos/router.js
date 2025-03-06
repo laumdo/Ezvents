@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Ruta para agregar un evento con imagen
-eventosRouter.post('/agregar', upload.single('imagen'), agregarEvento);
+eventosRouter.post('/agregarEvento', upload.single('imagen'), agregarEvento);
 
 // Mostrar la lista de eventos
 eventosRouter.get('/', viewEventos);
@@ -38,9 +38,9 @@ eventosRouter.get('/:id', viewEvento);
 //eventosRouter.post('/crear', crearEvento);
 
 // Ruta para eliminar un evento
-eventosRouter.post('/eliminar', eliminarEvento);
+eventosRouter.post('/eliminarEvento', eliminarEvento);
 
 // Ruta para modificar un evento
-eventosRouter.post('/modificar', modificarEvento);
+eventosRouter.post('/modificarEvento', modificarEvento);
 
 export default eventosRouter;

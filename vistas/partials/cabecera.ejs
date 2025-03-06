@@ -1,26 +1,24 @@
 <!-- Imagen principal del evento -->
- <header>
+<header>
     <a href="/"><img src="/img/image1.png" alt="EZVENTS Logo" class="logo1"></a>
- 
-<h1>EZVENTS</h1>
 
-<div class="saludo">
-    <% if(session && session.login) { %>
-        Hola, <%=session.nombre%> | <a href='/usuarios/logout'>Cerrar sesion</a>
-        <% if (session.rol === 'usuario') { %>
-            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
+    <h1>EZVENTS</h1>
+
+    <div class="saludo">
+        <% if (locals.session && locals.session.login) { %>
+            Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
+            <% if (locals.session.esEmpresa) { %>
+                <a href="paginas/empresa.ejs" class="boton-anadir">Añadir Evento</a>
+            <% } %>
+        <% } else if (locals.session.esAdmin) { %>
+            <a href="paginas/admin.ejs" class="boton-anadir">Consola Admin</a>
+        <% } else { %>
+            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito" class="logo1"></a>
+            <button onclick="window.location.href='/usuarios/login'">Acceder</button>
         <% } %>
-    <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
-        <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
-    <% } %>
-<% } else { %>
-    Usuario desconocido.
-    <button onclick="window.location.href='/usuarios/login'">Acceder</button>
-<% } %>
-</div>
+    </div>
 
 </header>
-
 
 <hr class="separador">
 
@@ -30,9 +28,12 @@
     <a href="/puntos">Puntos</a>
     <a href="/foro">Foro</a>
 </nav>
+<<<<<<< HEAD
 
 <!-- Formulario de búsqueda -->
 <form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
     <input type="text" name="nombre" placeholder="Buscar evento..." required>
     <button type="submit">Buscar</button>
 </form>
+=======
+>>>>>>> Adrian
