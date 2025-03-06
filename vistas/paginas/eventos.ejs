@@ -1,12 +1,30 @@
-<h1><%= evento.nombre %></h1>
-<p><%= evento.descripcion %></p>
-<p>Fecha: <%= evento.fecha %></p>
-<p>Lugar: <%= evento.lugar %></p>
-<p>Precio: <%= evento.precio %>€</p>
-<p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= evento.nombre %></title>
+    <link rel="stylesheet" href="/css/saber_mas.css">
+</head>
+<body>
+    <div class="container">
+        <h1><%= evento.nombre %></h1>
+        
+        <div class="image-container">
+            <img src="/img/<%= evento.imagen %>" alt="Imagen del evento">
+        </div>
 
-<form action="/eventos/<%= evento.id %>/comprar" method="POST">
-    <button type="submit" <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %> disabled <% } %>>
-        Comprar Entrada
-    </button>
-</form>
+        <p><strong>Descripción:</strong> <%= evento.descripcion %></p>
+        <p><strong>Fecha:</strong> <%= evento.fecha %></p>
+        <p><strong>Lugar:</strong> <%= evento.lugar %></p>
+        <p><strong>Precio:</strong> <%= evento.precio %>€</p>
+        <p><strong>Aforo:</strong> <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+
+        <form action="/eventos/<%= evento.id %>/comprar" method="POST">
+            <button type="submit" <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %> disabled <% } %>>
+                Comprar Entrada
+            </button>
+        </form>
+    </div>
+</body>
+</html>
