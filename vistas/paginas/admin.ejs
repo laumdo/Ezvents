@@ -5,3 +5,13 @@
     <h1>Acceso Denegado</h1>
     <p>No tienes permisos para administrar la web.</p>
 <% } %>
+
+<!-- Formulario para eliminar evento -->
+<div id="form-delete-user" class="admin-form oculto">
+    <h2>Eliminar Usuario</h2>
+    <form action="/usuarios/eliminar" method="POST">
+        <label>Nombre del usuario:</label>
+        <input type="text" name="nombre" required>
+        <button type="submit">Eliminar Usuario</button>
+    </form>
+</div>

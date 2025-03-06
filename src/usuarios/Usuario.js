@@ -12,6 +12,7 @@ export class Usuario {
     static #getByUsernameStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
+    static #deleteStmt = null;
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
@@ -19,6 +20,7 @@ export class Usuario {
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, rol) VALUES (@username, @password, @nombre, @rol)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, nombre = @nombre WHERE id = @id');
+        this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id'); // Nueva sentencia DELETE
     }
 
     static getUsuarioByUsername(username) {
@@ -64,6 +66,10 @@ export class Usuario {
         return usuario;
     }
 
+    static #delete(id) {
+        const result = this.#deleteStmt.run({ id });
+        if (result.changes === 0) throw new EventoNoEncontrado(id);
+    }
 
     static login(username, password) {
         let usuario = null;
@@ -78,7 +84,7 @@ export class Usuario {
 
         return usuario;
     }
-
+    
     #id;
     #username;
     #password;

@@ -1,5 +1,5 @@
 import { body, validationResult } from 'express-validator';
-import { RolesEnum } from './Usuario';
+import { RolesEnum, Usuario } from './Usuario';
 //import { Usuario, RolesEnum } from './Usuario.js';
 
 export function viewLogin(req, res) {
@@ -60,4 +60,36 @@ export function doLogout(req, res, next) {
             res.redirect('/');
         })
     })
+}
+
+export function agregarUsuario(req, res){
+
+    try{
+        const{username, password,nombre,rol}=req.body;
+        const nuevoUsuario= new Usuario(null,username,password,nombre,rol);
+        usuario.persist();
+
+        res.redirect('/usuarios');
+
+    }catch(error){
+        res.status(400).send("Error al agregar un usuario.");
+    }
+}
+
+export function eliminarunUsuario(req, res){
+
+    try{
+
+        const{nombre}=req.body;
+
+        // Verificar si el usuario existe
+        Usuario.getUsuarioByUsername(nombre); // Lanza error si no existe
+
+        Usuario.delete(nombre);
+
+        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Usuario eliminado con éxito' });
+
+    }catch(error){
+        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el un usuario.' });
+    }
 }
