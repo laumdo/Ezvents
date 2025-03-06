@@ -165,4 +165,5 @@ export function doRegister(req, res){
     req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;
 
     return res.redirect('/');
+    }
 }
