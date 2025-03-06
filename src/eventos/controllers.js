@@ -14,7 +14,6 @@ export function viewEventos(req, res) {
 
 export function viewEvento(req, res) {
     param('id').isInt().withMessage('ID de evento inválido'); // Validar que el ID es un número entero
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });
@@ -22,7 +21,7 @@ export function viewEvento(req, res) {
 
     try {
         const evento = Evento.getEventoById(req.params.id);
-        res.render('pagina', { contenido: 'paginas/evento', session: req.session, evento });
+        res.render('pagina', { contenido: 'paginas/eventos', session: req.session, evento });
     } catch (error) {
         res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Evento no encontrado' });
     }
