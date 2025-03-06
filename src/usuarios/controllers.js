@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
-import { RolesEnum, Usuario } from './Usuario';
-//import { Usuario, RolesEnum } from './Usuario.js';
+//import { RolesEnum, Usuario } from './Usuario';
+import { Usuario, RolesEnum } from './Usuario.js';
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/login';
@@ -76,7 +76,7 @@ export function agregarUsuario(req, res){
     }
 }
 
-export function eliminarunUsuario(req, res){
+export function eliminarUsuario(req, res){
 
     try{
 
