@@ -15,7 +15,7 @@ export class Usuario {
         if (this.#getByUsernameStmt !== null) return;
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, apellidos, email, rol) VALUES (@username, @password, @nombre, @apellidos, @email @rol)');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, apellidos, email, rol) VALUES (@username, @password, @nombre, @apellidos, @email, @rol)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, apellidos = @apellidos, email = @email, nombre = @nombre WHERE id = @id');
     }
 
