@@ -8,7 +8,7 @@
                     <h3 class="evento-titulo"><%= evento.nombre %></h3>
                     <p class="evento-descripcion"><%= evento.descripcion %></p>
                     <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
-                    <button onclick="window.location.href='/eventos'">Saber más</button>
+                    <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
 
                 </div>
             </div>

@@ -13,7 +13,7 @@
     <!-- Formulario para añadir evento -->
     <div id="form-add" class="admin-form oculto">
         <h2>Añadir Evento</h2>
-        <form action="/eventos/agregar" method="POST">
+        <form action="/eventos/agregarEvento" method="POST">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
             
@@ -42,7 +42,7 @@
     <!-- Formulario para eliminar evento -->
     <div id="form-delete" class="admin-form oculto">
         <h2>Eliminar Evento</h2>
-        <form action="/eventos/eliminar" method="POST">
+        <form action="/eventos/eliminarEvento" method="POST">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
             <button type="submit">Eliminar Evento</button>
@@ -52,7 +52,7 @@
     <!-- Formulario para modificar evento -->
     <div id="form-edit" class="admin-form oculto">
         <h2>Modificar Evento</h2>
-        <form action="/eventos/modificar" method="POST">
+        <form action="/eventos/modificarEvento" method="POST">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
 

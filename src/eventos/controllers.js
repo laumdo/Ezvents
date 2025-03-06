@@ -13,7 +13,7 @@ export function viewEventos(req, res) {
 }
 
 export function viewEvento(req, res) {
-    param('id').isInt().withMessage('ID de evento inválido'); // Validar que el ID es un número entero
+    param('id').isInt().withMessage('ID de evento inválido'); // Esto no está validando correctamente el ID
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });
@@ -26,6 +26,7 @@ export function viewEvento(req, res) {
         res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Evento no encontrado' });
     }
 }
+
 
 export function agregarEvento(req, res) {
     try {
