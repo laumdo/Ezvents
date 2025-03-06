@@ -41,3 +41,44 @@ export function agregarEvento(req, res) {
         res.status(400).send("Error al agregar el evento.");
     }
 }
+
+export function modificarEvento(req, res) {
+    try {
+        const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen } = req.body;
+
+        let evento = Evento.getEventoById(id);
+        if (!evento) throw new EventoNoEncontrado(id);
+
+        // Actualizar solo los campos que han cambiado
+        evento.nombre = nombre || evento.nombre;
+        evento.descripcion = descripcion || evento.descripcion;
+        evento.fecha = fecha || evento.fecha;
+        evento.lugar = lugar || evento.lugar;
+        evento.precio = precio || evento.precio;
+        evento.aforo_maximo = aforo_maximo || evento.aforo_maximo;
+        evento.imagen = imagen || evento.imagen;
+
+        // Guardar cambios en la base de datos
+        evento.persist(); // Esto llamará a Evento.#update(evento)
+
+        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Evento modificado con éxito' });
+    } catch (error) {
+        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al modificar el evento' });
+    }
+}
+
+export function eliminarEvento(req, res) {
+    try {
+        const { id } = req.body;
+
+        // Verificar si el evento existe
+        Evento.getEventoById(id); // Lanza error si no existe
+
+        // Eliminar evento
+        Evento.delete(id);
+
+        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Evento eliminado con éxito' });
+    } catch (error) {
+        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
+    }
+}

@@ -1,10 +1,11 @@
-
+import bcrypt from "bcryptjs";
 import { getConnection } from '../db.js'; // Asegúrate de que la ruta es correcta
 
 export class Evento {
     static #getByIdStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
+    static #deleteStmt = null; 
 
     static initStatements(db) {
         if (this.#getByIdStmt !== null) return;
@@ -20,6 +21,7 @@ export class Evento {
             lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
             WHERE id = @id
         `);
+        this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id'); // Nueva sentencia DELETE
     }
 
     static getEventoById(idEvento) {
@@ -32,7 +34,6 @@ export class Evento {
     static getAll() {
         const db = getConnection();  // Obtiene la conexión a la base de datos
         return db.prepare('SELECT * FROM eventos').all();
-        //return db.prepare('SELECT * FROM eventos').all();
     }
     
 
@@ -75,6 +76,11 @@ export class Evento {
         if (result.changes === 0) throw new EventoNoEncontrado(evento.#id);
 
         return evento;
+    }
+
+    static #delete(id) {
+        const result = this.#deleteStmt.run({ id });
+        if (result.changes === 0) throw new EventoNoEncontrado(id);
     }
 
     #id;
