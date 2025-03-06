@@ -42,9 +42,7 @@ export function agregarEvento(req, res) {
 }
 
 export function buscarEvento(req, res) {
-    console.log("GOALWGALWAWLFAFAFA");
-    const nombreEvento = req.query.nombre;   
-    console.log("GOALWGALWAWLFAFAFA");
+    const nombreEvento = req.query.nombre;  
     // Validación simple
     if (!nombreEvento || nombreEvento.trim() === '') {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'Nombre de evento no puede estar vacío.' });
