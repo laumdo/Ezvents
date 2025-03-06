@@ -68,11 +68,15 @@ export function doRegister(req, res){
     body('username').escape();
     body('password').escape();
     body('nombre').escape();
+    body('apellidos').escape();
+    body('email').escape();
     //Poner mas
 
     const username = req.body.username.trim();
     const password = req.body. password.trim();
     const nombre = req.body.nombre.trim();
+    const apellidos = req.body.apellidos.trim();
+    const email = req.body.email.trim();
 
     //Ver si usuario existe
     try{
@@ -84,8 +88,7 @@ export function doRegister(req, res){
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);//10?
-
-    const nuevoUsuario = new Usuario(username, hashedPassword, nombre, RolesEnum.USUARIO);//Tipo normal predeterminado
+    const nuevoUsuario = new Usuario(username, hashedPassword, nombre, apellidos, email, RolesEnum.USUARIO);//Tipo normal predeterminado
     nuevoUsuario.persist();
 
     req.session.login = true;
