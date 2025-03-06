@@ -1,5 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum } from './Usuario.js';
+import { Evento } from '../eventos/Evento.js'; // Importar la clase Evento
 import bcrypt from "bcryptjs";
 
 export function viewLogin(req, res) {
@@ -26,10 +27,12 @@ export function doLogin(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
-
+        
+        const eventos = Evento.getAll();
         return res.render('pagina', {
             contenido: 'paginas/index',
-            session: req.session
+            session: req.session,
+            eventos
         });
 
     } catch (e) {
