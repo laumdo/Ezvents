@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
-//import { Usuario, RolesEnum } from './Usuario.js';
-//import { Evento, EventoYaExiste, ErrorDatos } from './Evento.js';
+import { Usuario, RolesEnum } from './Usuario.js';
+
 
 export function viewLogin(req, res) {
     let contenido = 'paginas/login';

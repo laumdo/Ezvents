@@ -1,4 +1,4 @@
-
+import bcrypt from "bcryptjs";
 import { getConnection } from '../db.js'; // Asegúrate de que la ruta es correcta
 
 export class Evento {
@@ -34,7 +34,6 @@ export class Evento {
     static getAll() {
         const db = getConnection();  // Obtiene la conexión a la base de datos
         return db.prepare('SELECT * FROM eventos').all();
-        //return db.prepare('SELECT * FROM eventos').all();
     }
     
 
