@@ -41,3 +41,67 @@ export function agregarEvento(req, res) {
         res.status(400).send("Error al agregar el evento.");
     }
 }
+
+export function modificarEvento(req, res) {
+    try {
+        const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen } = req.body;
+
+        let evento = Evento.getEventoById(id);
+        if (!evento) throw new EventoNoEncontrado(id);
+
+        // Actualizar solo los campos que han cambiado
+        evento.nombre = nombre || evento.nombre;
+        evento.descripcion = descripcion || evento.descripcion;
+        evento.fecha = fecha || evento.fecha;
+        evento.lugar = lugar || evento.lugar;
+        evento.precio = precio || evento.precio;
+        evento.aforo_maximo = aforo_maximo || evento.aforo_maximo;
+        evento.imagen = imagen || evento.imagen;
+
+        // Guardar cambios en la base de datos
+        evento.persist(); // Esto llamará a Evento.#update(evento)
+
+        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Evento modificado con éxito' });
+    } catch (error) {
+        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al modificar el evento' });
+    }
+}
+
+export function eliminarEvento(req, res) {
+    try {
+        const { id } = req.body;
+
+        // Verificar si el evento existe
+        Evento.getEventoById(id); // Lanza error si no existe
+
+        // Eliminar evento
+        Evento.delete(id);
+
+        res.render('pagina', { contenido: 'paginas/admin', mensaje: 'Evento eliminado con éxito' });
+    } catch (error) {
+        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
+    }
+}
+export function buscarEvento(req, res) {
+    const nombreEvento = req.query.nombre;  
+    // Validación simple
+    if (!nombreEvento || nombreEvento.trim() === '') {
+        return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'Nombre de evento no puede estar vacío.' });
+    }
+
+    try {
+        const eventos = Evento.getAll();
+
+
+        // Filtra los eventos que coinciden con el nombre proporcionado
+        const eventosFiltrados = eventos.filter(evento =>
+            evento.nombre.toLowerCase().includes(nombreEvento.toLowerCase())
+        );
+
+        // Renderiza la vista con los eventos filtrados
+        res.render('pagina', { contenido: 'paginas/resultadosBusqueda', eventos: eventosFiltrados, session: req.session });
+    } catch (error) {
+        console.error('Error al buscar eventos:', error);
+        res.status(500).send('Error al buscar eventos');
+    }
+}
