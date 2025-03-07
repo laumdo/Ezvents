@@ -34,23 +34,19 @@ export function doLogin(req, res) {
         req.session.esEmpresa = usuario.rol ===RolesEnum.EMPRESA;
 
         if(req.session.esEmpresa){
-            //const eventos = Evento.getEventoById(usuario.id);
             return res.render('pagina', {
-                contenido: 'paginas/empresa', // Vista de empresa
+                contenido: 'paginas/empresa', 
                 session: req.session
             });
         }
         else if(req.session.esAdmin){
-            return res.render('pagina',{ //vista de admin
+            return res.render('pagina',{ 
                 contenido: 'paginas/admin',
                 session: req.session
             });
         }
         else{
-            return res.render('pagina', {
-                contenido: 'paginas/index',
-                session: req.session
-            });
+            return res.redirect('/');
         }
 
     } catch (e) {

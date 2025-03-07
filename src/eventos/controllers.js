@@ -3,10 +3,10 @@ import { Evento } from './Evento.js';
 
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();
-        res.render('pagina', { contenido: 'paginas/eventos', session: req.session, eventos });
+    res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos });
     /*try {
         const eventos = Evento.getAll();
-        res.render('pagina', { contenido: 'paginas/eventos', session: req.session, eventos });
+        res.render('pagina', { contenido: '', session: req.session, eventos });
     } catch (error) {
         res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al obtener eventos' });
     }*/

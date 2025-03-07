@@ -1,16 +1,29 @@
-<div class="eventos-container">
-    <% if (eventos.length > 0) { %>
-        <% eventos.forEach(evento => { %>
-            <div class="evento-card">
-                <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>">
-                <h3><%= evento.nombre %></h3>
-                <p><%= evento.descripcion %></p>
-                <p><strong>Fecha:</strong> <%= evento.fecha %></p>
-                <p><strong>Lugar:</strong> <%= evento.lugar %></p>
-            </div>
-            <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
-        <% }) %>
-    <% } else { %>
-        <p>No se encontraron eventos.</p>
-    <% } %>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos</title>
+    <link rel="stylesheet" href="/css/buscar.css"> <!-- Asegúrate de que la ruta sea correcta -->
+</head>
+<body>
+    <h2>Próximos Eventos</h2>
+    <div class="eventos">
+        <% if (eventos.length > 0) { %>
+            <% eventos.forEach(evento => { %>
+                <div class="evento">
+                    <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" class="evento-img">
+                    <div class="evento-info">
+                        <h3 class="evento-titulo"><%= evento.nombre %></h3>
+                        <p class="evento-descripcion"><%= evento.descripcion %></p>
+                        <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
+                        <a href="/eventos/<%= evento.id %>" class="evento-boton">Saber más</a>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No se encontraron eventos.</p>
+        <% } %>
+    </div>
+</body>
+</html>
