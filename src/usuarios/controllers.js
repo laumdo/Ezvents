@@ -96,35 +96,50 @@ export function agregarUsuario(req, res){
 
 export function eliminarUsuario(req, res) {
     try {
-        console.log("Cuerpo de la solicitud:", req.body); 
-
-        const username = req.body.nombre;
-
-        if (!username) {
-            throw new Error("El username es null o undefined");
+        if (!req.session || !req.session.username) {
+            return res.status(403).send("No tienes permiso para realizar esta acción.");
         }
 
-        // Obtener el usuario por username
-        const usuario = Usuario.getUsuarioByUsername(username);
+        let usernameAEliminar;
+
+        if (req.body.propio) {
+            // Si el usuario está eliminando su propia cuenta
+            usernameAEliminar = req.session.username;
+        } else if (req.session.esAdmin && req.body.nombre) {
+            // Si el admin está eliminando otra cuenta
+            usernameAEliminar = req.body.nombre;
+        } else {
+            return res.status(403).send("No tienes permiso para realizar esta acción.");
+        }
+
+        const usuario = Usuario.getUsuarioByUsername(usernameAEliminar);
         if (!usuario) {
-            throw new UsuarioNoEncontrado(username);
+            throw new UsuarioNoEncontrado(usernameAEliminar);
         }
 
-        // Eliminar usuario
         Usuario.delete(usuario.id);
 
-        res.render('pagina', { 
-            contenido: 'paginas/admin', 
-            session: req.session,
-            mensaje: 'Usuario eliminado con éxito' 
-        });
+        if (req.body.propio) {
+            // Si el usuario se eliminó a sí mismo, cerrar sesión
+            req.session.destroy((err) => {
+                if (err) console.error("Error al cerrar sesión tras eliminar usuario:", err);
+                res.redirect('/'); // Redirigir al inicio
+            });
+        } else {
+            // Si el admin eliminó una cuenta, volver a la página de admin
+            res.render('pagina', { 
+                contenido: 'paginas/admin', 
+                session: req.session,
+                mensaje: 'Usuario eliminado con éxito' 
+            });
+        }
 
     } catch (error) {
         console.error("Error al eliminar usuario:", error.message);
-        res.render('pagina', { 
-            contenido: 'paginas/admin', 
+        res.render('pagina', {
+            contenido: 'paginas/admin',
             session: req.session,
-            error: 'Error al eliminar el usuario.' 
+            error: 'Error al eliminar la cuenta.'
         });
     }
 }
@@ -193,6 +208,9 @@ export function doRegister(req, res){
 
     req.session.login = true;
     req.session.nombre = nuevoUsuario.nombre;
+    req.session.username = nuevoUsuario.username;
+    req.session.apellidos = nuevoUsuario.apellidos;
+    req.session.email = nuevoUsuario.email;   
     req.session.esUsuario=nuevoUsuario.rol===RolesEnum.USUARIO;
     req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
     req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;

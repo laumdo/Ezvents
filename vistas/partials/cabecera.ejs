@@ -7,7 +7,9 @@
     <div class="saludo">
         <% if (locals.session && locals.session.login) { %>
             Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
-
+            <a href="/usuarios/datos">
+                <img src="/img/perfil.png" class="logo1">
+            </a>
              <%if(session.esUsuario){ %>
 
                  <!-- Si el usuario es normal, mostrar el carrito -->
@@ -23,10 +25,6 @@
     <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
-<% } else { %>
-    Usuario desconocido
-    <button onclick="window.location.href='/usuarios/login'">Acceder</button>
-<% } %>
 </div>
 
 </header>
