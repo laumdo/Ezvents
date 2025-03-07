@@ -25,13 +25,12 @@ app.use(express.json());
 app.use('/', express.static(config.recursos));
 
 app.get('/', (req, res) => {
-    // Parámetros que estarán disponibles en la plantilla
     const eventos=Evento.getAll();
     const params = {
-        contenido: 'paginas/index', // fichero ejs que tiene el contenido específico para esta vista
+        contenido: 'paginas/index', 
         session: req.session, 
         eventos,
-        esInicio: true // Indica que estás en la pantalla de inicio
+        esInicio: true 
     }
     res.render('pagina', params);
 })
@@ -67,7 +66,7 @@ app.get('/evento', (req, res) => {
 app.get('/carrito', (req, res) => {
     const evento=Carrito.getCarrito();
     const params = {
-        contenido: 'paginas/carrito', // Se asume que la vista está en views/paginas/contacto.ejs
+        contenido: 'paginas/carrito', 
         session: req.session,
         evento
     };

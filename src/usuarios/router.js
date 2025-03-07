@@ -3,16 +3,12 @@ import { viewLogin, doLogin, viewDatos, doLogout, viewRegister, doRegister, elim
 
 const usuariosRouter = express.Router();
 
-// /usuarios/login
 usuariosRouter.get('/login', viewLogin);
 usuariosRouter.post('/login', doLogin);
-// /usuarios/logout
 usuariosRouter.get('/logout', doLogout);
 
 usuariosRouter.get('/datos', viewDatos);
-// Ruta para eliminar un evento
 usuariosRouter.post('/eliminarUsuario', eliminarUsuario);
-// /usuarios/register
 usuariosRouter.get('/register', viewRegister);
 usuariosRouter.post('/register', doRegister);
 

@@ -4,12 +4,6 @@ import { Evento } from './Evento.js';
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();
     res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos });
-    /*try {
-        const eventos = Evento.getAll();
-        res.render('pagina', { contenido: '', session: req.session, eventos });
-    } catch (error) {
-        res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al obtener eventos' });
-    }*/
 }
 
 export function viewEvento(req, res) {
@@ -31,7 +25,7 @@ export function viewEvento(req, res) {
 export function agregarEvento(req, res) {
     try {
         const { nombre, descripcion, fecha, lugar, precio, aforo_maximo } = req.body;
-        const imagen = req.file ? req.file.filename : 'default.png'; // Si no hay imagen, usa la predeterminada
+        const imagen = req.file ? req.file.filename : 'default.png';
 
         const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
         nuevoEvento.persist();
@@ -52,18 +46,16 @@ export function modificarEvento(req, res) {
         let evento = Evento.getEventoById(id);
         if (!evento) throw new EventoNoEncontrado(id);
 
-        // Actualizar solo los campos que han cambiado
         evento.nombre = nombre || evento.nombre;
         evento.descripcion = descripcion || evento.descripcion;
         evento.fecha = fecha || evento.fecha;
         evento.lugar = lugar || evento.lugar;
         evento.precio = precio || evento.precio;
         evento.aforo_maximo = aforo_maximo || evento.aforo_maximo;
-        evento.imagen = imagen ? imagen : evento.imagen; // Si hay imagen nueva, cambiarla
+        evento.imagen = imagen ? imagen : evento.imagen;
 
 
-        // Guardar cambios en la base de datos
-        evento.persist(); // Esto llamará a Evento.#update(evento)
+        evento.persist(); 
 
         res.render('pagina', { 
             contenido: 'paginas/admin', 
@@ -83,7 +75,6 @@ export function eliminarEvento(req, res) {
         const { id } = req.body;
         Evento.getEventoById(id);
         
-        // Eliminar evento
         Evento.delete(id);
 
         res.render('pagina', { 
@@ -97,7 +88,6 @@ export function eliminarEvento(req, res) {
 
 export function buscarEvento(req, res) {
     const nombreEvento = req.query.nombre;  
-    // Validación simple
     if (!nombreEvento || nombreEvento.trim() === '') {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'Nombre de evento no puede estar vacío.' });
     }
@@ -106,12 +96,10 @@ export function buscarEvento(req, res) {
         const eventos = Evento.getAll();
 
 
-        // Filtra los eventos que coinciden con el nombre proporcionado
         const eventosFiltrados = eventos.filter(evento =>
             evento.nombre.toLowerCase().includes(nombreEvento.toLowerCase())
         );
 
-        // Renderiza la vista con los eventos filtrados
         res.render('pagina', { contenido: 'paginas/resultadosBusqueda', eventos: eventosFiltrados, session: req.session });
     } catch (error) {
         console.error('Error al buscar eventos:', error);

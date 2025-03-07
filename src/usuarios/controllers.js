@@ -1,5 +1,4 @@
 import { body, validationResult } from 'express-validator';
-//import { RolesEnum, Usuario } from './Usuario';
 import { Usuario, RolesEnum } from './Usuario.js';
 import bcrypt from "bcryptjs";
 import session from 'express-session';
@@ -17,10 +16,9 @@ export function viewLogin(req, res) {
 }
 
 export function doLogin(req, res) {
-    body('username').escape(); // Se asegura que eliminar caracteres problemáticos
-    body('password').escape(); // Se asegura que eliminar caracteres problemáticos
+    body('username').escape(); 
+    body('password').escape(); 
 
-    // Capturo las variables username y password
     const username = req.body.username.trim();
     const password = req.body.password.trim();
 
@@ -103,10 +101,8 @@ export function eliminarUsuario(req, res) {
         let usernameAEliminar;
 
         if (req.body.propio) {
-            // Si el usuario está eliminando su propia cuenta
             usernameAEliminar = req.session.username;
         } else if (req.session.esAdmin && req.body.nombre) {
-            // Si el admin está eliminando otra cuenta
             usernameAEliminar = req.body.nombre;
         } else {
             return res.status(403).send("No tienes permiso para realizar esta acción.");
@@ -120,13 +116,11 @@ export function eliminarUsuario(req, res) {
         Usuario.delete(usuario.id);
 
         if (req.body.propio) {
-            // Si el usuario se eliminó a sí mismo, cerrar sesión
             req.session.destroy((err) => {
                 if (err) console.error("Error al cerrar sesión tras eliminar usuario:", err);
-                res.redirect('/'); // Redirigir al inicio
+                res.redirect('/');
             });
         } else {
-            // Si el admin eliminó una cuenta, volver a la página de admin
             res.render('pagina', { 
                 contenido: 'paginas/admin', 
                 session: req.session,
@@ -152,7 +146,7 @@ export function viewRegister(req, res){
 
 export function viewDatos(req, res) {
     if (!req.session || !req.session.username) {
-        return res.redirect('/usuarios/login'); // Redirigir si no está logueado
+        return res.redirect('/usuarios/login'); 
     }
 
     let usuario = null;
@@ -161,7 +155,7 @@ export function viewDatos(req, res) {
         usuario = Usuario.getUsuarioByUsername(req.session.username);
     } catch (e) {
         console.error("Error obteniendo usuario:", e);
-        usuario = null; // Asegurar que no crashee la vista
+        usuario = null; 
     }
 
     res.render('pagina', { contenido: 'paginas/datos', session: req.session, usuario });
@@ -183,7 +177,6 @@ export function doRegister(req, res){
     const email = req.body.email.trim();
     const rolSeleccionado = req.body.rol.trim().toUpperCase();
 
-    //Ver si usuario existe
     try{
         Usuario.getUsuarioByUsername(username);
         return res.render('pagina', {
@@ -191,7 +184,6 @@ export function doRegister(req, res){
             session: req.session,
             error: 'El usuario ya existe'});
     }catch(e){
-        //ver
 
     let rol;
     if (rolSeleccionado === "USUARIO") {

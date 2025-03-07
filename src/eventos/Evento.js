@@ -12,7 +12,6 @@
 
         if (this.#getByIdStmt !== null) return;
 
-            // Preparar sentencias SQL para la base de datos
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
             this.#insertStmt = db.prepare(`
                 INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen) 
@@ -41,7 +40,7 @@
     
     
     static getAll() {
-        const db = getConnection();  // Obtiene la conexión a la base de datos
+        const db = getConnection(); 
         return db.prepare('SELECT * FROM eventos').all();
     }
     

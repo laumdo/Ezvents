@@ -22,16 +22,16 @@ body {
 }
 
 .evento-img {
-    width: 180px;  /* Ancho fijo para todas las imágenes */
-    height: 180px; /* Alto fijo para todas las imágenes */
-    object-fit: cover; /* Recorta la imagen para que se ajuste sin deformarse */
-    border-radius: 8px; /* Bordes redondeados */
+    width: 180px; 
+    height: 180px; 
+    object-fit: cover; 
+    border-radius: 8px;
     margin-right: 20px;
 }
 
 .evento-info {
     flex: 1;
-    padding-left: 30px; /* Agrega espacio entre la imagen y el texto */
+    padding-left: 30px; 
 }
 
 
