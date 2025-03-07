@@ -2,7 +2,7 @@
     <% if (eventos.length > 0) { %>
         <% eventos.forEach(evento => { %>
             <div class="evento-card">
-                <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>">
+                <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="400" height="auto">
                 <h3><%= evento.nombre %></h3>
                 <p><%= evento.descripcion %></p>
                 <p><strong>Fecha:</strong> <%= evento.fecha %></p>

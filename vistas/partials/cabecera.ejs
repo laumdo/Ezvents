@@ -5,25 +5,15 @@
     <h1>EZVENTS</h1>
 
     <div class="saludo">
-        <% if (locals.session && locals.session.login) { %>
+        <% if (session && session.login) { %>
             Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
-
-            <% if (locals.session.esEmpresa) { %>
-                <!-- Si el usuario es empresa, mostrar "Añadir Evento" -->
-                <a href="/empresa" class="boton-anadir">Añadir Evento</a>
-
-            <% } else if (locals.session.esAdmin) { %>
-                <!-- Si el usuario es administrador, mostrar "Consola Admin" -->
-                <a href="/admin" class="boton-anadir">Consola Admin</a>
-
-            <% } else { %>
-                <!-- Si el usuario es normal, mostrar el carrito -->
-                <a href="/vistas/paginas/carrito">
-                    <img src="/img/carrito.jpg" alt="Carrito" class="logo1">
-                </a>
+            <% if (session.esEmpresa) { %>
+                <a href="paginas/empresa.ejs" class="boton-anadir">Añadir Evento</a>
             <% } %>
-
-        <% } else { %> 
+        <% } else if (session.esAdmin) { %>
+            <a href="paginas/admin.ejs" class="boton-anadir">Consola Admin</a>
+        <% } else { %>
+            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito" class="logo1"></a>
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>
         <% } %>
     </div>
