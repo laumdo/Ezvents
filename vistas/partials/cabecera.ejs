@@ -40,11 +40,3 @@
         <a href="<%= session.esAdmin ? '/contenido/admin' : '/contenido/empresa'%>" class="boton-anadir">Gestionar Evento</a>
     <%}%>
 </nav>
-
-<!-- Formulario de búsqueda -->
-<%if(typeof esInicio !== 'undefined' && esInicio){%>
-    <form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
-        <input type="text" name="nombre" placeholder="Buscar evento..." required>
-        <button type="submit">Buscar</button>
-    </form>
-<%}%>
