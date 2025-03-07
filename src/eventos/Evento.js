@@ -1,5 +1,5 @@
     import bcrypt from "bcryptjs";
-    import { getConnection } from '../db.js'; // Asegúrate de que la ruta es correcta
+    import { getConnection } from '../db.js';
 
     export class Evento {
         static #getByIdStmt = null;
@@ -23,7 +23,7 @@
                 lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
                 WHERE id = @id
             `);
-            this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id'); // Nueva sentencia DELETE
+            this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
         }
         static getEventoById(idEvento) { 
             try {
@@ -78,17 +78,21 @@
                 fecha: evento.fecha,
                 lugar: evento.lugar,
                 precio: evento.precio,
-                aforo_maximo: evento.aforo_maximo
+                aforo_maximo: evento.aforo_maximo,
+                imagen: evento.imagen
             };
-
+    
             const result = this.#updateStmt.run(datos);
             if (result.changes === 0) throw new EventoNoEncontrado(evento.#id);
-
+    
             return evento;
         }
 
-        static #delete(id) {
-            const result = this.#deleteStmt.run({ id });
+        static delete(id) {
+            const db = getConnection();
+            const deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
+            const result = deleteStmt.run(id);
+            
             if (result.changes === 0) throw new EventoNoEncontrado(id);
         }
 
@@ -101,7 +105,7 @@
         aforo_maximo;
         entradas_vendidas;
         imagen;
-        // id = null ??????????????????????
+
         constructor(id = null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
             this.#id = id;
             this.nombre = nombre;
@@ -124,6 +128,9 @@
         }
     }
 
+    
+
+    
     export class EventoNoEncontrado extends Error {
         constructor(id, options) {
             super(`Evento no encontrado: ${id}`, options);

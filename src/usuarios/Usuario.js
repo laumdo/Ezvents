@@ -19,7 +19,7 @@ export class Usuario {
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, rol) VALUES (@username, @password, @nombre, @rol)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, nombre = @nombre WHERE id = @id');
-        this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id'); // Nueva sentencia DELETE
+        this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
     }
 
     static getUsuarioByUsername(username) {
@@ -69,9 +69,9 @@ export class Usuario {
         return usuario;
     }
 
-    static #delete(id) {
+    static delete(id) {
         const result = this.#deleteStmt.run({ id });
-        if (result.changes === 0) throw new EventoNoEncontrado(id);
+        if (result.changes === 0) throw new UsuarioNoEncontrado(id);
     }
 
     static login(username, password) {

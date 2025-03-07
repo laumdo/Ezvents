@@ -94,27 +94,42 @@ export function agregarUsuario(req, res){
     }
 }
 
-export function eliminarUsuario(req, res){
+export function eliminarUsuario(req, res) {
+    try {
+        console.log("Cuerpo de la solicitud:", req.body); 
 
-    try{
+        const username = req.body.nombre;
 
-        const{nombre}=req.body;
+        if (!username) {
+            throw new Error("El username es null o undefined");
+        }
 
-        // Verificar si el usuario existe
-        Usuario.getUsuarioByUsername(nombre); // Lanza error si no existe
+        // Obtener el usuario por username
+        const usuario = Usuario.getUsuarioByUsername(username);
+        if (!usuario) {
+            throw new UsuarioNoEncontrado(username);
+        }
 
-        Usuario.delete(nombre);
+        // Eliminar usuario
+        Usuario.delete(usuario.id);
 
-        res.render('pagina', { contenido: 'paginas/admin', 
+        res.render('pagina', { 
+            contenido: 'paginas/admin', 
             session: req.session,
-            mensaje: 'Usuario eliminado con éxito' });
+            mensaje: 'Usuario eliminado con éxito' 
+        });
 
-    }catch(error){
-        res.render('pagina', { contenido: 'paginas/admin', 
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error.message);
+        res.render('pagina', { 
+            contenido: 'paginas/admin', 
             session: req.session,
-            error: 'Error al eliminar el un usuario.' });
+            error: 'Error al eliminar el usuario.' 
+        });
     }
 }
+
+
 
 export function viewRegister(req, res){
     res.render('pagina', {contenido: 'paginas/register', session: req.session, error: null});

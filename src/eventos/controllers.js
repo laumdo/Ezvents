@@ -13,7 +13,7 @@ export function viewEventos(req, res) {
 }
 
 export function viewEvento(req, res) {
-    param('id').isInt().withMessage('ID de evento inválido'); // Esto no está validando correctamente el ID
+    param('id').isInt().withMessage('ID de evento inválido');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });
@@ -47,8 +47,8 @@ export function agregarEvento(req, res) {
 
 export function modificarEvento(req, res) {
     try {
-        const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen } = req.body;
-
+        const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo } = req.body;
+        const imagen = req.file ? req.file.filename : null;
         let evento = Evento.getEventoById(id);
         if (!evento) throw new EventoNoEncontrado(id);
 
@@ -59,7 +59,8 @@ export function modificarEvento(req, res) {
         evento.lugar = lugar || evento.lugar;
         evento.precio = precio || evento.precio;
         evento.aforo_maximo = aforo_maximo || evento.aforo_maximo;
-        evento.imagen = imagen || evento.imagen;
+        evento.imagen = imagen ? imagen : evento.imagen; // Si hay imagen nueva, cambiarla
+
 
         // Guardar cambios en la base de datos
         evento.persist(); // Esto llamará a Evento.#update(evento)
@@ -69,7 +70,10 @@ export function modificarEvento(req, res) {
             session: req.session,
             mensaje: 'Evento modificado con éxito' });
     } catch (error) {
-        res.render('pagina', { contenido: 'paginas/admin', error: 'Error al modificar el evento' });
+        res.render('pagina', { 
+            contenido: 'paginas/admin', 
+            session: req.session,
+            error: 'Error al modificar el evento' });
     }
 }
 
@@ -78,8 +82,7 @@ export function eliminarEvento(req, res) {
 
         const { id } = req.body;
         Evento.getEventoById(id);
-        //if (!evento) throw new EventoNoEncontrado(id);
-
+        
         // Eliminar evento
         Evento.delete(id);
 
@@ -91,6 +94,7 @@ export function eliminarEvento(req, res) {
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
     }
 }
+
 export function buscarEvento(req, res) {
     const nombreEvento = req.query.nombre;  
     // Validación simple
