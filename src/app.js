@@ -16,6 +16,7 @@ app.set('views', config.vistas);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
+app.use(express.static('public'));
 app.use(express.json());
 
 app.use('/', express.static(config.recursos));
@@ -41,6 +42,19 @@ app.get('/contacto', (req, res) => {
     const params = {
         contenido: 'paginas/contacto', // Se asume que la vista está en views/paginas/contacto.ejs
         session: req.session
+    };
+    res.render('pagina', params);
+});
+
+
+
+
+app.get('/evento', (req, res) => {
+    const evento=Evento.getEventoById();
+    const params = {
+        contenido: 'paginas/evento', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session,
+        evento
     };
     res.render('pagina', params);
 });
