@@ -1,5 +1,5 @@
     import bcrypt from "bcryptjs";
-    import { getConnection } from '../db.js'; // Asegúrate de que la ruta es correcta
+    import { getConnection } from '../db.js';
 
     export class Evento {
         static #getByIdStmt = null;
@@ -23,7 +23,7 @@
                 lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
                 WHERE id = @id
             `);
-            this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id'); // Nueva sentencia DELETE
+            this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
         }
 
         static getEventoById(idEvento) {
@@ -117,7 +117,7 @@
         aforo_maximo;
         entradas_vendidas;
         imagen;
-        // id = null ??????????????????????
+
         constructor(id = null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
             this.#id = id;
             this.nombre = nombre;

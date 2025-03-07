@@ -6,7 +6,9 @@
 
 <body>
  <div id="contenedor">
-  <%- include('./partials/cabecera.ejs', { session: locals.session }) %>
+ 
+  <%- include('./partials/cabecera.ejs', { session: locals.session, esInicio: typeof esInicio !== 'undefined' ? esInicio : false }) %>
+
 
   <main>
     <article>

@@ -4,16 +4,11 @@ import { Evento } from './Evento.js';
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();
         res.render('pagina', { contenido: 'paginas/eventos', session: req.session, eventos });
-    /*try {
-        const eventos = Evento.getAll();
-        res.render('pagina', { contenido: 'paginas/eventos', session: req.session, eventos });
-    } catch (error) {
-        res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al obtener eventos' });
-    }*/
+
 }
 
 export function viewEvento(req, res) {
-    param('id').isInt().withMessage('ID de evento inválido'); // Esto no está validando correctamente el ID
+    param('id').isInt().withMessage('ID de evento inválido');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });

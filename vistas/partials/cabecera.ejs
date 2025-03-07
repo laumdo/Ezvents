@@ -5,15 +5,19 @@
     <h1>EZVENTS</h1>
 
     <div class="saludo">
-        <% if (session && session.login) { %>
+        <% if (locals.session && locals.session.login) { %>
             Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
-            <% if (session.esEmpresa) { %>
-                <a href="paginas/empresa.ejs" class="boton-anadir">Añadir Evento</a>
+
+             <%if(session.esUsuario){ %>
+
+                 <!-- Si el usuario es normal, mostrar el carrito -->
+                 <a href="/vistas/paginas/carrito">
+                    <img src="/img/carrito.jpg" alt="Carrito" class="logo1">
+                </a>
+               
             <% } %>
-        <% } else if (session.esAdmin) { %>
-            <a href="paginas/admin.ejs" class="boton-anadir">Consola Admin</a>
-        <% } else { %>
-            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito" class="logo1"></a>
+
+        <% } else { %> 
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>
         <% } %>
     </div>
@@ -26,10 +30,15 @@
     <a href="/noticias">Noticias</a>
     <a href="/puntos">Puntos</a>
     <a href="/foro">Foro</a>
+    <%if(session && (session.esAdmin || session.esEmpresa)){%>
+        <a href="<%= session.esAdmin ? '/contenido/admin' : '/contenido/empresa'%>" class="boton-anadir">Gestionar Evento</a>
+    <%}%>
 </nav>
 
 <!-- Formulario de búsqueda -->
-<form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
-    <input type="text" name="nombre" placeholder="Buscar evento..." required>
-    <button type="submit">Buscar</button>
-</form>
+<%if(typeof esInicio !== 'undefined' && esInicio){%>
+    <form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
+        <input type="text" name="nombre" placeholder="Buscar evento..." required>
+        <button type="submit">Buscar</button>
+    </form>
+<%}%>

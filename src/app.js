@@ -4,7 +4,7 @@ import { config } from './config.js';
 import usuariosRouter from './usuarios/router.js';
 import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
-import { getConnection } from './db.js'; // Asegúrate de la ruta correcta
+import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 export const app = express();
 
@@ -27,7 +27,8 @@ app.get('/', (req, res) => {
     const params = {
         contenido: 'paginas/index', // fichero ejs que tiene el contenido específico para esta vista
         session: req.session, 
-        eventos
+        eventos,
+        esInicio: true // Indica que estás en la pantalla de inicio
     }
     res.render('pagina', params);
 })
@@ -40,7 +41,7 @@ app.use('/eventos', eventosRouter);
 
 app.get('/contacto', (req, res) => {
     const params = {
-        contenido: 'paginas/contacto', // Se asume que la vista está en views/paginas/contacto.ejs
+        contenido: 'paginas/contacto',
         session: req.session
     };
     res.render('pagina', params);
@@ -52,7 +53,7 @@ app.get('/contacto', (req, res) => {
 app.get('/evento', (req, res) => {
     const evento=Evento.getEventoById();
     const params = {
-        contenido: 'paginas/evento', // Se asume que la vista está en views/paginas/contacto.ejs
+        contenido: 'paginas/evento', 
         session: req.session,
         evento
     };
