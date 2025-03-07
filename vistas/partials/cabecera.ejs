@@ -5,12 +5,12 @@
     <h1>EZVENTS</h1>
 
     <div class="saludo">
-        <% if (locals.session && locals.session.login) { %>
+        <% if (session && session.login) { %>
             Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
-            <% if (locals.session.esEmpresa) { %>
+            <% if (session.esEmpresa) { %>
                 <a href="paginas/empresa.ejs" class="boton-anadir">Añadir Evento</a>
             <% } %>
-        <% } else if (locals.session.esAdmin) { %>
+        <% } else if (session.esAdmin) { %>
             <a href="paginas/admin.ejs" class="boton-anadir">Consola Admin</a>
         <% } else { %>
             <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito" class="logo1"></a>
@@ -28,12 +28,9 @@
     <a href="/puntos">Puntos</a>
     <a href="/foro">Foro</a>
 </nav>
-<<<<<<< HEAD
 
 <!-- Formulario de búsqueda -->
 <form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
     <input type="text" name="nombre" placeholder="Buscar evento..." required>
     <button type="submit">Buscar</button>
 </form>
-=======
->>>>>>> Adrian

@@ -78,7 +78,8 @@ export class Evento {
             fecha: evento.fecha,
             lugar: evento.lugar,
             precio: evento.precio,
-            aforo_maximo: evento.aforo_maximo
+            aforo_maximo: evento.aforo_maximo,
+            imagen: evento.imagen
         };
 
         const result = this.#updateStmt.run(datos);
@@ -87,8 +88,11 @@ export class Evento {
         return evento;
     }
 
-    static #delete(id) {
-        const result = this.#deleteStmt.run({ id });
+    static delete(id) {
+        const db = getConnection();
+        const deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
+        const result = deleteStmt.run(id);
+        
         if (result.changes === 0) throw new EventoNoEncontrado(id);
     }
 
