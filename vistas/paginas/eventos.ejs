@@ -13,6 +13,16 @@
         <div class="image-container">
             <img src="/img/<%= evento.imagen %>" alt="Imagen del evento">
         </div>
+<h1><%= evento.nombre %></h1>
+<p><%= evento.descripcion %></p>
+<p>Fecha: <%= evento.fecha %></p>
+<p>Lugar: <%= evento.lugar %></p>
+<p>Precio: <%= evento.precio %>€</p>
+<p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+<form action="/carrito/agregar" method="POST">
+    <input type="hidden" name="id" value="<%= evento.id %>">
+    <button type="submit">Añadir al carrito</button>
+</form>
 
         <p><strong>Descripción:</strong> <%= evento.descripcion %></p>
         <p><strong>Fecha:</strong> <%= evento.fecha %></p>

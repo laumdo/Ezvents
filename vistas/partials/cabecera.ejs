@@ -13,13 +13,12 @@
              <%if(session.esUsuario){ %>
 
                  <!-- Si el usuario es normal, mostrar el carrito -->
-                 <a href="/vistas/paginas/carrito">
-                    <img src="/img/carrito.jpg" alt="Carrito" class="logo1">
+                 <a href="/carrito/carrito">
+                    <img src="/static/img/carrito.jpg" alt="Carrito" class="logo1">
                 </a>
                
-            <% } %>
-
-        <% } else { %> 
+            <% } %>       
+            
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>
         <% } %>
     <% if (session.rol === 'admin' || session.rol === 'empresa') { %>

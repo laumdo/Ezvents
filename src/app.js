@@ -6,10 +6,13 @@ import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
+import {Carrito} from './carrito/Carrito.js';
+import carritoRouter from './carrito/router.js';
 export const app = express();
 
 getConnection(); 
 Evento.initStatements(); 
+Carrito.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -38,6 +41,7 @@ app.get('/', (req, res) => {
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
+app.use('/carrito', carritoRouter);
 
 app.get('/contacto', (req, res) => {
     const params = {
@@ -59,3 +63,14 @@ app.get('/evento', (req, res) => {
     };
     res.render('pagina', params);
 });
+
+app.get('/carrito', (req, res) => {
+    const evento=Carrito.getCarrito();
+    const params = {
+        contenido: 'paginas/carrito', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session,
+        evento
+    };
+    res.render('pagina', params);
+});
+

@@ -1,0 +1,17 @@
+<h2>Carrito de Compras</h2>
+
+<% if (carrito.length === 0) { %>
+    <p>No hay eventos en el carrito.</p>
+<% } else { %>
+    <ul>
+        <% carrito.forEach(evento => { %>
+            <li>
+                <%= evento.nombre %> - <%= evento.precio %>€
+                <form action="/carrito/eliminar" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="<%= evento.id %>">
+                    <button type="submit">Eliminar</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+<% } %>
