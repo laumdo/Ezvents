@@ -24,7 +24,7 @@ contenidoRouter.get('/admin', (req, res) => {
     });
 });
 
-contenidoRouter.get('/admin', (req, res) => {
+contenidoRouter.get('/empresa', (req, res) => {
     let contenido = 'paginas/noPermisos';
     if(req.session && req.session.login && req.session.esEmpresa){
         contenido = 'paginas/empresa';
