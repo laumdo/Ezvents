@@ -24,6 +24,7 @@ eventosRouter.get('/', viewEventos);
 // 1. Primero la ruta de búsqueda
 eventosRouter.get('/buscarEvento', buscarEvento);
 
+
 // 2. Luego la ruta para ID
 eventosRouter.get('/:id', viewEvento);
 

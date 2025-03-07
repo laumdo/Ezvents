@@ -50,7 +50,8 @@ app.get('/contacto', (req, res) => {
 
 
 app.get('/evento', (req, res) => {
-    const evento=Evento.getEventoById();
+    console.log("holaa");
+    const evento=Evento.getEventoById(req.params.id);
     const params = {
         contenido: 'paginas/evento', // Se asume que la vista está en views/paginas/contacto.ejs
         session: req.session,

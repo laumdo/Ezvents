@@ -25,31 +25,19 @@
             `);
             this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id'); // Nueva sentencia DELETE
         }
+        static getEventoById(idEvento) { 
+            try {
+                const evento = this.#getByIdStmt.get({ id: idEvento });
+                if (evento === undefined) throw new EventoNoEncontrado(idEvento);
+                
+                const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
+                return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
+            } catch (error) {
+                console.error("Error al buscar evento:", error);
+                throw error;
+            }
+        }    
 
-        static getEventoById(idEvento) {
-            const evento = this.#getByIdStmt.get({ idEvento });
-            if (evento === undefined) throw new EventoNoEncontrado(idEvento);
-            const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendida, imagen} = evento;
-            return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
-        }
-
-        static getAll() {
-            const db = getConnection();  // Obtiene la conexión a la base de datos
-            return db.prepare('SELECT * FROM eventos').all();
-        }
-        
-    static getEventoById(idEvento) { 
-        try {
-            const evento = this.#getByIdStmt.get({ id: idEvento });
-            if (evento === undefined) throw new EventoNoEncontrado(idEvento);
-            
-            const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
-            return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
-        } catch (error) {
-            console.error("Error al buscar evento:", error);
-            throw error;
-        }
-    }
     
     
     static getAll() {

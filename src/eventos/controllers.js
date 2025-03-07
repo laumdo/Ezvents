@@ -21,7 +21,7 @@ export function viewEvento(req, res) {
 
     try {
         const evento = Evento.getEventoById(req.params.id);
-        res.render('pagina', { contenido: 'paginas/eventos', session: req.session, evento });
+        res.render('pagina', { contenido: 'paginas/evento', session: req.session, evento });
     } catch (error) {
         res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Evento no encontrado' });
     }
