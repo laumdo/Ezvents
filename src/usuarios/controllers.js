@@ -28,6 +28,7 @@ export function doLogin(req, res) {
         const usuario = Usuario.login(username, password);
         req.session.login = true;
         req.session.nombre = usuario.nombre;
+        req.session.esUsuario= usuario.rol===RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
         req.session.esEmpresa = usuario.rol ===RolesEnum.EMPRESA;
 
@@ -69,6 +70,7 @@ export function doLogout(req, res, next) {
     req.session.nombre = null;
     req.session.esAdmin = null;
     req.session.esEmpresa=null;
+    req.session.esUsuario=null;
     req.session.save((err) => {
         if (err) next(err);
 
@@ -161,6 +163,7 @@ export function doRegister(req, res){
 
     req.session.login = true;
     req.session.nombre = nuevoUsuario.nombre;
+    req.session.esUsuario=nuevoUsuario.rol===RolesEnum.USUARIO;
     req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
     req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;
 

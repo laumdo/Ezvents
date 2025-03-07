@@ -3,12 +3,12 @@
     <% if (locals.eventos && locals.eventos.length > 0) { %>
         <% locals.eventos.forEach(evento => { %>
             <div class="evento">
-                <img src="./img/<%= evento.imagen %>">
+                <img src="./img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="300" height="auto">
                 <div class="evento-info">
                     <h3 class="evento-titulo"><%= evento.nombre %></h3>
                     <p class="evento-descripcion"><%= evento.descripcion %></p>
                     <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
-                    <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
+                    <!--<button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>-->
 
                     <a class="evento-boton" href="/evento">Saber más</a>
                 </div>
