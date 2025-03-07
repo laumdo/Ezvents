@@ -7,8 +7,10 @@
         static #updateStmt = null;
         static #deleteStmt = null; 
 
-        static initStatements(db) {
-            if (this.#getByIdStmt !== null) return;
+    static initStatements() {
+        const db = getConnection();
+
+        if (this.#getByIdStmt !== null) return;
 
             // Preparar sentencias SQL para la base de datos
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
@@ -36,6 +38,25 @@
             return db.prepare('SELECT * FROM eventos').all();
         }
         
+    static getEventoById(idEvento) { 
+        try {
+            const evento = this.#getByIdStmt.get({ id: idEvento });
+            if (evento === undefined) throw new EventoNoEncontrado(idEvento);
+            
+            const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
+            return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
+        } catch (error) {
+            console.error("Error al buscar evento:", error);
+            throw error;
+        }
+    }
+    
+    
+    static getAll() {
+        const db = getConnection();  // Obtiene la conexión a la base de datos
+        return db.prepare('SELECT * FROM eventos').all();
+    }
+    
 
         static #insert(evento) {
             let result = null;

@@ -127,13 +127,14 @@ export function doRegister(req, res){
     body('nombre').escape();
     body('apellidos').escape();
     body('email').escape();
-    //Poner mas
+    body('rol').escape();
 
     const username = req.body.username.trim();
     const password = req.body. password.trim();
     const nombre = req.body.nombre.trim();
     const apellidos = req.body.apellidos.trim();
     const email = req.body.email.trim();
+    const rolSeleccionado = req.body.rol.trim().toUpperCase();
 
     //Ver si usuario existe
     try{
@@ -145,10 +146,17 @@ export function doRegister(req, res){
     }catch(e){
         //ver
 
+    let rol;
+    if (rolSeleccionado === "USUARIO") {
+        rol = RolesEnum.USUARIO;
+    } else if (rolSeleccionado === "EMPRESA") {
+        rol = RolesEnum.EMPRESA;
+    } else if (rolSeleccionado === "ADMINISTRADOR") {
+        rol = RolesEnum.ADMIN;
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);//10?
-    const nuevoUsuario = new Usuario(username, hashedPassword, nombre, apellidos, email, RolesEnum.USUARIO);//Tipo normal predeterminado
+    const nuevoUsuario = new Usuario(username, hashedPassword, nombre, apellidos, email, rol);
     nuevoUsuario.persist();
 
     req.session.login = true;
@@ -157,4 +165,5 @@ export function doRegister(req, res){
     req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;
 
     return res.redirect('/');
+    }
 }

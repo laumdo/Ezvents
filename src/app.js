@@ -4,13 +4,17 @@ import { config } from './config.js';
 import usuariosRouter from './usuarios/router.js';
 import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
+import { getConnection } from './db.js'; // Asegúrate de la ruta correcta
 import {Evento} from './eventos/Evento.js';
 export const app = express();
+
+getConnection(); 
+Evento.initStatements(); 
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
 app.use(express.static('public'));
 app.use(express.json());

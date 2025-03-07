@@ -13,8 +13,7 @@ export function viewEventos(req, res) {
 }
 
 export function viewEvento(req, res) {
-    param('id').isInt().withMessage('ID de evento inválido'); // Validar que el ID es un número entero
-
+    param('id').isInt().withMessage('ID de evento inválido'); // Esto no está validando correctamente el ID
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });
@@ -22,11 +21,12 @@ export function viewEvento(req, res) {
 
     try {
         const evento = Evento.getEventoById(req.params.id);
-        res.render('pagina', { contenido: 'paginas/evento', session: req.session, evento });
+        res.render('pagina', { contenido: 'paginas/eventos', session: req.session, evento });
     } catch (error) {
         res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Evento no encontrado' });
     }
 }
+
 
 export function agregarEvento(req, res) {
     try {
@@ -89,5 +89,28 @@ export function eliminarEvento(req, res) {
             mensaje: 'Evento eliminado con éxito' });
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
+    }
+}
+export function buscarEvento(req, res) {
+    const nombreEvento = req.query.nombre;  
+    // Validación simple
+    if (!nombreEvento || nombreEvento.trim() === '') {
+        return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'Nombre de evento no puede estar vacío.' });
+    }
+
+    try {
+        const eventos = Evento.getAll();
+
+
+        // Filtra los eventos que coinciden con el nombre proporcionado
+        const eventosFiltrados = eventos.filter(evento =>
+            evento.nombre.toLowerCase().includes(nombreEvento.toLowerCase())
+        );
+
+        // Renderiza la vista con los eventos filtrados
+        res.render('pagina', { contenido: 'paginas/resultadosBusqueda', eventos: eventosFiltrados, session: req.session });
+    } catch (error) {
+        console.error('Error al buscar eventos:', error);
+        res.status(500).send('Error al buscar eventos');
     }
 }

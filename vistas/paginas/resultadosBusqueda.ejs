@@ -1,0 +1,15 @@
+<div class="eventos-container">
+    <% if (eventos.length > 0) { %>
+        <% eventos.forEach(evento => { %>
+            <div class="evento-card">
+                <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>">
+                <h3><%= evento.nombre %></h3>
+                <p><%= evento.descripcion %></p>
+                <p><strong>Fecha:</strong> <%= evento.fecha %></p>
+                <p><strong>Lugar:</strong> <%= evento.lugar %></p>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>No se encontraron eventos.</p>
+    <% } %>
+</div>
