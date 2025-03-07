@@ -1,4 +1,5 @@
 import { getConnection } from '../db.js';
+import { Usuario } from '../usuarios/Usuario.js';
 
 export class Carrito {
     static #getByIdStmt = null;
@@ -11,18 +12,17 @@ export class Carrito {
 
         if (this.#getByIdStmt !== null) return;
 
-        this.#getByIdStmt = db.prepare('SELECT * FROM carrito WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO carrito (id_usuario, id_evento) VALUES (@id_usuario, @id_evento)');
-        this.#deleteStmt = db.prepare('DELETE FROM carrito WHERE id = @id');
-        this.#getAllStmt = db.prepare('SELECT * FROM carrito');
+        this.#insertStmt = db.prepare('INSERT INTO carrito (id_usuario, id_evento) VALUES (@id_usuario, @id)');
+        this.#deleteStmt = db.prepare('DELETE FROM carrito WHERE id_evento = @id_evento');
+        this.#getAllStmt = db.prepare('SELECT * FROM carrito WHERE id_usuario = @id_usuario');
     }
 
     static getCarrito() {
-        return this.#getAllStmt.all();
+        return this.#getAllStmt.all({ id_usuario: Usuario.id });
     }
 
-    static agregarEvento(evento) {
-        this.#insertStmt.run({ id_evento: evento.id, id_usuario: Usuario.id});
+    static agregarEvento(id) {
+        this.#insertStmt.run({ id_usuario: Usuario.id, id });
     }
 
     static eliminarEvento(id) {

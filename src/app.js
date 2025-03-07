@@ -6,11 +6,13 @@ import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
 import { getConnection } from './db.js'; // Asegúrate de la ruta correcta
 import {Evento} from './eventos/Evento.js';
+import {Carrito} from './carrito/Carrito.js';
 import carritoRouter from './carrito/router.js';
 export const app = express();
 
 getConnection(); 
 Evento.initStatements(); 
+Carrito.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -55,6 +57,16 @@ app.get('/evento', (req, res) => {
     const evento=Evento.getEventoById();
     const params = {
         contenido: 'paginas/evento', // Se asume que la vista está en views/paginas/contacto.ejs
+        session: req.session,
+        evento
+    };
+    res.render('pagina', params);
+});
+
+app.get('/carrito', (req, res) => {
+    const evento=Carrito.getCarrito();
+    const params = {
+        contenido: 'paginas/carrito', // Se asume que la vista está en views/paginas/contacto.ejs
         session: req.session,
         evento
     };

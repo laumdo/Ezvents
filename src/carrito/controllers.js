@@ -1,4 +1,4 @@
-import { Carrito } from '../modelos/Carrito.js';
+import { Carrito } from './Carrito.js';
 
 export function verCarrito(req, res) {
     const carrito = Carrito.getCarrito();
@@ -7,12 +7,14 @@ export function verCarrito(req, res) {
 
 export function agregarAlCarrito(req, res) {
     try {
-        const { id } = req.body;
-        
+        const { id } = req.body.id.trim();
+
         Carrito.agregarEvento({ id });
 
+        res.render('pagina', { contenido: '/', session: req.session })
+
     } catch (error) {
-        res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al agregar evento al carrito' });
+        res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al agregar evento al carrito' });
     }
 }
 
