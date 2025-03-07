@@ -6,6 +6,7 @@ import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
 import { getConnection } from './db.js'; // Asegúrate de la ruta correcta
 import {Evento} from './eventos/Evento.js';
+import carritoRouter from './carrito/router.js';
 export const app = express();
 
 getConnection(); 
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
+app.use('/carrito', carritoRouter);
 
 app.get('/contacto', (req, res) => {
     const params = {
@@ -58,3 +60,4 @@ app.get('/evento', (req, res) => {
     };
     res.render('pagina', params);
 });
+

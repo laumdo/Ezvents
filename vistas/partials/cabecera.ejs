@@ -8,12 +8,16 @@
         <% if (session && session.login) { %>
             Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
             <% if (session.esEmpresa) { %>
-                <a href="paginas/empresa.ejs" class="boton-anadir">Añadir Evento</a>
+                <a href="/paginas/empresa" class="boton-anadir">Añadir Evento</a>
             <% } %>
-        <% } else if (session.esAdmin) { %>
-            <a href="paginas/admin.ejs" class="boton-anadir">Consola Admin</a>
-        <% } else { %>
-            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito" class="logo1"></a>
+        <% } else { %> <!-- En este caso, si el usuario no ha iniciado sesión -->
+            <% if (session && session.esAdmin) { %> <!-- Verificar si es admin -->
+                <a href="/paginas/admin" class="boton-anadir">Consola Admin</a>
+            <% } %>
+            <a href="/eventos/carrito">
+                <img src="/static/img/carrito.jpg" alt="Carrito" class="logo1">
+            </a>
+            
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>
         <% } %>
     </div>

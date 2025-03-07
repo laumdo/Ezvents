@@ -43,4 +43,14 @@ eventosRouter.post('/eliminarEvento', eliminarEvento);
 // Ruta para modificar un evento
 eventosRouter.post('/modificarEvento', modificarEvento);
 
+// Mostrar el carrito
+eventosRouter.get('/carrito', (req, res) => {
+    const carrito = req.session.carrito || [];
+    res.render('pagina', {
+        contenido: 'paginas/carrito',
+        session: req.session
+    });
+});
+
+
 export default eventosRouter;
