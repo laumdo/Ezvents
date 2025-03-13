@@ -6,7 +6,6 @@ let db = null;
 export function getConnection() {
     if (db !== null) return db;
     db = createConnection();
-    crearTablaEventos();
     return db;
 }
 
@@ -40,21 +39,4 @@ export class ErrorDatos extends Error {
         super(message, options);
         this.name = 'ErrorDatos';
     }
-}
- // ???????????????
-export function crearTablaEventos(){
-    if(!db) return; //nos aseguramos de que la conexión a la BD está abierta
-    db.exec(`
-        CREATE TABLE IF NOT EXISTS eventos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            descripcion TEXT NOT NULL,
-            fecha TEXT NOT NULL,
-            lugar TEXT NOT NULL,
-            precio REAL NOT NULL,
-            aforo_maximo INTEGER NOT NULL,
-            entradas_vendidas INTEGER DEFAULT 0,
-            imagen TEXT DEFAULT 'default.png'
-        )
-    `);
 }
