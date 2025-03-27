@@ -1,6 +1,6 @@
 import express from 'express';
 
-const contenidoRouter = express.Router();
+/*const contenidoRouter = express.Router();
 
 contenidoRouter.get('/normal', (req, res) => {
     let contenido = 'paginas/noPermisos';
@@ -35,4 +35,19 @@ contenidoRouter.get('/empresa', (req, res) => {
     });
 });
 
+export default contenidoRouter;*/
+import { viewContenidoAdmin, viewContenidoNormal,viewContenidoEmpresa } from './controllers.js';
+import { autenticado, tieneRol } from '../middleware/auth.js';
+import { RolesEnum } from '../usuarios/Usuario.js';
+import asyncHandler from 'express-async-handler';
+
+const contenidoRouter = express.Router();
+
+contenidoRouter.use(autenticado('/usuarios/login'));
+
+contenidoRouter.get('/normal', asyncHandler(viewContenidoNormal));
+
+contenidoRouter.get('/admin', tieneRol(RolesEnum.ADMIN), asyncHandler(viewContenidoAdmin));
+
+contenidoRouter.get('/empresa',tieneRol(RolesEnum.EMPRESA),asyncHandler(viewContenidoEmpresa) )
 export default contenidoRouter;

@@ -4,6 +4,11 @@ import { config } from './config.js';
 import usuariosRouter from './usuarios/router.js';
 import contenidoRouter from './contenido/router.js';
 import eventosRouter from './eventos/router.js';
+import { logger } from './logger.js';
+import pinoHttp  from 'pino-http';
+const pinoMiddleware = pinoHttp(config.logger.http(logger));
+import { flashMessages } from './middleware/flash.js';
+import { errorHandler } from './middleware/error.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
@@ -17,8 +22,11 @@ Carrito.initStatements();
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
 
+app.use(pinoMiddleware);
+app.use(express.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
+app.use(flashMessages);
 app.use(express.static('public'));
 app.use(express.json());
 
@@ -72,4 +80,6 @@ app.get('/carrito', (req, res) => {
     };
     res.render('pagina', params);
 });
+
+app.use(errorHandler);
 

@@ -1,21 +1,26 @@
 import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum } from './Usuario.js';
+import { render } from '../utils/render.js';
 import bcrypt from "bcryptjs";
 import session from 'express-session';
 
 
 export function viewLogin(req, res) {
-    let contenido = 'paginas/login';
+    /*let contenido = 'paginas/login';
     if (req.session != null && req.session.login) {
         contenido = 'paginas/index'
     }
     res.render('pagina', {
         contenido,
         session: req.session
+    });*/
+    render(req, res, 'paginas/login', {
+        datos: {},
+        errores: {}
     });
 }
 
-export function doLogin(req, res) {
+/*export function doLogin(req, res) {
     body('username').escape(); 
     body('password').escape(); 
 
@@ -53,6 +58,40 @@ export function doLogin(req, res) {
             session: req.session,
             error: 'El usuario o contraseña no son válidos'
         })
+    }
+}*/
+export async function doLogin(req, res) {
+    const result = validationResult(req);
+    if (! result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        return render(req, res, 'paginas/login', {
+            errores,
+            datos
+        });
+    }
+    // Capturo las variables username y password
+    const username = req.body.username;
+    const password = req.body.password;
+
+    try {
+        const usuario = await Usuario.login(username, password);
+        req.session.login = true;
+        req.session.nombre = usuario.nombre;
+        req.session.rol = usuario.rol;
+
+        res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
+        return res.redirect('/');
+
+    } catch (e) {
+        const datos = matchedData(req);
+        req.log.warn("Problemas al hacer login del usuario '%s'", username);
+        req.log.debug('El usuario %s, no ha podido logarse: %s', username, e.message);
+        render(req, res, 'paginas/login', {
+            error: 'El usuario o contraseña no son válidos',
+            datos,
+            errores: {}
+        });
     }
 }
 
@@ -141,7 +180,9 @@ export function eliminarUsuario(req, res) {
 
 
 export function viewRegister(req, res){
-    res.render('pagina', {contenido: 'paginas/register', session: req.session, error: null});
+    res.render('pagina', {contenido: 'paginas/register', 
+        session: req.session, 
+        error: null});
 }
 
 export function viewDatos(req, res) {
@@ -162,7 +203,7 @@ export function viewDatos(req, res) {
 }
 
 
-export function doRegister(req, res){
+/*export function doRegister(req, res){
     body('username').escape();
     body('password').escape();
     body('nombre').escape();
@@ -208,5 +249,45 @@ export function doRegister(req, res){
     req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;
 
     return res.redirect('/');
+    }
+}*/
+export async function doRegistro(req, res) {
+    const result = validationResult(req);
+    if (! result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        return render(req, res, 'paginas/register', {
+            datos,
+            errores
+        });
+    }
+
+    // Capturo las variables username y password
+    const username = req.body.username;
+    const password = req.body.password;
+    const nombre = req.body.nombre;
+
+    try {
+        const usuario = await Usuario.creaUsuario(username, password, nombre);
+        req.session.login = true;
+        req.session.nombre = usuario.nombre;
+        req.session.rol = usuario.rol;
+
+        return res.redirect('/usuarios/home');
+    } catch (e) {
+        let error = 'No se ha podido crear el usuario';
+        if (e instanceof UsuarioYaExiste) {
+            error = 'El nombre de usuario ya está utilizado';
+        }
+        const datos = matchedData(req);
+        delete datos.password;
+        delete datos.passwordConfirmacion;
+        req.log.error("Problemas al registrar un nuevo usuario '%s'", username);
+        req.log.debug('El usuario no ha podido registrarse: %s', e);
+        render(req, res, 'paginas/registro', {
+            error,
+            datos: {},
+            errores: {}
+        });
     }
 }
