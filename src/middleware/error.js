@@ -35,7 +35,8 @@ export function errorHandler (err, req, res, next) {
         });
     }
     // Si es otro tipo de petición (e.g generada por el usuario) mostramos página de error
-    render(eq, res, 'paginas/error', {
-        message
-    });
+   res.status(statusCode).render('pagina',{
+    contenido:'paginas/error',
+    mensaje: message // Cambia la clave a 'mensaje'
+   });
 }

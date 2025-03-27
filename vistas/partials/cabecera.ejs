@@ -21,7 +21,8 @@
         <% }else{ %>
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>
         <% } %>  
-    <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
+        <% if (session && (session.rol === 'admin' || session.rol === 'empresa')) { %>
+
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
 

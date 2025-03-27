@@ -10,7 +10,7 @@ export const config = {
         secret: 'no muy secreto'
     }
 }*/
-import 'dotenv/config';
+//import 'dotenv/config';
 import { join, dirname } from 'node:path';
 
 const isProduction = process.env.NODE_ENV === 'production';

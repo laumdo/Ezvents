@@ -251,7 +251,7 @@ export function viewDatos(req, res) {
     return res.redirect('/');
     }
 }*/
-export async function doRegistro(req, res) {
+export async function doRegister(req, res) {
     const result = validationResult(req);
     if (! result.isEmpty()) {
         const errores = result.mapped();
@@ -273,7 +273,7 @@ export async function doRegistro(req, res) {
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
 
-        return res.redirect('/usuarios/home');
+        return res.redirect('/usuarios/index');
     } catch (e) {
         let error = 'No se ha podido crear el usuario';
         if (e instanceof UsuarioYaExiste) {
@@ -284,7 +284,7 @@ export async function doRegistro(req, res) {
         delete datos.passwordConfirmacion;
         req.log.error("Problemas al registrar un nuevo usuario '%s'", username);
         req.log.debug('El usuario no ha podido registrarse: %s', e);
-        render(req, res, 'paginas/registro', {
+        render(req, res, 'paginas/register', {
             error,
             datos: {},
             errores: {}

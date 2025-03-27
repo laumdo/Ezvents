@@ -74,7 +74,7 @@ export class Usuario {
         if (result.changes === 0) throw new UsuarioNoEncontrado(id);
     }
 
-    static login(username, password) {
+    static async login(username, password) {
         let usuario = null;
         try {
             usuario = this.getUsuarioByUsername(username);

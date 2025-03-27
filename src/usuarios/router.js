@@ -22,8 +22,8 @@ usuariosRouter.post('/eliminarUsuario', eliminarUsuario);
 /*usuariosRouter.get('/register', viewRegister);
 usuariosRouter.post('/register', doRegister);*/
 
-usuariosRouter.get('/registro', autenticado(null, '/usuarios/home'), asyncHandler(viewRegistro));
-usuariosRouter.post('/registro'
+usuariosRouter.get('/register', autenticado(null, '/usuarios/home'), asyncHandler(viewRegister));
+usuariosRouter.post('/register'
     , body('username', 'Sólo puede contener números y letras').trim().matches(/^[A-Z0-9]*$/i)
     , body('username', 'No puede ser vacío').trim().notEmpty()
     , body('nombre', 'No puede ser vacío').trim().notEmpty()

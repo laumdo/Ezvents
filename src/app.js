@@ -49,7 +49,10 @@ app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
 app.use('/carrito', carritoRouter);
-
+app.use((req, res, next) => {
+    res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
+    next();
+});
 app.get('/contacto', (req, res) => {
     const params = {
         contenido: 'paginas/contacto',
