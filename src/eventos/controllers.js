@@ -6,7 +6,7 @@ export function viewEventos(req, res) {
     res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos });
 }
 
-export function viewEvento(req, res) {
+/*export function viewEvento(req, res) {
     param('id').isInt().withMessage('ID de evento inválido');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -19,7 +19,7 @@ export function viewEvento(req, res) {
     } catch (error) {
         res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Evento no encontrado' });
     }
-}
+}*/
 
 
 export function agregarEvento(req, res) {
