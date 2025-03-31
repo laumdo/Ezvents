@@ -1,0 +1,24 @@
+
+    <div class="container">
+        <h1>Mi Cuenta</h1>
+
+        <% if (usuario) { %>
+            <div class="user-info">
+                <p><strong>Usuario:</strong> <%= usuario.username %></p>
+                <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
+                <p><strong>Apellidos:</strong> <%= usuario.apellidos %></p>
+                <p><strong>Email:</strong> <%= usuario.email %></p>
+                <p><strong>Rol:</strong> <%= usuario.rol %></p>
+            </div>
+            <form action="/usuarios/eliminarUsuario" method="POST">
+                <input type="hidden" name="propio" value="true">
+                <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')">
+                    Eliminar mi cuenta
+                </button>
+            </form>
+        <% } else { %>
+            <p class="no-user">Usuario no encontrado</p>
+        <% } %>
+    </div>
+
+

@@ -1,26 +1,34 @@
 <!-- Imagen principal del evento -->
- <header>
+<header>
     <a href="/"><img src="/img/image1.png" alt="EZVENTS Logo" class="logo1"></a>
- 
-<h1>EZVENTS</h1>
 
-<div class="saludo">
-    <% if(session && session.login) { %>
-        Hola, <%=session.nombre%> | <a href='/usuarios/logout'>Cerrar sesion</a>
-        <% if (session.rol === 'usuario') { %>
-            <a href="/vistas/paginas/carrito"><img src="./img/carrito.jpg" alt="Carrito"></a>
-        <% } %>
-    <% if (session.rol === 'admin' || session.rol === 'empresa') { %>
+    <h1>EZVENTS</h1>
+
+    <div class="saludo">
+        <% if (locals.session && locals.session.login) { %>
+            Hola, <%= session.nombre %> | <a href='/usuarios/logout'>Cerrar sesión</a>
+            <a href="/usuarios/datos">
+                <img src="/img/perfil.png" class="logo1">
+            </a>
+             <%if(session.esUsuario){ %>
+
+                 <a href="/carrito/carrito">
+                    <img src="/img/carrito.jpg" alt="Carrito" class="logo1">
+                </a>
+               
+            <% } %>       
+            
+        <% }else{ %>
+            <button onclick="window.location.href='/usuarios/login'">Acceder</button>
+        <% } %>  
+        <% if (session && (session.rol === 'admin' || session.rol === 'empresa')) { %>
+
         <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
     <% } %>
-<% } else { %>
-    Usuario desconocido.
-    <button onclick="window.location.href='/usuarios/login'">Acceder</button>
-<% } %>
+
 </div>
 
 </header>
-
 
 <hr class="separador">
 
@@ -29,10 +37,7 @@
     <a href="/noticias">Noticias</a>
     <a href="/puntos">Puntos</a>
     <a href="/foro">Foro</a>
+    <%if(session && (session.esAdmin || session.esEmpresa)){%>
+        <a href="<%= session.esAdmin ? '/contenido/admin' : '/contenido/empresa'%>" class="boton-anadir">Gestionar Evento</a>
+    <%}%>
 </nav>
-
-<!-- Formulario de búsqueda -->
-<form action="/eventos/buscarEvento" method="GET" class="buscar-evento">
-    <input type="text" name="nombre" placeholder="Buscar evento..." required>
-    <button type="submit">Buscar</button>
-</form>

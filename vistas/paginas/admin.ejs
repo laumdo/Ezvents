@@ -1,11 +1,18 @@
-<h1>Bienvenido, tienes los permisos necesarios para administrar eventos.</h1>
-<p>Aquí puedes gestionar los eventos. Selecciona una opción:</p>
+<% if (session && session.esAdmin) { %>
+    <h1>Bienvenido a la Consola de Administración</h1>
+    <p>Tienes los permisos necesarios para administrar eventos.</p>
+    <p>Aquí puedes gestionar los eventos. Selecciona una opción:</p>
+<% } else { %>
+    <h1>Acceso Denegado</h1>
+    <p>No tienes permisos para administrar la web.</p>
+<% } %>
 
 <!-- Menú de opciones -->
 <div class="admin-menu">
     <button onclick="mostrarFormulario('add')">Añadir Evento</button>
     <button onclick="mostrarFormulario('delete')">Eliminar Evento</button>
     <button onclick="mostrarFormulario('edit')">Modificar Evento</button>
+    <button onclick ="mostrarFormulario('deleteuser')">Eliminar Usuario</button>
 </div>
 
 <!-- Contenedor de formularios -->
@@ -73,3 +80,34 @@
             
             <label>Nuevo Aforo Máximo:</label>
             <input type="number" name="aforo_maximo">
+
+            <label>Nueva Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+
+            <button type="submit">Modificar Evento</button>
+        </form>
+    </div>
+
+    <!-- Formulario para eliminar usuario -->
+<div id="form-deleteuser" class="admin-form oculto">
+    <h2>Eliminar Usuario</h2>
+    <form action="/usuarios/eliminarUsuario" method="POST">
+        <label>Nombre del usuario:</label>
+        <input type="text" name="nombre" required>
+        <button type="submit">Eliminar Usuario</button>
+    </form>
+</div>
+
+    <!-- Script para manejar el formulario -->
+<script>
+    function mostrarFormulario(id) {
+        document.getElementById('form-' + id).classList.toggle('oculto');
+    }
+</script>
+
+<style>
+    .oculto { display: none; }
+    .empresa-menu { margin-bottom: 20px; }
+    .evento { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+</style>
+

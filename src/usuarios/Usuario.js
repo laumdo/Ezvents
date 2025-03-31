@@ -3,20 +3,23 @@ import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
     USUARIO: 'U',
-    ADMIN: 'A'
+    ADMIN: 'A',
+    EMPRESA: 'E'
 });
 
 export class Usuario {
     static #getByUsernameStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
+    static #deleteStmt = null;
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, apellidos, email, rol) VALUES (@username, @password, @nombre, @apellidos, @email, @rol)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, rol = @rol, apellidos = @apellidos, email = @email, nombre = @nombre WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol) VALUES (@username, @password, @nombre, @email, @apellidos, @rol)');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre WHERE id = @id');
+        this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
     }
 
     static getUsuarioByUsername(username) {
@@ -66,8 +69,12 @@ export class Usuario {
         return usuario;
     }
 
+    static delete(id) {
+        const result = this.#deleteStmt.run({ id });
+        if (result.changes === 0) throw new UsuarioNoEncontrado(id);
+    }
 
-    static login(username, password) {
+    static async login(username, password) {
         let usuario = null;
         try {
             usuario = this.getUsuarioByUsername(username);
@@ -75,12 +82,12 @@ export class Usuario {
             throw new UsuarioOPasswordNoValido(username, { cause: e });
         }
 
-        // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
-        if ( ! bcrypt.compareSync(password, usuario.#password) ) throw new UsuarioOPasswordNoValido(username);
+        const passwordMatch = await bcrypt.compare(password, usuario.#password);
+        if ( ! passwordMatch ) throw new UsuarioOPasswordNoValido(username);
 
         return usuario;
     }
-
+    
     #id;
     #username;
     #password;
