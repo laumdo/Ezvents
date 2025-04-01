@@ -5,6 +5,10 @@ import { inicializaModelos } from './modelos.js';
 import { logger } from './logger.js';
 
 const db = getConnection();
+if (!db) {
+    console.error("🚨 Error: No se pudo obtener la conexión a la base de datos.");
+    process.exit(1);
+}
 checkConnection(db);
 inicializaModelos(db);
 

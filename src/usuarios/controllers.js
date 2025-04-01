@@ -35,7 +35,6 @@ export function viewLogin(req, res) {
         req.session.username = usuario.username;
         req.session.esUsuario= usuario.rol===RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
-<<<<<<< HEAD
         
         const eventos = Evento.getAll();
         return res.render('pagina', {
@@ -43,7 +42,6 @@ export function viewLogin(req, res) {
             session: req.session,
             eventos
         });
-=======
         req.session.esEmpresa = usuario.rol ===RolesEnum.EMPRESA;
 
         if(req.session.esEmpresa){
@@ -61,7 +59,6 @@ export function viewLogin(req, res) {
         else{
             return res.redirect('/');
         }
->>>>>>> main
 
     } catch (e) {
         res.render('pagina', {
