@@ -108,5 +108,15 @@ app.get('/carrito', (req, res) => {
     res.render('pagina', params);
 });
 
+// Middleware para manejar rutas no encontradas (404)
+app.use((req, res, next) => {
+    const error = new Error('Página no encontrada');
+    error.statusCode = 404;
+    next(error);
+});
+
+// Middleware de manejo de errores
+//app.use(errorHandler);
+
 app.use(errorHandler);
 

@@ -70,7 +70,7 @@ export function viewLogin(req, res) {
 }*/
 export async function doLogin(req, res) {
     const result = validationResult(req);
-    if (! result.isEmpty()) {
+    if (!result.isEmpty()) {
         const errores = result.mapped();
         const datos = matchedData(req);
         return render(req, res, 'paginas/login', {
@@ -78,7 +78,7 @@ export async function doLogin(req, res) {
             datos
         });
     }
-    // Capturo las variables username y password
+
     const username = req.body.username;
     const password = req.body.password;
 
@@ -86,11 +86,15 @@ export async function doLogin(req, res) {
         const usuario = await Usuario.login(username, password);
         req.session.login = true;
         req.session.nombre = usuario.nombre;
+        req.session.username = usuario.username;
         req.session.rol = usuario.rol;
+        
+        req.session.esUsuario = usuario.rol === RolesEnum.USUARIO;
+        req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
+        req.session.esEmpresa = usuario.rol === RolesEnum.EMPRESA;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         return res.redirect('/');
-
     } catch (e) {
         const datos = matchedData(req);
         req.log.warn("Problemas al hacer login del usuario '%s'", username);

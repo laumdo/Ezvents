@@ -1,23 +1,26 @@
 import { ErrorDatos } from "../db.js";
 
 export class Descuento {
-    static #getAllStmt = null;
+    //static #getAllStmt = null;
     static #getByIdStmt = null;
     static #insertStmt = null;
     static #deleteStmt = null;
     static #updateStmt = null;
 
     static initStatements(db) {
-        if (this.#getAllStmt !== null) return;
+        if (this.#getByIdStmt !== null) return;
 
-        this.#getAllStmt = db.prepare('SELECT * FROM Descuentos');
+        //this.#getAllStmt = db.prepare('SELECT * FROM Descuentos');
         this.#getByIdStmt = db.prepare('SELECT * FROM Descuentos WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Descuentos(titulo, condiciones, puntos, imagen) VALUES (@titulo, @condiciones, @puntos, @imagen)');
+        this.#updateStmt= db.prepare(`UPDATE Descuentos SET titulo=@titulo, condiciones=@condiciones, puntos=@puntos,
+            imagen=@imagen WHERE id=@id`);
         this.#deleteStmt = db.prepare('DELETE FROM Descuentos WHERE id = @id'); 
     }
 
-    static obtenerTodos() {
-        return this.#getAllStmt.all();
+    static getAll() {
+        const db = getConnection(); 
+        return db.prepare('SELECT * FROM Descuentos').all();
     }
 
     static obtenerPorId(id) {
@@ -39,6 +42,9 @@ export class Descuento {
             result = this.#insertStmt.run(datos);
             descuento.id = result.lastInsertRowid;
         } catch(e) {
+            if (e.code === 'SQLITE_CONSTRAINT') {
+                throw new EventoYaExiste(descuento.titulo);
+            }
             throw new ErrorDatos('No se ha insertado el descuento', { cause: e });
         }
         return descuento;
@@ -70,6 +76,7 @@ export class Descuento {
 
     persist() {
         if (this.id === null) return Descuento.#insert(this);
+        return Descuento.#update(this);
     }
 
     id;
@@ -79,11 +86,16 @@ export class Descuento {
     imagen;
 
     constructor(titulo, condiciones, puntos, imagen, id = null) {
+        this.id = id;
         this.titulo = titulo;
         this.condiciones = condiciones;
         this.puntos = puntos;
         this.imagen = imagen;
-        this.id = id;
+        
+    }
+
+    get id() {
+        return this.id;
     }
 }
 
@@ -91,5 +103,24 @@ export class DescuentoNoEncontrado extends Error {
     constructor(id, options) {
         super(`Descuento no encontrado: ${id}`, options);
         this.name = 'DescuentoNoEncontrado';
+    }
+}
+
+export class ErrorDatos extends Error {
+    constructor(mensaje, options) {
+        super(mensaje, options);
+        this.name = 'ErrorDatos';
+    }
+}
+
+export class DescuentoYaExiste extends Error {
+    /**
+     * 
+     * @param {string} username 
+     * @param {ErrorOptions} [options]
+     */
+    constructor(username, options) {
+        super(`Descuento ya existe: ${username}`, options);
+        this.name = 'EventoYaExiste';
     }
 }

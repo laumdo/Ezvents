@@ -4,7 +4,7 @@ import { autenticado } from '../middleware/auth.js';
 import { body } from 'express-validator';
 import asyncHandler from 'express-async-handler';
 
-const usuariosRouter = express.Router();
+const usuariosRouter = express.Router();    
 
 /*usuariosRouter.get('/login', viewLogin);
 usuariosRouter.post('/login', doLogin);
@@ -21,6 +21,12 @@ usuariosRouter.get('/datos', viewDatos);
 usuariosRouter.post('/eliminarUsuario', eliminarUsuario);
 /*usuariosRouter.get('/register', viewRegister);
 usuariosRouter.post('/register', doRegister);*/
+// Manejador para rutas no encontradas (404)
+usuariosRouter.use((req, res, next) => {
+    const error = new Error('Página no encontrada');
+    error.statusCode = 404;
+    next(error);
+});
 
 usuariosRouter.get('/register', autenticado(null, '/usuarios/home'), asyncHandler(viewRegister));
 usuariosRouter.post('/register'
