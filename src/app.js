@@ -13,7 +13,10 @@ import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
 import carritoRouter from './carrito/router.js';
+//import { procesarFormulario, viewImagen } from './simple/controladores.js';
 export const app = express();
+
+//const upload = multer({ dest: config.uploads });
 
 getConnection(); 
 Evento.initStatements(); 
@@ -86,9 +89,11 @@ app.get('/carrito', (req, res) => {
 
 // Middleware para manejar rutas no encontradas (404)
 app.use((req, res, next) => {
-    const error = new Error('Página no encontrada');
-    error.statusCode = 404;
-    next(error);
+    res.status(404).render('pagina', {
+        contenido: 'paginas/error',
+        mensaje: 'Oops, la página que buscas no existe',
+        session: req.session
+    });
 });
 
 // Middleware de manejo de errores
