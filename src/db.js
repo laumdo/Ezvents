@@ -48,8 +48,4 @@ export class ErrorDatos extends Error {
         super(message, options);
         this.name = 'ErrorDatos';
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> main

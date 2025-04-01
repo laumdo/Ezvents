@@ -1,10 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum } from './Usuario.js';
-<<<<<<< HEAD
 import { Evento } from '../eventos/Evento.js'; // Importar la clase Evento
-=======
 import { render } from '../utils/render.js';
->>>>>>> main
 import bcrypt from "bcryptjs";
 import session from 'express-session';
 

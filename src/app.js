@@ -15,7 +15,7 @@ import {Carrito} from './carrito/Carrito.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
 import carritoRouter from './carrito/router.js';
-import descuentoRouter from './descuentos/router.js';
+//import descuentoRouter from './descuentos/router.js';
 export const app = express();
 
 getConnection(); 
