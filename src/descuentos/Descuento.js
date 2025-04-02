@@ -8,7 +8,9 @@ export class Descuento {
     static #deleteStmt = null;
     static #updateStmt = null;
 
-    static initStatements(db) {
+    static initStatements() {
+        const db = getConnection();
+
         if (this.#getByIdStmt !== null) return;
         
         this.#getByIdStmt = db.prepare('SELECT * FROM Descuento WHERE id = @id');
@@ -22,7 +24,7 @@ export class Descuento {
         return db.prepare('SELECT * FROM Descuento').all();
     }
 
-    static obtenerPorId(id) {
+    static getDescuento(id) {
         const descuento = this.#getByIdStmt.get({ id });
         if (!descuento) throw new DescuentoNoEncontrado(id);
         return new Descuento(descuento.id, descuento.titulo, descuento.condiciones, descuento.puntos, descuento.imagen);

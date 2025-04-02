@@ -1,13 +1,25 @@
+<link rel="stylesheet" href="/css/descuentos.css">
+<script defer src="/js/descuento.js"></script>
+
 <h2>Promociones Disponibles</h2>
+<h4>Aquí podrás canjear los puntos ganados en tus compras en Ezvents por descuentos y promociones.</h4>
+<p>Puntos disponibles: <strong><%= puntosUsuario %></strong></p>
+<div id="mensajeDescuento" class="mensaje oculto"></div>
+
 <div class="descuentos">
     <% if (locals.descuentos && locals.descuentos.length > 0) { %>
         <% locals.descuentos.forEach(descuento => { %>
             <div class="descuento">
-                <img src="./img/<%= descuento.imagen %>" alt="<%= descuento.titulo %>" width="300" height="auto">
+                <img src="/img/<%= descuento.imagen %>" alt="<%= descuento.titulo %>" width="300" height="auto">
                 <div class="descuento-info">
                     <h3 class="descuento-titulo"><%= descuento.titulo %></h3>
-                    <p class="descuento-descripcion"><%= descuento.descripcion %></p>
+                    <p class="descuento-condiciones"><%= descuento.condiciones %></p>
                     <p class="descuento-puntos"><strong>Puntos necesarios:</strong> <%= descuento.puntos %></p>
+                    <button class="btn-canjear"
+                        data-id="<%= descuento.id %>"
+                        data-puntos="<%= descuento.puntos %>">
+                        Canjear
+                    </button>                  
                 </div>
             </div>
         <% }) %>
@@ -15,14 +27,3 @@
         <p>No hay promociones disponibles.</p>
     <% } %>
 </div>
-
-<!--
-<style>
-    .container { text-align: center; padding: 20px; }
-    .promociones { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
-    .promo-card { border: 1px solid #ddd; border-radius: 10px; padding: 15px; width: 300px; text-align: center; }
-    .promo-card img { max-width: 100%; border-radius: 5px; }
-    .canjear-btn { background: green; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; }
-    .canjear-btn.disabled { background: gray; cursor: not-allowed; }
-</style>
--->

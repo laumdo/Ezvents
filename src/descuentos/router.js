@@ -24,8 +24,9 @@ descuentosRouter.post('/modificarDescuento', modificarDescuento);
 export default descuentosRouter;*/
 import express from 'express';
 import multer from 'multer';
-import { viewDescuentos, agregarDescuento, eliminarDescuento, modificarDescuento } from './controllers.js';
+import { viewDescuentos, agregarDescuento, eliminarDescuento, modificarDescuento,canjearDescuento } from './controllers.js';
 import { autenticado } from '../middleware/auth.js';
+import { body } from 'express-validator';
 import asyncHandler from 'express-async-handler';
 
 const descuentosRouter = express.Router();
@@ -56,5 +57,8 @@ descuentosRouter.post('/modificarDescuento',
     autenticado(), 
     asyncHandler(modificarDescuento)
 );
+
+descuentosRouter.post("/canjear/:id", canjearDescuento);
+
 
 export default descuentosRouter;
