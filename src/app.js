@@ -16,12 +16,16 @@ import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
 import carritoRouter from './carrito/router.js';
 import descuentosRouter from './descuentos/router.js';
+import { DescuentosUsuario } from './descuentosUsuario/DescuentosUsuario.js';
+import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
+
 export const app = express();
 
 getConnection(); 
 Evento.initStatements(); 
 Carrito.initStatements();
 Descuento.initStatements();
+DescuentosUsuario.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -117,6 +121,7 @@ app.use((req, res, next) => {
 
 // Middleware de manejo de errores
 //app.use(errorHandler);
+app.use("/descuentosUsuario", descuentosUsuarioRouter);
 
 app.use(errorHandler);
 

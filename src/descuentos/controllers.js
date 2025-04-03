@@ -81,6 +81,43 @@ export function eliminarDescuento(req,res){
 }
 
 export function canjearDescuento(req, res) {
+    const idDescuento = parseInt(req.params.id, 10);
+    const usuario = Usuario.getUsuarioByUsername(req.session.username);
+
+    if (!usuario) {
+        return res.status(401).json({ error: "Usuario no autenticado" });
+    }
+
+    const descuento = Descuento.getDescuento(idDescuento);
+    if (!descuento) {
+        return res.status(404).json({ error: "Descuento no encontrado" });
+    }
+
+    // Verificar si el usuario tiene suficientes puntos
+    if (usuario.puntos < descuento.puntos) {
+        return res.status(400).json({ error: "Puntos insuficientes" });
+    }
+
+    // Verificar si el usuario ya canjeó este descuento
+    const yaCanjeado = DescuentosUsuario.getDescuentoUsuario(usuario.id, idDescuento);
+    if (yaCanjeado) {
+        return res.status(400).json({ error: "Este descuento ya ha sido canjeado" });
+    }
+
+    // Restar puntos al usuario
+    usuario.puntos -= descuento.puntos;
+    usuario.persist(); // Guardar cambios en la BD
+
+    // Generar código único
+    const codigo = generarCodigo();
+
+    // Registrar el canje en DescuentosUsuario
+    DescuentosUsuario.canjearDescuento(usuario.id, idDescuento, codigo);
+
+    return res.json({ mensaje: "Descuento canjeado con éxito", codigo });
+}
+
+/*export function canjearDescuento(req, res) {
     const descuento = Descuento.getDescuento(req.params.id);
     if (!descuento) {
         return res.json({ success: false, message: "El descuento no existe." });
@@ -101,7 +138,7 @@ export function canjearDescuento(req, res) {
     usuario.persist(); // Guardar los cambios en la BD
 
     return res.json({ success: true, message: "Descuento canjeado con éxito." });
-}
+}*/
 /*export function canjearDescuento(req,res){
     const descuento = Descuento.getDescuento(req.params.id);
     const usuario = Usuario.getUsuarioByUsername(req.session.username); // Obtener el usuario por su ID
