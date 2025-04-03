@@ -64,3 +64,54 @@
     background-color: #f44336;
     color: white;
 }
+
+/* Estilos para el modal de confirmación */
+#modalConfirmacion,
+#modalMensaje {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    width: 300px;
+    text-align: center;
+    z-index: 1000;
+}
+
+/* Estilo para el texto del modal */
+#modalTexto,
+#modalMensajeTexto {
+    color: black;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Botones dentro del modal */
+#modalConfirmacion button,
+#modalMensaje button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+#btnConfirmar {
+    background: green;
+    color: white;
+}
+
+#btnCancelar {
+    background: red;
+    color: white;
+}
+
+#btnCerrarMensaje {
+    background: black;
+    color: white;
+}

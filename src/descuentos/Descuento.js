@@ -1,5 +1,3 @@
-//import { ErrorDatos } from "../db.js";
-//import bcrypt from "bcryptjs";
 import { getConnection } from "../db.js"; // Asegura que la conexión esté disponible
 
 export class Descuento {
@@ -79,7 +77,7 @@ export class Descuento {
         return Descuento.#update(this);
     }
 
-    constructor(id, titulo, condiciones, puntos, imagen) {
+    constructor(id, titulo, condiciones, puntos, imagen='default.png') {
         this.id = id;
         this.titulo = titulo;
         this.condiciones = condiciones;

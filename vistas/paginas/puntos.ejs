@@ -1,6 +1,24 @@
 <link rel="stylesheet" href="/css/descuentos.css">
 <script defer src="/js/descuento.js"></script>
 
+<!-- Modal de confirmación -->
+<div id="modalConfirmacion" class="modal oculto">
+    <div class="modal-contenido">
+        <h3>Confirmar Canje</h3>
+        <p id="modalTexto"></p>
+        <button id="btnConfirmar">Confirmar</button>
+        <button id="btnCancelar">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal de mensajes (éxito/error) -->
+<div id="modalMensaje" class="modal oculto">
+    <div class="modal-contenido">
+        <p id="modalMensajeTexto"></p>
+        <button id="btnCerrarMensaje">Aceptar</button>
+    </div>
+</div>
+
 <h2>Promociones Disponibles</h2>
 <h4>Aquí podrás canjear los puntos ganados en tus compras en Ezvents por descuentos y promociones.</h4>
 <p>Puntos disponibles: <strong><%= puntosUsuario %></strong></p>

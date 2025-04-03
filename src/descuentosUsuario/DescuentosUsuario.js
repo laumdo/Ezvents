@@ -1,49 +1,95 @@
 import { getConnection } from "../db.js";
 
 export class DescuentosUsuario {
-    static #insertStmt = null;
-    static #getByUsuarioStmt = null;
-    static #getByUsuarioDescuentoStmt = null;
+    static #insertStmt;
+    static #updateStmt;
+    static #getByUsuarioStmt;
+    static #getByUsuarioDescuentoStmt;
+    static #existsStmt;
 
     static initStatements() {
         const db = getConnection();
 
-        if (this.#insertStmt !== null) return;
+        if (this.#insertStmt) return; // Evita reinicializar si ya están preparadas
 
         this.#insertStmt = db.prepare(`
             INSERT INTO DescuentosUsuario (idUsuario, idDescuento, codigo)
             VALUES (@idUsuario, @idDescuento, @codigo)
         `);
 
-        this.#getByUsuarioStmt = db.prepare(`
-            SELECT * FROM DescuentosUsuario WHERE idUsuario = @idUsuario
+        this.#updateStmt = db.prepare(`
+            UPDATE DescuentosUsuario
+            SET codigo = @codigo
+            WHERE idUsuario = @idUsuario AND idDescuento = @idDescuento
         `);
+
+        this.#getByUsuarioStmt = db.prepare(`
+            SELECT * FROM DescuentosUsuario WHERE idUsuario = ?
+        `);
+
         this.#getByUsuarioDescuentoStmt = db.prepare(`
             SELECT * FROM DescuentosUsuario 
-            WHERE idUsuario = @idUsuario AND idDescuento = @idDescuento
+            WHERE idUsuario = ? AND idDescuento = ?
+        `);
+
+        this.#existsStmt = db.prepare(`
+            SELECT COUNT(*) as count FROM DescuentosUsuario 
+            WHERE idUsuario = ? AND idDescuento = ?
         `);
     }
 
-    static canjearDescuento(idUsuario, idDescuento, codigo) {
-        const db = getConnection();
-        this.initStatements(db);
-        
+    static insert(idUsuario, idDescuento) {
+        let result = null;
         try {
-            this.#insertStmt.run({ idUsuario, idDescuento, codigo });
-        } catch (error) {
-            throw new Error("Error al registrar el canje: " + error.message);
+            const datos = {
+                idUsuario,
+                idDescuento,
+                codigo: DescuentosUsuario.#generarCodigoUnico() // Se genera un código único
+            };
+    
+            result = this.#insertStmt.run(datos);
+            return { idUsuario, idDescuento, codigo: datos.codigo };
+        } catch (e) {
+            if (e.code === 'SQLITE_CONSTRAINT') {
+                throw new Error("El descuento ya ha sido canjeado por este usuario.");
+            }
+            throw new Error("No se ha registrado el descuento.", { cause: e });
+        }
+    }
+    
+
+    static obtenerPorUsuario(idUsuario) {
+        return this.#getByUsuarioStmt.all(idUsuario);
+    }
+
+    static obtenerPorUsuarioYDescuento(idUsuario, idDescuento) {
+        return this.#getByUsuarioDescuentoStmt.all(idUsuario, idDescuento);
+    }
+
+    static existe(idUsuario, idDescuento) {
+        const result = this.#existsStmt.get(idUsuario, idDescuento);
+        return result.count > 0;
+    }
+
+    persist() {
+        if (DescuentosUsuario.existe(this.idUsuario, this.idDescuento)) {
+            this.updateStmt.run({
+                idUsuario: this.idUsuario,
+                idDescuento: this.idDescuento,
+                codigo: this.codigo
+            });
+        } else {
+            DescuentosUsuario.insert(this);
         }
     }
 
-    static getDescuentosByUsuario(idUsuario) {
-        const db = getConnection();
-        this.initStatements(db);
-        return this.#getByUsuarioStmt.all({ idUsuario });
+    static #generarCodigoUnico() {
+        return Math.random().toString(36).substr(2, 8).toUpperCase();
     }
 
-    static getDescuentoUsuario(idUsuario, idDescuento) {
-        const db = getConnection();
-        this.initStatements(db);
-        return this.#getByUsuarioDescuentoStmt.get({ idUsuario, idDescuento });
+    constructor(idUsuario, idDescuento, codigo = null) {
+        this.idUsuario = idUsuario;
+        this.idDescuento = idDescuento;
+        this.codigo = codigo || DescuentosUsuario.#generarCodigoUnico();
     }
 }
