@@ -12,7 +12,7 @@ export function verPerfil(req, res) {
             contenido: 'paginas/datos',
             session: req.session,
             usuario: usuario,
-            descuentos: descuentos
+            descuentosUsuario: descuentos 
         });
     } catch (error) {
         res.status(500).render('pagina', {
@@ -21,6 +21,7 @@ export function verPerfil(req, res) {
         });
     }
 }
+
 
 export function obtenerDescuentosUsuario(req, res) {
     try {
