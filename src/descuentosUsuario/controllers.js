@@ -1,6 +1,26 @@
 import { DescuentosUsuario } from "./DescuentosUsuario.js";
 import { Usuario } from "../usuarios/Usuario.js";
 
+export function verPerfil(req, res) {
+    try {
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = DescuentosUsuario.obtenerPorUsuario(usuario.id);
+
+        console.log(descuentos);  // Verifica los descuentos aquí
+
+        res.render('pagina', {
+            contenido: 'paginas/datos',
+            session: req.session,
+            usuario: usuario,
+            descuentos: descuentos
+        });
+    } catch (error) {
+        res.status(500).render('pagina', {
+            contenido: 'paginas/error',
+            mensaje: "Error al cargar perfil"
+        });
+    }
+}
 
 export function obtenerDescuentosUsuario(req, res) {
     try {

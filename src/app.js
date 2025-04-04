@@ -123,6 +123,20 @@ app.use((req, res, next) => {
     });
 });
 
+app.use(async (req, res, next) => {
+    res.locals.usuario = req.session?.usuario || null;
+
+    if (res.locals.usuario) {
+        // Puedes usar async/await si getPuntosByUsuario o getAll son promesas
+        res.locals.descuentos = await Descuento.getAll(); // O filtrar por usuario si corresponde
+    } else {
+        res.locals.descuentos = [];
+    }
+
+    next();
+});
+
+
 // Middleware de manejo de errores
 //app.use(errorHandler);
 app.use("/descuentosUsuario", descuentosUsuarioRouter);

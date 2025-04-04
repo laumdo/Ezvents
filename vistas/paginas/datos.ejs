@@ -19,6 +19,22 @@
         <% } else { %>
             <p class="no-user">Usuario no encontrado</p>
         <% } %>
+
+        <% if (locals.descuentos && locals.descuentos.length > 0) { %>
+            <div class="user-discounts">
+                <h2>Mis Descuentos</h2>
+                <div class="descuento-info">
+                    <% locals.descuentos.forEach(descuento => { %>
+                        <li>
+                            <p class ="descuento.idDescuento"> <%= descuento.idDescuento %></p> |
+                            <p class="descuento.codigo"> <%= descuento.codigo %></p>
+                        </li>
+                    <% }) %>
+                </div>
+            </div>
+        <% } else { %>
+            <p>No tienes descuentos canjeados.</p>
+        <% } %>
     </div>
 
 
