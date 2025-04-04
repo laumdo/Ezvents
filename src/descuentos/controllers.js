@@ -21,7 +21,7 @@ export function viewDescuentos(req, res) {
 export function agregarDescuento(req,res){
     try{
         const{ titulo, condiciones, puntos}=req.body;
-        const imagen = req.file ? req.file.filename : 'default.png';
+        const imagen = req.file ? req.file.filename : 'descuento.png';
 
         const nuevoDescuento= new Descuento(null,titulo,condiciones,puntos,imagen);
         nuevoDescuento.persist();

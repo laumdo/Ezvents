@@ -3,18 +3,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalTexto = document.getElementById("modalTexto");
     const btnConfirmar = document.getElementById("btnConfirmar");
     const btnCancelar = document.getElementById("btnCancelar");
-    
+
     const modalMensaje = document.getElementById("modalMensaje");
     const modalMensajeTexto = document.getElementById("modalMensajeTexto");
     const btnCerrarMensaje = document.getElementById("btnCerrarMensaje");
 
     let idDescuentoSeleccionado = null;
     let puntosNecesariosSeleccionados = null;
-    
+
     document.querySelectorAll(".btn-canjear").forEach(btn => {
         btn.addEventListener("click", function () {
             idDescuentoSeleccionado = this.dataset.id;
-            puntosNecesariosSeleccionados = this.dataset.puntos;
+            puntosNecesariosSeleccionados = parseInt(this.dataset.puntos, 10);
+
+            const puntosUsuarioElem = document.querySelector("p strong");
+            const puntosActuales = parseInt(puntosUsuarioElem.textContent, 10);
+
+            if (puntosActuales < puntosNecesariosSeleccionados) {
+                mostrarMensaje("No tienes suficientes puntos para este descuento.", false);
+                return;
+            }
 
             modalTexto.textContent = `¿Estás seguro de que quieres canjear este descuento por ${puntosNecesariosSeleccionados} puntos?`;
             modalConfirmacion.classList.remove("oculto");
@@ -39,10 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Si el canje fue exitoso, actualizar los puntos en la interfaz
             if (data.success) {
-                const puntosUsuarioElem = document.getElementById("puntosUsuario");
+                const puntosUsuarioElem = document.querySelector("p strong");
                 if (puntosUsuarioElem) {
-                    const puntosActuales = parseInt(puntosUsuarioElem.textContent, 10);
-                    puntosUsuarioElem.textContent = puntosActuales - parseInt(puntosNecesariosSeleccionados, 10);
+                    const nuevosPuntos = parseInt(puntosUsuarioElem.textContent, 10) - puntosNecesariosSeleccionados;
+                    puntosUsuarioElem.textContent = nuevosPuntos >= 0 ? nuevosPuntos : 0;
                 }
             }
         } catch (error) {

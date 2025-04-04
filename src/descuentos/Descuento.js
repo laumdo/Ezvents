@@ -77,7 +77,7 @@ export class Descuento {
         return Descuento.#update(this);
     }
 
-    constructor(id, titulo, condiciones, puntos, imagen='default.png') {
+    constructor(id, titulo, condiciones, puntos, imagen='descuento.png') {
         this.id = id;
         this.titulo = titulo;
         this.condiciones = condiciones;
