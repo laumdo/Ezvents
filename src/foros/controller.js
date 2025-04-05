@@ -15,12 +15,13 @@ export const mostrarForo = (req, res) => {
 };
 
 export const agregarMensaje = (req, res) => {
-    const { mensaje } = req.body;  // Solo se obtiene el contenido del mensaje
+    const { mensaje, parent_id } = req.body;  // Solo se obtiene el contenido del mensaje
     const usuario = req.session.usuario;  // Usamos el usuario de la sesión
     const eventoId = req.body.id;
+    const parentId = parent_id || null // si no es una respuesta, es nulo
 
     // Agregar el mensaje sin parent_id
-    Foro.insertMensaje(usuario, mensaje, eventoId);
+    Foro.insertMensaje(usuario, mensaje, eventoId, parentId);
 
     // Redirigir al foro del evento
     res.redirect(`/foro/${eventoId}`);
