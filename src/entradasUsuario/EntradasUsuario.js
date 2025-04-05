@@ -15,7 +15,7 @@ export class EntradasUsuario {
 
     static getEntradasByUsuario(id_usuario){
         const db = getConnection();
-        return db.prepare('SELECT idEvento, cantidad FROM entradasUsuario WHERE idUsuario = id_usuario')
+        return db.prepare('SELECT * FROM entradasUsuario WHERE idUsuario = @id_usuario').all({id_usuario});
     }
 
     static #insert(id_usuario, id_evento){
@@ -39,7 +39,7 @@ export class EntradasUsuario {
     agregarEntrada(id_usuario, id_evento){
         const db = getConnection();
 
-        const existe = db.prepare("SELECT COUNT(*) as count FROM EntradasUsuario WHERE idUsuario = id_usuario AND idEvento = id_evento");
+        const existe = db.prepare("SELECT COUNT(*) as count FROM EntradasUsuario WHERE idUsuario = @id_usuario AND idEvento = @id_evento");
 
         if(existe.count == 0) return EntradasUsuario.#insert(id_usuario, id_evento);
         return EntradasUsuario.#update(id_usuario, id_evento);

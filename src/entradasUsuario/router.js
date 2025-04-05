@@ -3,7 +3,7 @@ import {viewEntradas, viewComprar, comprar} from './controller.js';
 
 const entradasRouter = express.Router();
 
-entradasRouter.get('/', viewEntradas);
+entradasRouter.get('/viewEntradas', viewEntradas);
 
 entradasRouter.get('/comprar', viewComprar);
 

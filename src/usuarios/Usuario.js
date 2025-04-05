@@ -31,10 +31,6 @@ export class Usuario {
         return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
     }
 
-    static sumarPuntos(id_usuario, puntos){
-        
-    }
-
     static #insert(usuario) {
         let result = null;
         try {

@@ -5,15 +5,15 @@ import { EntradasUsuario } from './EntradasUsuario.js';
 import { render } from '../utils/render.js';
 import { flashMessages } from '../middleware/flash.js';
 
-export async function viewEntradas(req, res){
+export function viewEntradas(req, res){
     const usuario_id = req.session.usuario_id;
     
-    const entradas = await EntradasUsuario.getEntradasByUsuario(usuario_id);
+    const entradas = EntradasUsuario.getEntradasByUsuario(usuario_id);
 
     const eventos = [];
 
     for (const entrada of entradas) {
-        const evento = await Evento.getEventoById(entrada.id_evento);
+        const evento = Evento.getEventoById(entrada.idEvento);
         if (evento) {
             eventos.push({
                 ...evento,
@@ -33,9 +33,9 @@ export function viewComprar(req, res){
 }
 
 export async function comprar(req, res){
-    //Hace falta hacer un const result?
     try{
         const id_usuario = req.session.usuario_id;
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
 
         const carrito = await Carrito.getByUser(id_usuario);
 
@@ -47,7 +47,8 @@ export async function comprar(req, res){
         for (const item of carrito) {
             const id_evento = item.id_evento;
 
-            Usuario.sumarPuntos(id_usuario, item.precio*10);
+            usuario.puntos += item.precio * 10; // Sumar puntos al usuario
+            usuario.persist();
 
             await EntradasUsuario.compraEntrada(id_usuario, id_evento, 1);
             await Carrito.deleteById(item.id_usuario, item.id_evento); // Eliminar entrada del carrito

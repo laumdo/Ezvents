@@ -88,6 +88,7 @@ export async function doLogin(req, res) {
         req.session.nombre = usuario.nombre;
         req.session.username = usuario.username;
         req.session.rol = usuario.rol;
+        req.session.usuario_id = usuario.id;
         
         req.session.esUsuario = usuario.rol === RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
