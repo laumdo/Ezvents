@@ -1,53 +1,51 @@
 <% if (session && session.esAdmin) { %>
     <h1>Bienvenido a la Consola de Administración</h1>
-    <p>Tienes los permisos necesarios para administrar eventos.</p>
-    <p>Aquí puedes gestionar los eventos. Selecciona una opción:</p>
+    <p>Tienes los permisos necesarios para administrar la web.</p>
+    <p>Selecciona una opción:</p>
 <% } else { %>
     <h1>Acceso Denegado</h1>
     <p>No tienes permisos para administrar la web.</p>
 <% } %>
 
-<!-- Menú de opciones -->
+<!-- Menú de administración -->
 <div class="admin-menu">
-    <button onclick="mostrarFormulario('add')">Añadir Evento</button>
-    <button onclick="mostrarFormulario('delete')">Eliminar Evento</button>
-    <button onclick="mostrarFormulario('edit')">Modificar Evento</button>
-    <button onclick ="mostrarFormulario('deleteuser')">Eliminar Usuario</button>
+    <button onclick="mostrarSeccion('eventos')">Gestionar Eventos</button>
+    <button onclick="mostrarSeccion('descuentos')">Gestionar Descuentos</button>
 </div>
 
-<!-- Contenedor de formularios -->
-<div class="admin-forms">
-    <!-- Formulario para añadir evento -->
-    <div id="form-add" class="admin-form oculto">
+<!-- Sección de gestión de eventos -->
+<div id="seccion-eventos" class="admin-seccion oculto">
+    <h2>Gestionar Eventos</h2>
+    <button onclick="mostrarFormulario('addEvento')">Añadir Evento</button>
+    <button onclick="mostrarFormulario('deleteEvento')">Eliminar Evento</button>
+    <button onclick="mostrarFormulario('editEvento')">Modificar Evento</button>
+    <button onclick="mostrarFormulario('deleteUsuario')">Eliminar Usuario</button>
+
+    <!-- Formularios de eventos -->
+    <div id="form-addEvento" class="admin-form oculto">
         <h2>Añadir Evento</h2>
         <form action="/eventos/agregarEvento" method="POST">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
-            
             <label>Descripción:</label>
             <textarea name="descripcion" required></textarea>
-            
             <label>Fecha:</label>
             <input type="date" name="fecha" required>
-            
             <label>Lugar:</label>
             <input type="text" name="lugar" required>
-            
             <label>Precio:</label>
             <input type="number" step="0.01" name="precio" required>
-            
             <label>Aforo Máximo:</label>
             <input type="number" name="aforo_maximo" required>
-
             <label>Imagen:</label>
             <input type="file" name="imagen" accept="image/*">
-
             <button type="submit">Añadir Evento</button>
         </form>
     </div>
+    </div>
 
     <!-- Formulario para eliminar evento -->
-    <div id="form-delete" class="admin-form oculto">
+    <div id="form-deleteEvento" class="admin-form oculto">
         <h2>Eliminar Evento</h2>
         <form action="/eventos/eliminarEvento" method="POST">
             <label>ID del evento:</label>
@@ -57,7 +55,7 @@
     </div>
 
     <!-- Formulario para modificar evento -->
-    <div id="form-edit" class="admin-form oculto">
+    <div id="form-editEvento" class="admin-form oculto">
         <h2>Modificar Evento</h2>
         <form action="/eventos/modificarEvento" method="POST">
             <label>ID del evento:</label>
@@ -89,25 +87,88 @@
     </div>
 
     <!-- Formulario para eliminar usuario -->
-<div id="form-deleteuser" class="admin-form oculto">
-    <h2>Eliminar Usuario</h2>
-    <form action="/usuarios/eliminarUsuario" method="POST">
-        <label>Nombre del usuario:</label>
-        <input type="text" name="nombre" required>
-        <button type="submit">Eliminar Usuario</button>
-    </form>
-</div>
+    <div id="form-deleteUsuario" class="admin-form oculto">
+        <h2>Eliminar Usuario</h2>
+        <form action="/usuarios/eliminarUsuario" method="POST">
+            <label>Nombre del usuario:</label>
+            <input type="text" name="nombre" required>
+            <button type="submit">Eliminar Usuario</button>
+        </form>
+    </div>
 
-    <!-- Script para manejar el formulario -->
+    <!-- Sección de gestión de descuentos -->
+    <div id="seccion-descuentos" class="admin-seccion oculto">
+        <h2>Gestionar Descuentos</h2>
+        <button onclick="mostrarFormulario('addDescuento')">Añadir Descuento</button>
+        <button onclick="mostrarFormulario('deleteDescuento')">Eliminar Descuento</button>
+        <button onclick="mostrarFormulario('editDescuento')">Modificar Descuento</button>
+
+        <!-- Formularios de descuentos -->
+        <div id="form-addDescuento" class="admin-form oculto">
+            <h2>Añadir Descuento</h2>
+            <form action="/descuentos/agregarDescuento" method="POST">
+                <label>Título:</label>
+                <input type="text" name="titulo" required>
+                <label>Condiciones:</label>
+                <textarea name="condiciones" required></textarea>
+                <label>Puntos:</label>
+                <input type="number" name="puntos" required>
+                <label>Imagen:</label>
+                <input type="file" name="imagen" accept="image/*">
+                <button type="submit">Añadir Descuento</button>
+            </form>
+        </div>
+
+        <!-- Formulario para eliminar descuento -->
+    <div id="form-deleteDescuento" class="admin-form oculto">
+        <h2>Eliminar Descuento</h2>
+        <form action="/descuentos/eliminarDescuento" method="POST">
+            <label>ID del descuento:</label>
+            <input type="number" name="id" required>
+            <button type="submit">Eliminar Descuento</button>
+        </form>
+    </div>
+
+    <!-- Formulario para modificar descuento -->
+    <div id="form-editDescuento" class="admin-form oculto">
+        <h2>Modificar Descuento</h2>
+        <form action="/descuentos/modificarDescuento" method="POST">
+            <label>ID del descuento:</label>
+            <input type="number" name="id" required>
+
+            <label>Nuevo Titulo:</label>
+            <input type="text" name="titulo">
+            
+            <label>Nuevas Condiciones:</label>
+            <textarea name="condiciones"></textarea>
+            
+            <label>Puntos:</label>
+            <input type="number" name="puntos">
+
+            <label>Nueva Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+
+            <button type="submit">Modificar Evento</button>
+        </form>
+    </div>
+    </div>
+
 <script>
+    function mostrarSeccion(seccion) {
+        document.getElementById('seccion-eventos').classList.add('oculto');
+        document.getElementById('seccion-descuentos').classList.add('oculto');
+        document.getElementById('seccion-' + seccion).classList.remove('oculto');
+    }
+    
     function mostrarFormulario(id) {
-        document.getElementById('form-' + id).classList.toggle('oculto');
+        document.querySelectorAll('.admin-form').forEach(form => form.classList.add('oculto'));
+        document.getElementById('form-' + id).classList.remove('oculto');
     }
 </script>
 
 <style>
     .oculto { display: none; }
-    .empresa-menu { margin-bottom: 20px; }
-    .evento { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    .admin-menu { margin-bottom: 20px; }
+    .admin-seccion { margin-top: 20px; }
+    .admin-form { border: 1px solid #ddd; padding: 10px; margin-top: 10px; }
 </style>
-

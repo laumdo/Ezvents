@@ -13,7 +13,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bcryptjs": "^3.0.2",
-    "better-sqlite3": "^11.8.1",
+    "better-sqlite3": "^11.9.1",
     "dotenv": "^16.4.7",
     "ejercicio2": "file:",
     "ejs": "^3.1.10",
@@ -22,7 +22,8 @@
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "multer": "^1.4.5-lts.1",
-    "pino-http": "^10.4.0"
+    "pino-http": "^10.4.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

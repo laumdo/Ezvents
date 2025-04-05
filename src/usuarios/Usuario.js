@@ -17,8 +17,8 @@ export class Usuario {
         if (this.#getByUsernameStmt !== null) return;
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol) VALUES (@username, @password, @nombre, @email, @apellidos, @rol)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos)');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
     }
 
@@ -26,9 +26,9 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
-        const { password, rol, nombre, apellidos, email, id } = usuario;
+        const { password, rol, nombre, apellidos, email, id, puntos } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
     }
 
     static #insert(usuario) {
@@ -40,12 +40,13 @@ export class Usuario {
             const rol = usuario.rol;
             const apellidos = usuario.apellidos;
             const email = usuario.email;
-            const datos = {username, password, nombre, apellidos, email, rol};
+            const puntos = usuario.puntos || 0; // Agregamos los puntos
+            const datos = {username, password, nombre, apellidos, email, rol, puntos};
 
             result = this.#insertStmt.run(datos);
 
             usuario.#id = result.lastInsertRowid;
-        } catch(e) { // SqliteError: https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md#class-sqliteerror
+        } catch(e) { 
             if (e.code === 'SQLITE_CONSTRAINT') {
                 throw new UsuarioYaExiste(usuario.#username);
             }
@@ -61,7 +62,8 @@ export class Usuario {
         const rol = usuario.rol;
         const apellidos = usuario.apellidos;
         const email = usuario.email;
-        const datos = {username, password, nombre, apellidos, email, rol};
+        const puntos = usuario.puntos; // Agregamos los puntos
+        const datos = {username, password, nombre, apellidos, email, rol, puntos, id: usuario.#id};
 
         const result = this.#updateStmt.run(datos);
         if (result.changes === 0) throw new UsuarioNoEncontrado(username);
@@ -95,8 +97,9 @@ export class Usuario {
     nombre;
     apellidos;
     email;
+    puntos; // Nuevo atributo puntos
 
-    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null) {
+    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0) {
         this.#username = username;
         this.#password = password;
         this.nombre = nombre;
@@ -104,6 +107,7 @@ export class Usuario {
         this.apellidos = apellidos;
         this.email = email;
         this.#id = id;
+        this.puntos = puntos; // Inicializar con el valor pasado o 0
     }
 
     get id() {
@@ -111,7 +115,6 @@ export class Usuario {
     }
 
     set password(nuevoPassword) {
-        // XXX: En el ej3 / P3 lo cambiaremos para usar async / await o Promises
         this.#password = bcrypt.hashSync(nuevoPassword);
     }
 
@@ -126,11 +129,6 @@ export class Usuario {
 }
 
 export class UsuarioNoEncontrado extends Error {
-    /**
-     * 
-     * @param {string} username 
-     * @param {ErrorOptions} [options]
-     */
     constructor(username, options) {
         super(`Usuario no encontrado: ${username}`, options);
         this.name = 'UsuarioNoEncontrado';
@@ -138,24 +136,13 @@ export class UsuarioNoEncontrado extends Error {
 }
 
 export class UsuarioOPasswordNoValido extends Error {
-    /**
-     * 
-     * @param {string} username 
-     * @param {ErrorOptions} [options]
-     */
     constructor(username, options) {
         super(`Usuario o password no válido: ${username}`, options);
         this.name = 'UsuarioOPasswordNoValido';
     }
 }
 
-
 export class UsuarioYaExiste extends Error {
-    /**
-     * 
-     * @param {string} username 
-     * @param {ErrorOptions} [options]
-     */
     constructor(username, options) {
         super(`Usuario ya existe: ${username}`, options);
         this.name = 'UsuarioYaExiste';

@@ -5,6 +5,7 @@ import { inicializaModelos } from './modelos.js';
 import { logger } from './logger.js';
 
 const db = getConnection();
+
 checkConnection(db);
 inicializaModelos(db);
 

@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="/css/descuentos.css">
+<script defer src="/js/descuento.js"></script>
+
+<!-- Modal de confirmación -->
+<div id="modalConfirmacion" class="modal oculto">
+    <div class="modal-contenido">
+        <h3>¿Seguro?</h3>
+        <p id="modalTexto"></p>
+        <button id="btnConfirmar">Confirmar</button>
+        <button id="btnCancelar">Cancelar</button>
+    </div>
+</div>
+
+<!-- Modal de mensajes (éxito/error) -->
+<div id="modalMensaje" class="modal oculto">
+    <div class="modal-contenido">
+        <p id="modalMensajeTexto"></p>
+        <button id="btnCerrarMensaje">Aceptar</button>
+    </div>
+</div>
+
+<h2>Promociones Disponibles</h2>
+<h4>Aquí podrás canjear los puntos ganados en tus compras en Ezvents por descuentos y promociones.</h4>
+<p>Puntos disponibles: <strong><%= puntosUsuario %></strong></p>
+<p>Una vez cajeado un descuento, tendrás acceso al código en tu perfil para poder usarlo.</p>
+<div id="mensajeDescuento" class="mensaje oculto"></div>
+
+<div class="descuentos">
+    <% if (locals.descuentos && locals.descuentos.length > 0) { %>
+        <% locals.descuentos.forEach(descuento => { %>
+            <div class="descuento">
+                <img src="/img/<%= descuento.imagen %>" alt="<%= descuento.titulo %>" width="300" height="auto">
+                <div class="descuento-info">
+                    <h3 class="descuento-titulo"><%= descuento.titulo %></h3>
+                    <p class="descuento-condiciones"><%= descuento.condiciones %></p>
+                    <p class="descuento-puntos"><strong>Puntos necesarios:</strong> <%= descuento.puntos %></p>
+                    <button class="btn-canjear"
+                        data-id="<%= descuento.id %>"
+                        data-puntos="<%= descuento.puntos %>">
+                        Canjear
+                    </button>                  
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>No hay promociones disponibles.</p>
+    <% } %>
+</div>
