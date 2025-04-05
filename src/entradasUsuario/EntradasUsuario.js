@@ -15,7 +15,7 @@ export class EntradasUsuario {
 
     static getEntradasByUsuario(id_usuario){
         const db = getConnection();
-        return db.prepare('SELECT ev.nombre, e.cantidad FROM entradasUsuario e JOIN Evento ev ON e.idEvento = ev.id WHERE e.idUsuario = id_usuario')
+        return db.prepare('SELECT idEvento, cantidad FROM entradasUsuario WHERE idUsuario = id_usuario')
     }
 
     static #insert(id_usuario, id_evento){
