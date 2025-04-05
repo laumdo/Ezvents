@@ -14,7 +14,7 @@
                     <p class="evento-descripcion"><%= evento.descripcion %></p>
                     <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
                     <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
-                    
+                    <button onclick="window.location.href='/foro/<%= evento.id %>'">Foro</button>
                 </div>
             </div>
         <% }) %>

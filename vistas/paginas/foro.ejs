@@ -1,17 +1,34 @@
-<div class="foro-container">
-    <h2>Foro del Evento</h2>
-    <form action="/foro/agregar" method="POST">
-        <input type="hidden" name="id" value="<%= evento_id %>">
-        <textarea name="mensaje" required></textarea>
-        <button type="submit">Enviar</button>
-    </form>
+<h2>Foro del Evento</h2>
 
-    <div class="mensajes">
-        <% mensajes.forEach(m => { %>
-            <div class="mensaje">
-                <strong><%= m.usuario %></strong> <em><%= m.fecha %></em>
-                <p><%= m.contenido %></p>
-            </div>
+<form action="/foro/agregar" method="POST">
+    <input type="hidden" name="id" value="<%= evento_id %>">
+    <textarea name="mensaje" required></textarea>
+    <button type="submit">Publicar mensaje</button>
+</form>
+
+<hr>
+
+<div class="mensajes">
+    <% function renderMensajes(mensajes, parentId = null, nivel = 0) { %>
+        <% mensajes
+            .filter(m => m.parent_id === parentId)
+            .forEach(m => { %>
+                <div>
+                    <p><strong><%= m.usuario %></strong> <em><%= m.fecha %></em></p>
+                    <p><%= m.contenido %></p>
+
+                    <form action="/foro/agregar" method="POST">
+                        <input type="hidden" name="id" value="<%= evento_id %>">
+                        
+                        <textarea name="mensaje" required placeholder="Escribe tu mensaje aquí..."></textarea>
+                        
+                        <button type="submit">Publicar mensaje</button>
+                    </form>
+
+                    <% renderMensajes(mensajes, m.id, nivel + 1); %>
+                </div>
         <% }); %>
-    </div>
+    <% } %>
+
+    <% renderMensajes(mensajes); %>
 </div>

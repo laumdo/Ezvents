@@ -12,12 +12,15 @@ import { errorHandler } from './middleware/error.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
+import { Foro } from './foros/Foro.js';
 import carritoRouter from './carrito/router.js';
+import foroRouter from './foros/router.js';
 export const app = express();
 
 getConnection(); 
 Evento.initStatements(); 
 Carrito.initStatements();
+Foro.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -49,6 +52,7 @@ app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
 app.use('/carrito', carritoRouter);
+app.use('/foro', foroRouter);
 app.use((req, res, next) => {
     res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
     next();
