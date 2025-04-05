@@ -7,13 +7,22 @@ export function verCarrito(req, res) {
 
 export function agregarAlCarrito(req, res) {
     try {
-        const { id } = req.body.id.trim();
+        console.log("Contenido de req.session:", req.session);
 
-        Carrito.agregarEvento({ id });
+        const id = req.body.id.trim();
 
-        res.render('pagina', { contenido: '/', session: req.session })
+        const id_usuario = req.session.usuario_id ? req.session.usuario_id : null;
+        console.log("Usuario ID:", id_usuario); // 🛠 Verificar si el usuario está definido
+
+    if (!id_usuario) {
+        return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para agregar al carrito' });
+    }
+
+    Carrito.agregarEvento(id_usuario, id);
+    res.redirect('/');
 
     } catch (error) {
+        console.log(error);
         res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al agregar evento al carrito' });
     }
 }

@@ -79,6 +79,7 @@ export async function doLogin(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
+        req.session.usuario_id = usuario.id;
 
         res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         return res.redirect('/');
