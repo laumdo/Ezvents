@@ -1,4 +1,4 @@
-import { Foro } from './Foro.js';
+import { Foro } from './foro.js';
 
 export const mostrarForo = (req, res) => {
     const eventoId = req.params.id;  // Obtener el ID del evento

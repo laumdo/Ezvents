@@ -12,10 +12,10 @@ import { errorHandler } from './middleware/error.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
-import carritoRouter from './carrito/router.js';
 import foroRouter from './foros/router.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
+import { Foro } from './foros/foro.js'
 import carritoRouter from './carrito/router.js';
 import descuentosRouter from './descuentos/router.js';
 import { DescuentosUsuario } from './descuentosUsuario/DescuentosUsuario.js';
