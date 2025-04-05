@@ -1,0 +1,17 @@
+<div class="foro-container">
+    <h2>Foro del Evento</h2>
+    <form action="/foro/agregar" method="POST">
+        <input type="hidden" name="id" value="<%= evento_id %>">
+        <textarea name="mensaje" required></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div class="mensajes">
+        <% mensajes.forEach(m => { %>
+            <div class="mensaje">
+                <strong><%= m.usuario %></strong> <em><%= m.fecha %></em>
+                <p><%= m.contenido %></p>
+            </div>
+        <% }); %>
+    </div>
+</div>
