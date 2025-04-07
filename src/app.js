@@ -12,12 +12,27 @@ import { errorHandler } from './middleware/error.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
+import foroRouter from './foros/router.js';
+import { Descuento } from './descuentos/Descuento.js';
+import { Usuario } from './usuarios/Usuario.js';
+import { Foro } from './foros/foro.js'
 import carritoRouter from './carrito/router.js';
+import {EntradasUsuario} from './entradasUsuario/EntradasUsuario.js';
+import entradasRouter from './entradasUsuario/router.js';
+import descuentosRouter from './descuentos/router.js';
+import { DescuentosUsuario } from './descuentosUsuario/DescuentosUsuario.js';
+import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
+
 export const app = express();
+
 
 getConnection(); 
 Evento.initStatements(); 
 Carrito.initStatements();
+EntradasUsuario.initStatements();
+Foro.initStatements();
+Descuento.initStatements();
+DescuentosUsuario.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -49,6 +64,10 @@ app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
 app.use('/carrito', carritoRouter);
+app.use('/entradasUsuario', entradasRouter);
+app.use('/foro', foroRouter);
+app.use('/descuentos', descuentosRouter);
+
 app.use((req, res, next) => {
     res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
     next();
@@ -61,6 +80,34 @@ app.get('/contacto', (req, res) => {
     res.render('pagina', params);
 });
 
+app.get('/entradas', (req, res) => {
+    const entradas=Evento.getEventoById(req.params.id);
+    const params = {
+        contenido: 'paginas/evento', 
+        session: req.session,
+        entradas
+    };
+    res.render('pagina', params);
+});
+
+app.get('/puntos', (req, res) => {
+    if (!req.session.usuario) {
+        return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados
+    }
+
+    const usuarioId = req.session.usuario.id;
+    const puntos = Usuario.getPuntosByUsuario(usuarioId); 
+    const descuentos = Descuento.getAll(); 
+
+    const params = {
+        contenido: 'paginas/puntos',
+        session: req.session,
+        puntos,
+        descuentos
+    };
+
+    res.render('pagina', params);
+});
 
 
 
@@ -83,6 +130,30 @@ app.get('/carrito', (req, res) => {
     };
     res.render('pagina', params);
 });
+
+// Middleware para manejar rutas no encontradas (404)
+app.use((req, res, next) => {
+    res.status(404).render('pagina', {
+        contenido: 'paginas/error',
+        mensaje: 'Oops, la página que buscas no existe',
+        session: req.session
+    });
+});
+
+app.use(async (req, res, next) => {
+    res.locals.usuario = req.session?.usuario || null;
+
+    if (res.locals.usuario) {
+       
+        res.locals.descuentos = await Descuento.getAll();
+    } else {
+        res.locals.descuentos = [];
+    }
+
+    next();
+});
+
+app.use("/descuentosUsuario", descuentosUsuarioRouter);
 
 app.use(errorHandler);
 

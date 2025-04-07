@@ -15,11 +15,11 @@
         </div>
 
 
-        <p><strong>Descripción:</strong> <%= evento.descripcion %></p>
-        <p><strong>Fecha:</strong> <%= evento.fecha %></p>
-        <p><strong>Lugar:</strong> <%= evento.lugar %></p>
-        <p><strong>Precio:</strong> <%= evento.precio %>€</p>
-        <p><strong>Aforo:</strong> <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+        <p>Descripción: <%= evento.descripcion %></p>
+        <p>Fecha: <%= evento.fecha %></p>
+        <p>Lugar: <%= evento.lugar %></p>
+        <p>Precio: <%= evento.precio %>€</p>
+        <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
         <form action="/carrito/agregar" method="POST">
             <input type="hidden" name="id_evento" value="<%= evento.id %>">
             <input type="hidden" name="precio" value="<%= evento.precio %>">

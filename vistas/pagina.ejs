@@ -12,7 +12,14 @@
 
   <main>
     <article>
-    <%- include(contenido) %>
+      <%- include(contenido, { 
+        session: typeof session !== 'undefined' ? session : null,
+        usuario: typeof usuario !== 'undefined' ? usuario : null,
+        descuentos: typeof descuentos !== 'undefined' ? descuentos : null,
+        error: typeof error !== 'undefined' ? error : null
+    }) %>
+    
+
     </article>
   </main>
 

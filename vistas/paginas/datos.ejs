@@ -1,24 +1,53 @@
+<link rel="stylesheet" href="/css/perfil.css">
 
-    <div class="container">
-        <h1>Mi Cuenta</h1>
+<div class="container">
+    <h1>Mi Cuenta</h1>
 
-        <% if (usuario) { %>
-            <div class="user-info">
-                <p><strong>Usuario:</strong> <%= usuario.username %></p>
-                <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
-                <p><strong>Apellidos:</strong> <%= usuario.apellidos %></p>
-                <p><strong>Email:</strong> <%= usuario.email %></p>
-                <p><strong>Rol:</strong> <%= usuario.rol %></p>
+    <% if (usuario) { %>
+        <div class="user-info">
+            <p><strong>Usuario:</strong> <%= usuario.username %></p>
+            <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
+            <p><strong>Apellidos:</strong> <%= usuario.apellidos %></p>
+            <p><strong>Email:</strong> <%= usuario.email %></p>
+            <p><strong>Puntos:</strong> <%= usuario.puntos %></p>
+            <p><strong>Rol:</strong> <%= usuario.rol %></p>
+        </div>
+
+        <div class="boton_entradas">
+            <button onclick="window.location.href='/entradasUsuario/viewEntradas'">Ver mis entradas</button>
+        </div>
+
+        <% if (locals.descuentosUsuario && locals.descuentosUsuario.length > 0) { %>
+            <div class="user-discounts">
+                <h2>Mis Descuentos</h2>
+                <p>Consulta el código de tus descuentos canjeados para poder utilizarlos!</p>
+
+                <% locals.descuentosUsuario.forEach(descuentosUsuario => { %>
+                    <div class="descuento-card">
+                        <div class="descuento-info">
+                            <h3><%= descuentosUsuario.titulo %></h3>
+                            <p><strong>Condiciones:</strong> <%= descuentosUsuario.condiciones %></p>
+                            <p><strong>Código descuento:</strong> <%= descuentosUsuario.codigo %></p>
+                        </div>
+                        <div class="descuento-img">
+                            <img src="/img/<%= descuentosUsuario.imagen %>" alt="Imagen descuento">
+                        </div>
+                    </div>
+                <% }) %>
             </div>
+        <% } else { %>
+            <p>No tienes descuentos canjeados.</p>
+        <% } %>
+
+        <div class="eliminar-cuenta">
             <form action="/usuarios/eliminarUsuario" method="POST">
                 <input type="hidden" name="propio" value="true">
                 <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')">
                     Eliminar mi cuenta
                 </button>
             </form>
-        <% } else { %>
-            <p class="no-user">Usuario no encontrado</p>
-        <% } %>
-    </div>
-
-
+        </div>
+    <% } else { %>
+        <p class="no-user">Usuario no encontrado</p>
+    <% } %>
+</div>

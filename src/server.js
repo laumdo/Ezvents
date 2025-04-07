@@ -5,11 +5,12 @@ import { inicializaModelos } from './modelos.js';
 import { logger } from './logger.js';
 
 const db = getConnection();
+
 checkConnection(db);
 inicializaModelos(db);
 
 const server = app.listen(config.port, (error) => {
-    if (error) return /*console.log(`Error: ${error}`);*/logger.error(`Error: ${error}`);
+    if (error) return logger.error(`Error: ${error}`);
     const address = server.address();
     let actualPort = 'n/a';
     if (typeof address === 'string')  {
