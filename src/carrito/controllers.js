@@ -1,5 +1,6 @@
 import { Carrito } from './Carrito.js';
 import { Evento } from '../eventos/Evento.js';
+import { flashMessages } from '../middleware/flash.js';
 
 export function verCarrito(req, res) {
     const usuario_id = req.session.usuario_id;
@@ -26,23 +27,20 @@ export function verCarrito(req, res) {
 
 export function agregarAlCarrito(req, res) {
     try {
-        console.log("Contenido de req.session:", req.session);
 
         const id_evento = req.body.id_evento;
         const precio = req.body.precio;
 
         const id_usuario = req.session.usuario_id ? req.session.usuario_id : null;
-        console.log("Usuario ID:", id_usuario); // 🛠 Verificar si el usuario está definido
-        console.log("Evento ID:", id_evento); // 🛠 Verificar si el usuario está definido
     if (!id_usuario) {
         return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para agregar al carrito' });
     }
 
     Carrito.agregarEvento(id_usuario, id_evento, precio);
+    res.setFlash('Evento añadido al carrito.');
     res.redirect('/');
 
     } catch (error) {
-        console.log(error);
         res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al agregar evento al carrito' });
     }
 }
@@ -50,14 +48,13 @@ export function agregarAlCarrito(req, res) {
 export function eliminarDelCarrito(req, res) {
     try {
         const { id_evento } = req.body;
-        console.log("id_evento recibido:", id_evento);
         const id_usuario = req.session.usuario_id ? req.session.usuario_id : null;
 
         Carrito.deleteByEvent(id_usuario, id_evento);
 
+        res.setFlash('Evento eliminado del carrito.');
         res.redirect('/');
     } catch (error) {
-        console.log(error);
         res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al eliminar evento del carrito' });
     }
 }
@@ -65,23 +62,21 @@ export function eliminarDelCarrito(req, res) {
 export function actualizarCantidadCarrito(req, res) {
     try {
         const id_usuario = req.session.usuario_id;
-        const { id_evento, accion } = req.body;
-
+        const { id_evento} = req.body;
+        const { accion} = req.body;
         const carritoActual = Carrito.getCarrito(id_usuario);
         const item = carritoActual.find(e => e.id_evento == id_evento);
 
-        if (!item) return res.redirect('/carrito');
-
         if (accion === 'sumar') {
-            Carrito.actualizarCantidad(id_usuario, id_evento, 1);
+            Carrito.sumarCantidad(id_usuario, id_evento);
         } else if (accion === 'restar' && item.cantidad > 1) {
-            Carrito.actualizarCantidad(id_usuario, id_evento, 0);
+            Carrito.restarCantidad(id_usuario, id_evento);
+        }else{
+            res.setFlash('Cantidad de entradas actualizada.');
         }
 
-
-        res.redirect('/carrito');
+        res.redirect('/');
     } catch (error) {
-        console.error(error);
         res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al actualizar cantidad' });
     }
 }

@@ -7,6 +7,7 @@ export class Carrito {
     static #deleteStmt = null;
     static #getAllStmt = null;
     static #updateCantidadStmt = null;
+    static #restaCantidadStmt = null;
     static #checkStmt = null;
     static #deleteByEventStmt = null;
     
@@ -22,6 +23,8 @@ export class Carrito {
         this.#getAllStmt = db.prepare('SELECT * FROM carrito WHERE id_usuario = @id_usuario');
         this.#checkStmt = db.prepare('SELECT COUNT(*) as count FROM carrito WHERE id_usuario = @id_usuario AND id_evento = @id_evento');
         this.#updateCantidadStmt = db.prepare('UPDATE carrito SET cantidad = cantidad + 1 WHERE id_usuario = @id_usuario AND id_evento = @id_evento');
+        this.#restaCantidadStmt = db.prepare('UPDATE carrito SET cantidad = cantidad - 1 WHERE id_usuario = @id_usuario AND id_evento = @id_evento');
+
     }
 
     static getCarrito(id_usuario) {
@@ -30,7 +33,6 @@ export class Carrito {
 
     static agregarEvento(id_usuario, id_evento, precio) {
         const existe = this.#checkStmt.get({id_usuario, id_evento});
-        console.log("Agregando evento al carrito -> Usuario:", id_usuario, "Evento:", id_evento);
         if(existe.count === 0){
             this.#insertStmt.run({ id_usuario, id_evento, precio });
         }else{
@@ -47,8 +49,11 @@ export class Carrito {
         this.#deleteByEventStmt.run({ id_usuario, id_evento });
     }
 
-    static actualizarCantidad(id_usuario, id_evento) {
-        this.initStatements();
+    static sumarCantidad(id_usuario, id_evento) {
         this.#updateCantidadStmt.run({ id_usuario, id_evento});
+    }
+
+    static restarCantidad(id_usuario, id_evento) {
+        this.#restaCantidadStmt.run({ id_usuario, id_evento});
     }
 }

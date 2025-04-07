@@ -11,7 +11,7 @@
                     <h3 class="evento-titulo"><%= evento.nombre %></h3>
                     <p class="evento-fecha">Precio: <%= evento.precio %></p>
                     <form action="/carrito/actualizar" method="POST" class="form-cantidad">
-                        <input type="hidden" name="id_evento" value="<%= evento.id_evento %>">
+                        <input type="hidden" name="id_evento" value="<%= evento.id %>">
                         <div class="cantidad-control">
                           <button type="submit" name="accion" value="restar">-</button>
                           <span><%= evento.cantidad %></span>
