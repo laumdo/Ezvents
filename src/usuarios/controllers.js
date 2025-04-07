@@ -1,5 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum } from './Usuario.js';
+import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 import { Evento } from '../eventos/Evento.js'; // Importar la clase Evento
 import { render } from '../utils/render.js';
 import bcrypt from "bcryptjs";
@@ -204,15 +205,23 @@ export function viewDatos(req, res) {
     }
 
     let usuario = null;
+    let descuentosUsuario=null;
     try {
         console.log(req.session.username);
         usuario = Usuario.getUsuarioByUsername(req.session.username);
+        descuentosUsuario = DescuentosUsuario.obtenerPorUsuario(usuario.id);
+
     } catch (e) {
         console.error("Error obteniendo usuario:", e);
         usuario = null; 
+        descuentosUsuario=null;
     }
 
-    res.render('pagina', { contenido: 'paginas/datos', session: req.session, usuario });
+    res.render('pagina', { contenido: 'paginas/datos', 
+        session: req.session, 
+        usuario,
+        descuentosUsuario
+     });
 }
 
 
