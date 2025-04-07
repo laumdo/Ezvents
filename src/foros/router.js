@@ -1,6 +1,6 @@
 // foro/router.js
 import express from 'express';
-import { mostrarForo, agregarMensaje } from './controller.js';
+import { mostrarForo, agregarMensaje, eliminarMensaje } from './controller.js';
 
 const router = express.Router();
 
@@ -9,5 +9,8 @@ router.get('/:id', mostrarForo);
 
 // Ruta para agregar un mensaje al foro
 router.post('/agregar', agregarMensaje);
+
+// Ruta para eliminar un mensaje del foro
+router.post('/eliminar', eliminarMensaje);
 
 export default router;

@@ -17,8 +17,14 @@
                 <div>
                     <p><strong><%= m.usuario %></strong> <em><%= m.fecha %></em></p>
                     <p><%= m.contenido %></p>
+                    <% if (session && session.esAdmin) { %>
+                        <form action="/foro/eliminar" method="POST" style="display:inline;">
+                            <input type="hidden" name="id" value="<%= evento_id %>">
+                            <input type="hidden" name="mensaje_id" value="<%= m.id %>">
+                            <button type="submit">Eliminar</button>
+                        </form>
+                    <% } %>
 
-                    <!-- Si es un mensaje principal, permite responder a este mensaje -->
                     <% if (parentId === null) { %>
                         <form action="/foro/agregar" method="POST">
                             <input type="hidden" name="id" value="<%= evento_id %>">
@@ -28,7 +34,6 @@
                         </form>
                     <% } %>
 
-                    <!-- Llamada recursiva para mostrar respuestas -->
                     <% renderMensajes(mensajes, m.id, nivel + 1); %>
                 </div>
         <% }); %>

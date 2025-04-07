@@ -1,3 +1,4 @@
+import { escapeXML } from 'ejs';
 import { Foro } from './foro.js';
 
 export const mostrarForo = (req, res) => {
@@ -29,5 +30,13 @@ export const agregarMensaje = (req, res) => {
 
     // Redirigir al foro del evento
     res.redirect(`/foro/${eventoId}`);
+};
+
+export const eliminarMensaje = (req, res) => {
+    const { mensaje_id, id } = req.body;
+    const rol = req.session.rol;
+
+    Foro.borrarMensaje(mensaje_id);
+    res.redirect(`/foro/${id}`);
 };
 

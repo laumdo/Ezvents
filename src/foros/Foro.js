@@ -40,4 +40,9 @@ export class Foro {
             parent_id: parentId
         });
     }
+
+    static borrarMensaje(mensajeId) {
+        const db = getConnection();
+        db.prepare('DELETE FROM mensajes WHERE id = ?').run(mensajeId);
+    }
 }
