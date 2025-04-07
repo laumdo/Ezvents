@@ -6,8 +6,6 @@ export function verPerfil(req, res) {
         const usuario = Usuario.getUsuarioByUsername(req.session.username);
         const descuentos = DescuentosUsuario.obtenerPorUsuario(usuario.id);
 
-        console.log(descuentos);  // Verifica los descuentos aquí
-
         res.render('pagina', {
             contenido: 'paginas/datos',
             session: req.session,

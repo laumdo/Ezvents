@@ -34,6 +34,7 @@
     <a href="/descuentos/">Puntos</a>
     <a href="/foro">Foro</a>
     <%if(session && (session.esAdmin || session.esEmpresa)){%>
-        <a href="<%= session.esAdmin ? '/contenido/admin' : '/contenido/empresa'%>" class="boton-anadir">Gestionar Evento</a>
+        <a href="<%= session.esAdmin ? '/contenido/admin' : '/contenido/empresa'%>" class="boton-anadir">Apartado de gestion</a>
     <%}%>
+    
 </nav>

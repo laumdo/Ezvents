@@ -25,7 +25,6 @@ import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
 
 export const app = express();
 
-//const upload = multer({ dest: config.uploads });
 
 getConnection(); 
 Evento.initStatements(); 
@@ -81,7 +80,7 @@ app.get('/contacto', (req, res) => {
     res.render('pagina', params);
 });
 
-app.get('/entradas', (req, res) => {//TODO MODIFICAR
+app.get('/entradas', (req, res) => {
     const entradas=Evento.getEventoById(req.params.id);
     const params = {
         contenido: 'paginas/evento', 
@@ -90,6 +89,7 @@ app.get('/entradas', (req, res) => {//TODO MODIFICAR
     };
     res.render('pagina', params);
 });
+
 app.get('/puntos', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados
@@ -144,8 +144,8 @@ app.use(async (req, res, next) => {
     res.locals.usuario = req.session?.usuario || null;
 
     if (res.locals.usuario) {
-        // Puedes usar async/await si getPuntosByUsuario o getAll son promesas
-        res.locals.descuentos = await Descuento.getAll(); // O filtrar por usuario si corresponde
+       
+        res.locals.descuentos = await Descuento.getAll();
     } else {
         res.locals.descuentos = [];
     }
@@ -153,9 +153,6 @@ app.use(async (req, res, next) => {
     next();
 });
 
-
-// Middleware de manejo de errores
-//app.use(errorHandler);
 app.use("/descuentosUsuario", descuentosUsuarioRouter);
 
 app.use(errorHandler);
