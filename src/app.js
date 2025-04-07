@@ -23,6 +23,8 @@ import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
 
 export const app = express();
 
+//const upload = multer({ dest: config.uploads });
+
 getConnection(); 
 Evento.initStatements(); 
 Carrito.initStatements();
@@ -127,10 +129,26 @@ app.get('/carrito', (req, res) => {
 
 // Middleware para manejar rutas no encontradas (404)
 app.use((req, res, next) => {
-    const error = new Error('Página no encontrada');
-    error.statusCode = 404;
-    next(error);
+    res.status(404).render('pagina', {
+        contenido: 'paginas/error',
+        mensaje: 'Oops, la página que buscas no existe',
+        session: req.session
+    });
 });
+
+app.use(async (req, res, next) => {
+    res.locals.usuario = req.session?.usuario || null;
+
+    if (res.locals.usuario) {
+        // Puedes usar async/await si getPuntosByUsuario o getAll son promesas
+        res.locals.descuentos = await Descuento.getAll(); // O filtrar por usuario si corresponde
+    } else {
+        res.locals.descuentos = [];
+    }
+
+    next();
+});
+
 
 // Middleware de manejo de errores
 //app.use(errorHandler);
