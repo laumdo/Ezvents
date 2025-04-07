@@ -52,15 +52,15 @@ body {
 }
 
 .evento-boton {
-    display: inline-block;
-    padding: 8px 12px;
-    background: #e74c3c;;
+    background: #ff5e62;
     color: white;
-    text-decoration: none;
+    padding: 10px 20px;
+    border: none;
     border-radius: 5px;
-    margin-top: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .evento-boton:hover {
-    background: #c0392b;
+    background: #ff9966;
 }

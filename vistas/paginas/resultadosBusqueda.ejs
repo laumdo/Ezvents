@@ -18,6 +18,7 @@
                         <p class="evento-descripcion"><%= evento.descripcion %></p>
                         <p class="evento-fecha">Fecha: <%= evento.fecha %></p>
                         <a href="/eventos/<%= evento.id %>" class="evento-boton">Saber más</a>
+                        <button onclick="window.location.href='/foro/<%= evento.id %>'">Foro</button>
                     </div>
                 </div>
             <% }) %>

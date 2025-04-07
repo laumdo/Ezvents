@@ -238,6 +238,13 @@ hr.separador {
     background: #0056b3;
 }
 
+.evento-img img {
+    width: 180px;
+    height: auto;
+    border-radius: 8px;
+    margin-left: 20px;
+  }
+
 .redes-sociales img {
     width: 40px;
 }
@@ -284,3 +291,4 @@ hr.separador {
     margin-top: 20px;
     align-items: center;
 }
+
