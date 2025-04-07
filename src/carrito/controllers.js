@@ -16,7 +16,8 @@ export function verCarrito(req, res) {
             id: evento.id,  // Asegúrate de que el id esté disponible
             nombre: evento.nombre,
             precio: evento.precio,
-            cantidad: entrada.cantidad
+            cantidad: entrada.cantidad,
+            imagen: evento.imagen
             });
             precioTotal += (evento.precio * entrada.cantidad);
         }
@@ -72,9 +73,10 @@ export function actualizarCantidadCarrito(req, res) {
         } else if (accion === 'restar' && item.cantidad > 1) {
             Carrito.restarCantidad(id_usuario, id_evento);
         }else{
-            res.setFlash('Cantidad de entradas actualizada.');
+            res.setFlash('No se puede actualizar la cantidad de entradas.');
         }
 
+        res.setFlash('Cantidad de entradas actualizada.');
         res.redirect('/');
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al actualizar cantidad' });
