@@ -24,7 +24,14 @@ export class Foro {
 
     // Insertar un mensaje en el foro
     static insertMensaje(usuario, contenido, eventoId, parentId = null) {
-        const fecha = new Date().toISOString().split('T')[0];
+        const fecha = new Date().toLocaleString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
         this.#insertStmt.run({
             usuario,
             contenido,

@@ -20,6 +20,10 @@ export const agregarMensaje = (req, res) => {
     const eventoId = req.body.id;
     const parentId = parent_id || null // si no es una respuesta, es nulo
 
+    if (usuario == null) {
+        return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para escribir en el foro' });
+    }
+
     // Agregar el mensaje sin parent_id
     Foro.insertMensaje(usuario, mensaje, eventoId, parentId);
 
