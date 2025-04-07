@@ -10,13 +10,9 @@
             <a href="/usuarios/datos">
                 <img src="/img/perfil.png" class="logo1">
             </a>
-             <%if(session.esUsuario){ %>
-
-                 <a href="/carrito/carrito">
-                    <img src="/img/carrito.jpg" alt="Carrito" class="logo1">
-                </a>
-               
-            <% } %>       
+            <a href="/carrito/carrito">
+                <img src="/img/carrito.jpg" alt="Carrito" class="logo1">
+            </a>    
             
         <% }else{ %>
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>

@@ -15,6 +15,8 @@ import {Carrito} from './carrito/Carrito.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
 import carritoRouter from './carrito/router.js';
+import {EntradasUsuario} from './entradasUsuario/EntradasUsuario.js';
+import entradasRouter from './entradasUsuario/router.js';
 import descuentosRouter from './descuentos/router.js';
 import { DescuentosUsuario } from './descuentosUsuario/DescuentosUsuario.js';
 import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
@@ -24,6 +26,7 @@ export const app = express();
 getConnection(); 
 Evento.initStatements(); 
 Carrito.initStatements();
+EntradasUsuario.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();
 
@@ -57,6 +60,7 @@ app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
 app.use('/carrito', carritoRouter);
+app.use('/entradasUsuario', entradasRouter);
 app.use('/descuentos', descuentosRouter);
 
 app.use((req, res, next) => {
@@ -71,6 +75,15 @@ app.get('/contacto', (req, res) => {
     res.render('pagina', params);
 });
 
+app.get('/entradas', (req, res) => {//TODO MODIFICAR
+    const entradas=Evento.getEventoById(req.params.id);
+    const params = {
+        contenido: 'paginas/evento', 
+        session: req.session,
+        entradas
+    };
+    res.render('pagina', params);
+});
 app.get('/puntos', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados

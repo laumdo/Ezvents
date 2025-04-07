@@ -1,5 +1,6 @@
 <h2>Carrito de Compras</h2>
 
+<div class="carrito">
 <% if (carrito.length === 0) { %>
     <p>No hay eventos en el carrito.</p>
 <% } else { %>
@@ -14,4 +15,8 @@
             </li>
         <% }); %>
     </ul>
+    <div class="boton_compra">
+        <button onclick="window.location.href='/entradasUsuario/comprar'">Finalizar compra</button>
+    </div>
 <% } %>
+</div>

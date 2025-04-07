@@ -114,6 +114,16 @@ fieldset {
     margin-top: 30px;
 }
 
+.pagar{
+    text-align: center;
+    margin-top: 30px;
+}
+
+.boton_pagar{
+    text-align: center;
+    margin-top: 30px;
+}
+
 legend {
     color: white;
     background: #ff5e62;
@@ -268,4 +278,9 @@ hr.separador {
     font-weight: bold;
 }
 
-
+.boton_compra button{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+}

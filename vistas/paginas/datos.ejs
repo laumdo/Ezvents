@@ -8,14 +8,20 @@
                 <p><strong>Nombre:</strong> <%= usuario.nombre %></p>
                 <p><strong>Apellidos:</strong> <%= usuario.apellidos %></p>
                 <p><strong>Email:</strong> <%= usuario.email %></p>
+                <p><strong>Puntos:</strong> <%= usuario.puntos %></p>
                 <p><strong>Rol:</strong> <%= usuario.rol %></p>
             </div>
-            <form action="/usuarios/eliminarUsuario" method="POST">
-                <input type="hidden" name="propio" value="true">
-                <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')">
-                    Eliminar mi cuenta
-                </button>
-            </form>
+            <div class="boton_entradas">
+                <button onclick="window.location.href='/entradasUsuario/viewEntradas'">Ver mis entradas</button>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 20px;">
+                <form action="/usuarios/eliminarUsuario" method="POST">
+                    <input type="hidden" name="propio" value="true">
+                    <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')">
+                        Eliminar mi cuenta
+                    </button>
+                </form>
+            </div>
         <% } else { %>
             <p class="no-user">Usuario no encontrado</p>
         <% } %>
