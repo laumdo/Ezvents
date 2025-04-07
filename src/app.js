@@ -90,6 +90,7 @@ app.get('/entradas', (req, res) => {//TODO MODIFICAR
     };
     res.render('pagina', params);
 });
+
 app.get('/puntos', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados

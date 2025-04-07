@@ -1,0 +1,80 @@
+.container {
+    padding: 20px;
+}
+
+.user-info p {
+    margin: 5px 0;
+}
+
+.boton_entradas {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.boton_entradas button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.boton_entradas button:hover {
+    background-color: #0056b3;
+}
+
+.user-discounts {
+    margin-top: 30px;
+}
+
+.user-discounts h2 {
+    margin-bottom: 10px;
+}
+
+.descuento-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.descuento-info {
+    flex: 1;
+}
+
+.descuento-img {
+    margin-left: 20px;
+}
+
+.descuento-img img {
+    max-width: 150px;
+    border-radius: 8px;
+}
+
+.eliminar-cuenta {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.eliminar-cuenta button {
+    padding: 10px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.eliminar-cuenta button:hover {
+    background-color: #b52a38;
+}
+
+.no-user {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}

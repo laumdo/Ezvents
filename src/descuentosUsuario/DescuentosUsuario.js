@@ -59,7 +59,14 @@ export class DescuentosUsuario {
     
 
     static obtenerPorUsuario(idUsuario) {
-        return this.#getByUsuarioStmt.all(idUsuario);
+        const db = getConnection(); 
+        const stmt = db.prepare(`
+            SELECT d.id AS idDescuento, d.titulo, d.condiciones, d.imagen, du.codigo
+            FROM DescuentosUsuario du
+            JOIN Descuento d ON du.idDescuento = d.id
+            WHERE du.idUsuario = ?
+        `);
+        return stmt.all(idUsuario);
     }
 
     static obtenerPorUsuarioYDescuento(idUsuario, idDescuento) {
