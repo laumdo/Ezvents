@@ -5,7 +5,6 @@ export function procesarFormulario(request, response) {
     response.render("datos_formulario", {
         nombre: request.body.nombre,
         apellidos: request.body.apellidos,
-        fumador: request.body.fumador === "si",
         imagen: request.file ? request.file.filename : ""
     });
 }
