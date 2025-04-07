@@ -89,6 +89,7 @@ export async function doLogin(req, res) {
         req.session.username = usuario.username;
         req.session.rol = usuario.rol;
         req.session.usuario_id = usuario.id;
+        req.session.usuario = usuario.username;
         
         req.session.esUsuario = usuario.rol === RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
@@ -285,6 +286,7 @@ export async function doRegister(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
+        req.session.usuario = usuario.username;
 
         return res.redirect('/usuarios/index');
     } catch (e) {

@@ -12,8 +12,10 @@ import { errorHandler } from './middleware/error.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
+import foroRouter from './foros/router.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
+import { Foro } from './foros/foro.js'
 import carritoRouter from './carrito/router.js';
 import {EntradasUsuario} from './entradasUsuario/EntradasUsuario.js';
 import entradasRouter from './entradasUsuario/router.js';
@@ -29,6 +31,7 @@ getConnection();
 Evento.initStatements(); 
 Carrito.initStatements();
 EntradasUsuario.initStatements();
+Foro.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();
 
@@ -63,6 +66,7 @@ app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
 app.use('/carrito', carritoRouter);
 app.use('/entradasUsuario', entradasRouter);
+app.use('/foro', foroRouter);
 app.use('/descuentos', descuentosRouter);
 
 app.use((req, res, next) => {
