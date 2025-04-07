@@ -279,5 +279,8 @@ hr.separador {
 }
 
 .boton_compra button{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
     align-items: center;
 }

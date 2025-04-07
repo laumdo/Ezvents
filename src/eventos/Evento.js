@@ -12,30 +12,31 @@
 
             if (this.#getByIdStmt !== null) return;
 
-                this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
-                this.#insertStmt = db.prepare(`
-                    INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen) 
-                    VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @imagen)
-                `);
-                this.#updateStmt = db.prepare(`
-                    UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
-                    lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
-                    WHERE id = @id
-                `);
-                this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
+            this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
+            this.#insertStmt = db.prepare(`
+                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen) 
+                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @imagen)
+            `);
+            this.#updateStmt = db.prepare(`
+                UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
+                lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
+                WHERE id = @id
+            `);
+            this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
+        }
+        
+        static getEventoById(idEvento) { 
+            try {
+                const evento = this.#getByIdStmt.get({ id: idEvento });
+                if (evento === undefined) throw new EventoNoEncontrado(idEvento);
+                
+                const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
+                return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
+            } catch (error) {
+                console.error("Error al buscar evento:", error);
+                throw error;
             }
-            static getEventoById(idEvento) { 
-                try {
-                    const evento = this.#getByIdStmt.get({ id: idEvento });
-                    if (evento === undefined) throw new EventoNoEncontrado(idEvento);
-                    
-                    const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
-                    return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
-                } catch (error) {
-                    console.error("Error al buscar evento:", error);
-                    throw error;
-                }
-            }    
+        }    
 
         
         
