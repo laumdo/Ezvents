@@ -1,8 +1,4 @@
-import { param, validationResult } from 'express-validator';
 import { Descuento } from './Descuento.js';
-import session from 'express-session';
-import { v4 as uuidv4 } from 'uuid';
-import { getConnection } from "../db.js";
 import { Usuario } from '../usuarios/Usuario.js';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 
@@ -19,26 +15,32 @@ export function viewDescuentos(req, res) {
 }
 
 export function agregarDescuento(req,res){
-    try{
-        const{ titulo, condiciones, puntos}=req.body;
+    try {
+        const { titulo, condiciones, puntos } = req.body;
         const imagen = req.file ? req.file.filename : 'descuento.png';
 
-        const nuevoDescuento= new Descuento(null,titulo,condiciones,puntos,imagen);
+        const nuevoDescuento = new Descuento(null, titulo, condiciones, puntos, imagen);
         nuevoDescuento.persist();
 
-        res.render('pagina',{
-            contenido:'paginas/puntos',
-            session:req.session,
-            mensaje:'Descuento agregado con exito'
+        const usuario = Usuario.getUsuarioByUsername(req.session.username); 
+        const descuentos = Descuento.getAll();
+
+        res.render('pagina', {
+            contenido: 'paginas/puntos',
+            session: req.session,
+            mensaje: 'Descuento agregado con éxito',
+            puntosUsuario: usuario.puntos,
+            descuentos
         });
-    }catch(error){
+    } catch (error) {
         res.status(400).send("Error al agregar descuento");
     }
 }
 
+
 export function modificarDescuento(req,res){
     try{
-        const{ titulo, condiciones, puntos}=req.body;
+        const{ id,titulo, condiciones, puntos}=req.body;
         const imagen = req.file ? req.file.filename : null;
         let descuento = Descuento.getDescuento(id);
         if(!descuento) throw new DescuentoNoEncontrado(id);

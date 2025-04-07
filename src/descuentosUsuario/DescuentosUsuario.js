@@ -10,7 +10,7 @@ export class DescuentosUsuario {
     static initStatements() {
         const db = getConnection();
 
-        if (this.#insertStmt) return; // Evita reinicializar si ya están preparadas
+        if (this.#insertStmt) return;
 
         this.#insertStmt = db.prepare(`
             INSERT INTO DescuentosUsuario (idUsuario, idDescuento, codigo)

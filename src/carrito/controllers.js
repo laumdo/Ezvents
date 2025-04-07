@@ -12,7 +12,7 @@ export function agregarAlCarrito(req, res) {
         const id = req.body.id.trim();
 
         const id_usuario = req.session.usuario_id ? req.session.usuario_id : null;
-        console.log("Usuario ID:", id_usuario); // 🛠 Verificar si el usuario está definido
+        console.log("Usuario ID:", id_usuario);
 
     if (!id_usuario) {
         return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para agregar al carrito' });

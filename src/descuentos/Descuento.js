@@ -1,4 +1,4 @@
-import { getConnection } from "../db.js"; // Asegura que la conexión esté disponible
+import { getConnection } from "../db.js";
 
 export class Descuento {
     static #getByIdStmt = null;
