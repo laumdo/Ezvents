@@ -21,7 +21,8 @@
         <p><strong>Precio:</strong> <%= evento.precio %>€</p>
         <p><strong>Aforo:</strong> <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
         <form action="/carrito/agregar" method="POST">
-            <input type="hidden" name="id" value="<%= evento.id %>">
+            <input type="hidden" name="id_evento" value="<%= evento.id %>">
+            <input type="hidden" name="precio" value="<%= evento.precio %>">
             <button type="submit" <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %> disabled <% } %>>
                 Añadir al carrito
             </button>
