@@ -92,7 +92,7 @@ app.get('/entradas', (req, res) => {
 
 app.get('/puntos', (req, res) => {
     if (!req.session.usuario) {
-        return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados
+        return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados.
     }
 
     const usuarioId = req.session.usuario.id;
