@@ -21,7 +21,7 @@
 
 <h2>Promociones Disponibles</h2>
 <h4>Aquí podrás canjear los puntos ganados en tus compras en Ezvents por descuentos y promociones.</h4>
-<p>Puntos disponibles: <%= puntosUsuario %></p>
+<p>Puntos disponibles: <strong><%= puntosUsuario %></strong></p>
 <p>Una vez cajeado un descuento, tendrás acceso al código en tu perfil para poder usarlo.</p>
 <div id="mensajeDescuento" class="mensaje oculto"></div>
 
@@ -33,7 +33,7 @@
                 <div class="descuento-info">
                     <h3 class="descuento-titulo"><%= descuento.titulo %></h3>
                     <p class="descuento-condiciones"><%= descuento.condiciones %></p>
-                    <p class="descuento-puntos">Puntos necesarios: <%= descuento.puntos %></p>
+                    <p class="descuento-puntos"><strong>Puntos necesarios:</strong> <%= descuento.puntos %></p>
                     <button class="btn-canjear"
                         data-id="<%= descuento.id %>"
                         data-puntos="<%= descuento.puntos %>">

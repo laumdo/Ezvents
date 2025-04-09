@@ -29,7 +29,14 @@ CREATE TABLE DescuentosUsuario (
 DROP TABLE IF EXISTS "Usuarios";
 CREATE TABLE Usuarios (id INTEGER NOT NULL, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, rol TEXT NOT NULL DEFAULT 'U' CHECK (rol IN ('U', 'A', 'E')), nombre TEXT NOT NULL, apellidos TEXT, email TEXT, puntos INTEGER NOT NULL DEFAULT (0), PRIMARY KEY (id AUTOINCREMENT));
 DROP TABLE IF EXISTS "carrito";
-CREATE TABLE carrito (id INTEGER PRIMARY KEY AUTOINCREMENT, id_usuario INTEGER REFERENCES Usuarios (id), id_evento INTEGER REFERENCES eventos (id));
+CREATE TABLE carrito (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario INTEGER REFERENCES Usuarios (id),
+    id_evento  INTEGER REFERENCES eventos (id),
+    precio     REAL    NOT NULL,
+    cantidad   INTEGER NOT NULL
+                       DEFAULT (1) 
+);
 DROP TABLE IF EXISTS "entradasUsuario";
 CREATE TABLE entradasUsuario (id INTEGER PRIMARY KEY AUTOINCREMENT, idUsuario INTEGER REFERENCES Usuarios (id), idEvento INTEGER REFERENCES eventos (id), cantidad INTEGER);
 DROP TABLE IF EXISTS "eventos";
