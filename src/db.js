@@ -3,6 +3,7 @@ import Database from 'better-sqlite3';
 import { logger } from './logger.js';
 
 let db = null;
+//const db = new Database('data.db');
 
 export function getConnection() {
     if (db !== null) return db;

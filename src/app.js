@@ -15,7 +15,7 @@ import {Carrito} from './carrito/Carrito.js';
 import foroRouter from './foros/router.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
-import { Foro } from './foros/foro.js'
+import { Foro } from './foros/Foro.js'
 import carritoRouter from './carrito/router.js';
 import {EntradasUsuario} from './entradasUsuario/EntradasUsuario.js';
 import entradasRouter from './entradasUsuario/router.js';
