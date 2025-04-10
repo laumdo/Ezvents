@@ -21,9 +21,13 @@
         <form action="/carrito/agregar" method="POST">
             <input type="hidden" name="id_evento" value="<%= evento.id %>">
             <input type="hidden" name="precio" value="<%= evento.precio %>">
-            <button type="submit" <% if (evento.entradas_vendidas>= evento.aforo_maximo) { %> disabled <% } %>>
-                    Añadir al carrito
-            </button>
+            <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %>
+                <p class="error">No hay entradas disponibles para este evento.</p>
+            <% } else { %>
+                <button type="submit">
+                        Añadir al carrito
+                </button>
+            <% } %>
         </form>
     </div>
 

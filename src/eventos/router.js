@@ -8,6 +8,8 @@ eventosRouter.get('/', viewEventos);
 
 eventosRouter.get('/buscarEvento', buscarEvento);
 
+eventosRouter.get('/agregarEvento', agregarEvento)
+
 
 eventosRouter.get('/:id', viewEvento);
 

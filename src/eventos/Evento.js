@@ -19,7 +19,7 @@
             `);
             this.#updateStmt = db.prepare(`
                 UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
-                lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
+                lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, entradas_vendidas = @entradas_vendidas, imagen = @imagen 
                 WHERE id = @id
             `);
             this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
@@ -79,6 +79,7 @@
             lugar: evento.lugar,
             precio: evento.precio,
             aforo_maximo: evento.aforo_maximo,
+            entradas_vendidas: evento.entradas_vendidas,
             imagen: evento.imagen
         };
 
@@ -89,6 +90,7 @@
     }
 
     static delete(id) {
+        console.log("se mete el evento en delete con id: ", id);
         const db = getConnection();
         const deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
         const result = deleteStmt.run(id);

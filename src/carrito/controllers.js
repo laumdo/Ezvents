@@ -33,9 +33,9 @@ export function agregarAlCarrito(req, res) {
         const precio = req.body.precio;
 
         const id_usuario = req.session.usuario_id ? req.session.usuario_id : null;
-    if (!id_usuario) {
-        return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para agregar al carrito' });
-    }
+        if (!id_usuario) {
+            return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para agregar al carrito' });
+        }
 
     Carrito.agregarEvento(id_usuario, id_evento, precio);
     res.setFlash('Evento añadido al carrito.');
@@ -68,12 +68,15 @@ export function actualizarCantidadCarrito(req, res) {
         const carritoActual = Carrito.getCarrito(id_usuario);
         const item = carritoActual.find(e => e.id_evento == id_evento);
 
-        if (accion === 'sumar') {
+        const evento = Evento.getEventoById(id_evento);
+
+        if (accion === 'sumar' && evento.entradas_vendidas + item.cantidad < evento.aforo_maximo) {
             Carrito.sumarCantidad(id_usuario, id_evento);
         } else if (accion === 'restar' && item.cantidad > 1) {
             Carrito.restarCantidad(id_usuario, id_evento);
         }else{
             res.setFlash('No se puede actualizar la cantidad de entradas.');
+            res.redirect('/');
         }
 
         res.setFlash('Cantidad de entradas actualizada.');
