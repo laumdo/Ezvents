@@ -8,6 +8,8 @@
  <div id="contenedor">
  
   <%- include('./partials/cabecera.ejs', { session: locals.session, esInicio: typeof esInicio !== 'undefined' ? esInicio : false }) %>
+  <%- include('./partials/sidebarIzq.ejs', { session: locals.session})%>
+  <!--, { session: locals.session, esInicio: typeof esInicio !== 'undefined' ? esInicio : false })  -->
 
 
   <main>

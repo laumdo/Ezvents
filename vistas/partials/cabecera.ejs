@@ -17,24 +17,8 @@
             
         <% }else{ %>
             <button onclick="window.location.href='/usuarios/login'">Acceder</button>
-        <% } %>  
-        <% if (session && (session.rol === 'admin' || session.rol === 'empresa')) { %>
-
-        <a href="/vistas/paginas/añadirEvento" class="boton-anadir">Añadir Evento</a>
-    <% } %>
+        <% } %>
 
 </div>
 
 </header>
-
-<hr class="separador">
-
-<nav>
-    <a href="/">Inicio</a>
-    <a href="/noticias">Noticias</a>
-    <a href="/descuentos/">Puntos</a>
-    <%if(session && (session.esAdmin || session.esEmpresa)){%>
-        <a href="<%= session.esAdmin ? '/contenido/admin' : '/contenido/empresa'%>" class="boton-anadir">Apartado de gestion</a>
-    <%}%>
-    
-</nav>
