@@ -77,7 +77,7 @@ export function actualizarCantidadCarrito(req, res) {
         }
 
         res.setFlash('Cantidad de entradas actualizada.');
-        res.redirect('/');
+        res.redirect('/carrito/carrito');
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al actualizar cantidad' });
     }
