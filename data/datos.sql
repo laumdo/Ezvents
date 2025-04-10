@@ -14,10 +14,10 @@ INSERT INTO "Usuarios" ("id","username","password","rol","nombre","apellidos","e
 INSERT INTO "Usuarios" ("id","username","password","rol","nombre","apellidos","email","puntos") VALUES (5,'empresa','$2b$10$JdCg8yL3rRkkr.hhx1rjqOe30F9lhBlqA1sjYJW6ymzYExvQFHyjy','E','empresa',NULL,NULL,0);
 INSERT INTO "Usuarios" ("id","username","password","rol","nombre","apellidos","email","puntos") VALUES (6,'adrian','$2b$10$rg9tML3YXR0cZociXpj9VuVWg16IKmEwg9GeJsBz54vGHPBhNV3tm','U','adrian',NULL,NULL,1000);
 INSERT INTO "Usuarios" ("id","username","password","rol","nombre","apellidos","email","puntos") VALUES (7,'Holi','$2b$10$WHiR8wRmG6U/oJgXCfCSyu/t537y1XIEIL3GjmvB6AFkK6WGw5c7q','A','Hola',NULL,NULL,0);
-INSERT INTO "carrito" ("id","id_usuario","id_evento") VALUES (1,2,1);
-INSERT INTO "carrito" ("id","id_usuario","id_evento") VALUES (2,2,1);
-INSERT INTO "carrito" ("id","id_usuario","id_evento") VALUES (3,2,1);
-INSERT INTO "carrito" ("id","id_usuario","id_evento") VALUES (4,2,1);
+INSERT INTO "carrito" ("id","id_usuario","id_evento","precio","cantidad") VALUES (1,2,1,20,1);
+INSERT INTO "carrito" ("id","id_usuario","id_evento","precio","cantidad") VALUES (2,2,1,25,2);
+INSERT INTO "carrito" ("id","id_usuario","id_evento","precio","cantidad") VALUES (3,2,1,15,1);
+INSERT INTO "carrito" ("id","id_usuario","id_evento","precio","cantidad") VALUES (4,2,1,36,2);
 INSERT INTO "entradasUsuario" ("id","idUsuario","idEvento","cantidad") VALUES (1,1,2,7);
 INSERT INTO "entradasUsuario" ("id","idUsuario","idEvento","cantidad") VALUES (2,1,1,6);
 INSERT INTO "eventos" ("id","nombre","descripcion","fecha","lugar","precio","aforo_maximo","entradas_vendidas","imagen") VALUES (1,'Concierto de prueba','Un gran concierto de prueba para ver si todo funciona.','2025-06-15','Madrid',30.0,500,0,'concierto.jpg');
