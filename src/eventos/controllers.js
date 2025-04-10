@@ -25,15 +25,12 @@ export function viewEvento(req, res) {
 export function agregarEvento(req, res) {
     try {
         const { nombre, descripcion, fecha, lugar, precio, aforo_maximo } = req.body;
-        const imagen = req.file ? req.file.filename : 'default.png';
+        const imagen = req.file ? req.file.filename : 'default.png'; // Si no hay imagen, usa la predeterminada
 
         const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
         nuevoEvento.persist();
 
-        res.render('pagina', { 
-            contenido: 'paginas/index', 
-            session: req.session,
-            mensaje: 'Evento modificado con éxito' });
+        res.redirect('/eventos'); // Redirigir a la lista de eventos
     } catch (error) {
         res.status(400).send("Error al agregar el evento.");
     }
