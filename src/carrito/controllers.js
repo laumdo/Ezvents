@@ -13,7 +13,7 @@ export function verCarrito(req, res) {
         const evento = Evento.getEventoById(entrada.id_evento);
         if (evento) {
             carrito.push({
-            id: evento.id,  // Asegúrate de que el id esté disponible
+            id: evento.id,
             nombre: evento.nombre,
             precio: evento.precio,
             cantidad: entrada.cantidad,

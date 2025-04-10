@@ -80,16 +80,6 @@ app.get('/contacto', (req, res) => {
     res.render('pagina', params);
 });
 
-app.get('/entradas', (req, res) => {
-    const entradas=Evento.getEventoById(req.params.id);
-    const params = {
-        contenido: 'paginas/evento', 
-        session: req.session,
-        entradas
-    };
-    res.render('pagina', params);
-});
-
 app.get('/puntos', (req, res) => {
     if (!req.session.usuario) {
         return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados.
