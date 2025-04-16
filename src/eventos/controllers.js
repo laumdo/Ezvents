@@ -103,3 +103,40 @@ export function buscarEvento(req, res) {
         res.status(500).send('Error al buscar eventos');
     }
 }
+
+
+export function apiEventos(req, res) {
+    try {
+        const eventos = Evento.getAll();
+        const eventosFormateados = eventos.map(e => {
+            const entradasDisponibles = e.aforo_maximo - e.entradas_vendidas;
+            return {
+                id: e.id,
+                title: e.nombre,
+                start: e.fecha,
+                allDay: true,
+                imagen: e.imagen,
+                aforo: e.aforo_maximo,
+                entradasDisponibles
+            };
+        });
+        res.json(eventosFormateados);
+    } catch (err) {
+        console.error('Error al obtener eventos:', err);
+        res.status(500).json({ error: 'Error al obtener eventos' });
+    }
+}
+
+
+
+export function viewCalendario(req, res) {
+    const eventos = Evento.getAll();
+    res.render('pagina', {
+        contenido: 'paginas/calendario',
+        session: req.session,
+        eventos
+    });
+}
+
+
+

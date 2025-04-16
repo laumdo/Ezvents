@@ -1,0 +1,95 @@
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+
+<style>
+    #calendar {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+</style>
+
+<h1 style="text-align: center;">Calendario de Eventos</h1>
+<div id="calendar"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            },
+            events: '/eventos/api/eventos',
+            noEventsContent: 'No hay eventos para este día',
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            dateClick: function (info) {
+                calendar.changeView('listDay', info.dateStr);
+            },
+            eventClick: function (info) {
+                const eventoId = info.event.id;
+                window.location.href = `/eventos/${eventoId}`;
+            },
+            eventDidMount: function (info) {
+            if (calendar.view.type === 'listDay' && info.event.extendedProps.imagen) {
+                const img = document.createElement('img');
+                img.src = `/img/${info.event.extendedProps.imagen}`;
+                img.alt = info.event.title;
+                img.style.width = '60px';
+                img.style.height = '60px';
+                img.style.objectFit = 'cover';
+                img.style.marginRight = '10px';
+
+                const contentEl = info.el.querySelector('.fc-list-event-title');
+                if (contentEl) {
+                    contentEl.prepend(img);
+                }
+            }
+
+            const aforo = info.event.extendedProps.aforo;
+            const disponibles = info.event.extendedProps.entradasDisponibles;
+
+            const now = new Date();
+            const fechaEvento = new Date(info.event.start);
+
+            let color = '';
+
+            if (fechaEvento < now) {
+                color = 'gray';
+            } else if (disponibles <= 0) {
+                color = 'red';
+            } else {
+                const porcentaje = (disponibles / aforo) * 100;
+                if (porcentaje > 50) {
+                    color = 'green';
+                } else if (porcentaje > 20) {
+                    color = 'yellow';
+                } else {
+                    color = 'orange';
+                }
+            }
+
+            info.el.style.backgroundColor = color;
+            info.el.style.border = 'none';
+
+            info.el.style.color = (color === 'yellow' || color === 'orange') ? 'black' : 'white';
+            }
+
+        });
+
+        calendar.render();
+    });
+</script>
