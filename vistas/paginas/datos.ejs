@@ -47,6 +47,14 @@
                 </button>
             </form>
         </div>
+
+        <div class="modificar-cuenta">
+            <form action="/usuarios/viewModificarUsuario" method="GET">
+                <input type="hidden" name="id" value="<%= usuario.id %>">
+                <button type="submit">Modificar mis datos</button>
+            </form>
+        </div>
+
     <% } else { %>
         <p class="no-user">Usuario no encontrado</p>
     <% } %>

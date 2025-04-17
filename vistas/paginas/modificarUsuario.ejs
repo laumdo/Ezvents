@@ -1,0 +1,28 @@
+<h1>Modificar datos</h1>
+
+
+<form action="/usuarios/modificarUsuario" method="POST">
+    <fieldset>
+        <legend>Datos a rellenar:</legend>
+
+        <div><label>Nombre:</label> <input type="text" name="nombre"/></div>
+        <div><label>Apellidos:</label> <input type="text" name="apellidos"/></div>
+        <div><label>Email:</label> <input type="text" name="email"  pattern=".+@(gmail\.com|ucm\.es)" title="El email debe ser válido"/></div>
+        <div><label>Usuario:</label> <input type="text" name="username"/></div>
+        <div><label>Contraseña:</label> <input type="password" name="password"/></div>
+
+        <div>
+            <label for="rol">Tipo de cuenta:</label>
+            <select name="rol" id="rol" required>
+                <option value="usuario">Usuario</option>
+                <option value="empresa">Empresa</option>
+                <option value="administrador">Administrador</option>
+            </select>
+        </div>
+
+        <!--Botón para enviar el formulario-->
+        <p>
+        <input type="submit" name="enviar" value="Enviar"/>
+        </p>
+    </fieldset>
+</form>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { viewLogin, doLogin, viewDatos, doLogout, viewRegister, doRegister, eliminarUsuario } from './controllers.js';
+import { viewLogin, doLogin, viewDatos, doLogout, viewRegister, doRegister, eliminarUsuario, modificarUsuario, viewModificarUsuario } from './controllers.js';
 import { autenticado } from '../middleware/auth.js';
 import { body } from 'express-validator';
 import asyncHandler from 'express-async-handler';
@@ -15,7 +15,10 @@ usuariosRouter.post('/login', autenticado(null, '/usuarios/home'),
 usuariosRouter.get('/logout', doLogout);
 
 usuariosRouter.get('/datos', viewDatos);
+usuariosRouter.get('/viewModificarUsuario', viewModificarUsuario);
 usuariosRouter.post('/eliminarUsuario', eliminarUsuario);
+usuariosRouter.post('/modificarUsuario', modificarUsuario);
+
 
 // Rutas de registro
 usuariosRouter.get('/register', autenticado(null, '/usuarios/home'), asyncHandler(viewRegister));
