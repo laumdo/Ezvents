@@ -39,19 +39,19 @@
             <p>No tienes descuentos canjeados.</p>
         <% } %>
 
+        <div class="modificar-cuenta">
+            <form action="/usuarios/viewModificarUsuario" method="GET">
+                <input type="hidden" name="id" value="<%= usuario.id %>">
+                <button type="submit">Modificar mis datos</button>
+            </form>
+        </div>
+
         <div class="eliminar-cuenta">
             <form action="/usuarios/eliminarUsuario" method="POST">
                 <input type="hidden" name="propio" value="true">
                 <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')">
                     Eliminar mi cuenta
                 </button>
-            </form>
-        </div>
-
-        <div class="modificar-cuenta">
-            <form action="/usuarios/viewModificarUsuario" method="GET">
-                <input type="hidden" name="id" value="<%= usuario.id %>">
-                <button type="submit">Modificar mis datos</button>
             </form>
         </div>
 
