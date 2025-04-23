@@ -19,7 +19,7 @@
         <%if(session && (session.esAdmin || session.esEmpresa)){%>
             <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
         <% } else if ((evento.aforo_maximo - evento.entradas_vendidas) < (evento.aforo_maximo * 0.9)) { %>
-            <p class="advertencia">Quedan pocas entradas!</p>
+            <p class="advertencia">¡Quedan pocas entradas!</p>
         <% } %>
 
         <form action="/carrito/agregar" method="POST">
