@@ -1,73 +1,20 @@
 import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum } from './Usuario.js';
-import { Evento } from '../eventos/Evento.js'; // Importar la clase Evento
+import { matchedData } from 'express-validator';
+import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
+
 import { render } from '../utils/render.js';
-import bcrypt from "bcryptjs";
-import session from 'express-session';
+
 
 
 export function viewLogin(req, res) {
-    /*let contenido = 'paginas/login';
-    if (req.session != null && req.session.login) {
-        contenido = 'paginas/index'
-    }
-    res.render('pagina', {
-        contenido,
-        session: req.session
-    });*/
     render(req, res, 'paginas/login', {
         datos: {},
         errores: {}
     });
 }
 
-/*export function doLogin(req, res) {
-    body('username').escape(); 
-    body('password').escape(); 
 
-    const username = req.body.username.trim();
-    const password = req.body.password.trim();
-
-    try {
-        const usuario = Usuario.login(username, password);
-        req.session.login = true;
-        req.session.nombre = usuario.nombre;
-        req.session.username = usuario.username;
-        req.session.esUsuario= usuario.rol===RolesEnum.USUARIO;
-        req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
-        
-        const eventos = Evento.getAll();
-        return res.render('pagina', {
-            contenido: 'paginas/index',
-            session: req.session,
-            eventos
-        });
-        req.session.esEmpresa = usuario.rol ===RolesEnum.EMPRESA;
-
-        if(req.session.esEmpresa){
-            return res.render('pagina', {
-                contenido: 'paginas/empresa', 
-                session: req.session
-            });
-        }
-        else if(req.session.esAdmin){
-            return res.render('pagina',{ 
-                contenido: 'paginas/admin',
-                session: req.session
-            });
-        }
-        else{
-            return res.redirect('/');
-        }
-
-    } catch (e) {
-        res.render('pagina', {
-            contenido: 'paginas/login',
-            session: req.session,
-            error: 'El usuario o contraseña no son válidos'
-        })
-    }
-}*/
 export async function doLogin(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -88,6 +35,8 @@ export async function doLogin(req, res) {
         req.session.nombre = usuario.nombre;
         req.session.username = usuario.username;
         req.session.rol = usuario.rol;
+        req.session.usuario_id = usuario.id;
+        req.session.usuario = usuario.username;
         
         req.session.esUsuario = usuario.rol === RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
@@ -108,10 +57,7 @@ export async function doLogin(req, res) {
 }
 
 export function doLogout(req, res, next) {
-    // TODO: https://expressjs.com/en/resources/middleware/session.html
-    // clear the user from the session object and save.
-    // this will ensure that re-using the old session id
-    // does not have a logged in user
+    
     req.session.login = null
     req.session.nombre = null;
     req.session.esAdmin = null;
@@ -120,8 +66,6 @@ export function doLogout(req, res, next) {
     req.session.save((err) => {
         if (err) next(err);
 
-        // regenerate the session, which is good practice to help
-        // guard against forms of session fixation
         req.session.regenerate((err) => {
             if (err) next(err)
             res.redirect('/');
@@ -203,67 +147,26 @@ export function viewDatos(req, res) {
     }
 
     let usuario = null;
+    let descuentosUsuario=null;
     try {
         console.log(req.session.username);
         usuario = Usuario.getUsuarioByUsername(req.session.username);
+        descuentosUsuario = DescuentosUsuario.obtenerPorUsuario(usuario.id);
+
     } catch (e) {
         console.error("Error obteniendo usuario:", e);
         usuario = null; 
+        descuentosUsuario=null;
     }
 
-    res.render('pagina', { contenido: 'paginas/datos', session: req.session, usuario });
+    res.render('pagina', { contenido: 'paginas/datos', 
+        session: req.session, 
+        usuario,
+        descuentosUsuario
+     });
 }
 
-
-/*export function doRegister(req, res){
-    body('username').escape();
-    body('password').escape();
-    body('nombre').escape();
-    body('apellidos').escape();
-    body('email').escape();
-    body('rol').escape();
-
-    const username = req.body.username.trim();
-    const password = req.body. password.trim();
-    const nombre = req.body.nombre.trim();
-    const apellidos = req.body.apellidos.trim();
-    const email = req.body.email.trim();
-    const rolSeleccionado = req.body.rol.trim().toUpperCase();
-
-    try{
-        Usuario.getUsuarioByUsername(username);
-        return res.render('pagina', {
-            contenido: 'paginas/register', 
-            session: req.session,
-            error: 'El usuario ya existe'});
-    }catch(e){
-
-    let rol;
-    if (rolSeleccionado === "USUARIO") {
-        rol = RolesEnum.USUARIO;
-    } else if (rolSeleccionado === "EMPRESA") {
-        rol = RolesEnum.EMPRESA;
-    } else if (rolSeleccionado === "ADMINISTRADOR") {
-        rol = RolesEnum.ADMIN;
-    }
-
-    const hashedPassword = bcrypt.hashSync(password, 10);//10?
-    const nuevoUsuario = new Usuario(username, hashedPassword, nombre, apellidos, email, rol);
-    nuevoUsuario.persist();
-
-    req.session.login = true;
-    req.session.nombre = nuevoUsuario.nombre;
-    req.session.username = nuevoUsuario.username;
-    req.session.apellidos = nuevoUsuario.apellidos;
-    req.session.email = nuevoUsuario.email;   
-    req.session.esUsuario=nuevoUsuario.rol===RolesEnum.USUARIO;
-    req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
-    req.session.esEmpresa=nuevoUsuario.rol === RolesEnum.EMPRESA;
-
-    return res.redirect('/');
-    }
-}*/
-export async function doRegister(req, res) {
+/*export async function doRegister(req, res) {
     const result = validationResult(req);
     if (! result.isEmpty()) {
         const errores = result.mapped();
@@ -284,6 +187,7 @@ export async function doRegister(req, res) {
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.rol = usuario.rol;
+        req.session.usuario = usuario.username;
 
         return res.redirect('/usuarios/index');
     } catch (e) {
@@ -302,4 +206,69 @@ export async function doRegister(req, res) {
             errores: {}
         });
     }
-}
+}*/
+export async function doRegister(req, res) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+      const errores = result.mapped();
+      const datos = matchedData(req);
+      return render(req, res, 'paginas/register', {
+        datos,
+        errores
+      });
+    }
+  
+    // Capturar las variables del formulario
+    const username = req.body.username;
+    const password = req.body.password;
+    const nombre = req.body.nombre;
+    const apellidos = req.body.apellidos;
+    const email = req.body.email;
+    const rolStr = req.body.rol.toLowerCase();
+  
+    // Determinar el rol según el valor seleccionado
+    let rol;
+    if (rolStr === 'usuario') {
+      rol = RolesEnum.USUARIO;
+    } else if (rolStr === 'empresa') {
+      rol = RolesEnum.EMPRESA;
+    } else if (rolStr === 'administrador') {
+      rol = RolesEnum.ADMIN;
+    } else {
+      rol = RolesEnum.USUARIO;
+    }
+  
+    try {
+      // Crear un nuevo usuario y persistirlo en la base de datos
+      const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
+      nuevoUsuario.persist();
+  
+      // Configurar la sesión con los datos del usuario
+      req.session.login = true;
+      req.session.nombre = nuevoUsuario.nombre;
+      req.session.username = nuevoUsuario.username;
+      req.session.rol = nuevoUsuario.rol;
+      req.session.esUsuario = nuevoUsuario.rol === RolesEnum.USUARIO;
+      req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
+      req.session.esEmpresa = nuevoUsuario.rol === RolesEnum.EMPRESA;
+  
+      return res.redirect('/usuarios/index');
+    } catch (e) {
+      let error = 'No se ha podido crear el usuario';
+      if (e instanceof UsuarioYaExiste) {
+        error = 'El nombre de usuario ya está utilizado';
+      }
+      const datos = matchedData(req);
+      // Eliminar datos sensibles
+      delete datos.password;
+      delete datos.passwordConfirmacion;
+      req.log.error("Problemas al registrar un nuevo usuario '%s'", username);
+      req.log.debug('El usuario no ha podido registrarse: %s', e);
+      render(req, res, 'paginas/register', {
+        error,
+        datos: {},
+        errores: {}
+      });
+    }
+  }
+  

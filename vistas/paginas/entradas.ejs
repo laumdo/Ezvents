@@ -1,0 +1,17 @@
+<h1>Tus entradas</h1>
+<div class="eventos">
+    <% if (locals.eventos && locals.eventos.length > 0) { %>
+        <% locals.eventos.forEach(evento => { %>
+            <div class="evento">
+                <div class="evento-info">
+                    <h3 class="evento-titulo"><%= evento.nombre %></h3>
+                    <p class="evento-descripcion"><%= evento.descripcion %></p>
+                    <p class="evento-fecha">Fecha:<%= evento.fecha %></p>
+                    <p class="evento-cantidad">Cantidad: <%= evento.cantidad %></p>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>Aquí podrás ver los eventos a los que tienes entrada.</p>
+    <% } %>
+</div>

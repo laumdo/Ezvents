@@ -7,23 +7,24 @@
         static #updateStmt = null;
         static #deleteStmt = null; 
 
-    static initStatements() {
-        const db = getConnection();
+        static initStatements() {
+            const db = getConnection();
 
-        if (this.#getByIdStmt !== null) return;
+            if (this.#getByIdStmt !== null) return;
 
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
             this.#insertStmt = db.prepare(`
-                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen) 
-                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @imagen)
+                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
+                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
             `);
             this.#updateStmt = db.prepare(`
                 UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
-                lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, imagen = @imagen 
+                lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, entradas_vendidas = @entradas_vendidas, imagen = @imagen 
                 WHERE id = @id
             `);
             this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
         }
+        
         static getEventoById(idEvento) { 
             try {
                 const evento = this.#getByIdStmt.get({ id: idEvento });
@@ -37,13 +38,13 @@
             }
         }    
 
-    
-    
-    static getAll() {
-        const db = getConnection(); 
-        return db.prepare('SELECT * FROM eventos').all();
-    }
-    
+        
+        
+        static getAll() {
+            const db = getConnection(); 
+            return db.prepare('SELECT * FROM eventos').all();
+        }
+        
 
         static #insert(evento) {
             let result = null;
@@ -55,6 +56,7 @@
                     lugar: evento.lugar,
                     precio: evento.precio,
                     aforo_maximo: evento.aforo_maximo,
+                    entradas_vendidas: evento.entradas_vendidas,
                     imagen: evento.imagen
                 };
 
@@ -69,31 +71,33 @@
             return evento;
         }
 
-        static #update(evento) {
-            const datos = {
-                id: evento.#id,
-                nombre: evento.nombre,
-                descripcion: evento.descripcion,
-                fecha: evento.fecha,
-                lugar: evento.lugar,
-                precio: evento.precio,
-                aforo_maximo: evento.aforo_maximo,
-                imagen: evento.imagen
-            };
-    
-            const result = this.#updateStmt.run(datos);
-            if (result.changes === 0) throw new EventoNoEncontrado(evento.#id);
-    
-            return evento;
-        }
+    static #update(evento) {
+        const datos = {
+            id: evento.#id,
+            nombre: evento.nombre,
+            descripcion: evento.descripcion,
+            fecha: evento.fecha,
+            lugar: evento.lugar,
+            precio: evento.precio,
+            aforo_maximo: evento.aforo_maximo,
+            entradas_vendidas: evento.entradas_vendidas,
+            imagen: evento.imagen
+        };
 
-        static delete(id) {
-            const db = getConnection();
-            const deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
-            const result = deleteStmt.run(id);
-            
-            if (result.changes === 0) throw new EventoNoEncontrado(id);
-        }
+        const result = this.#updateStmt.run(datos);
+        if (result.changes === 0) throw new EventoNoEncontrado(evento.#id);
+
+        return evento;
+    }
+
+    static delete(id) {
+        console.log("se mete el evento en delete con id: ", id);
+        const db = getConnection();
+        const deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
+        const result = deleteStmt.run(id);
+        
+        if (result.changes === 0) throw new EventoNoEncontrado(id);
+    }
 
         #id;
         nombre;

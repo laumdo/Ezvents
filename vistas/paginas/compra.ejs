@@ -1,0 +1,16 @@
+<h1>Pago con tarjeta</h1>
+<form action="/entradasUsuario/comprar" method="POST">
+    <div class="pagar">
+        <label>Número de Tarjeta:</label>
+        <input type="text" name="tarjeta" required pattern="\d{13,18}" title="Debe contener entre 13 y 18 dígitos">
+
+        <label>Fecha de Expiración:</label>
+        <input type="text" name="expiracion" placeholder="MM/AA" required pattern="(0[1-9]|1[0-2])\/\d{2}" title="Formato MM/YY">
+
+        <label>CVC:</label>
+        <input type="text" name="cvc" required pattern="\d{3}" title="Debe contener exactamente 3 dígitos">
+    </div>
+    <div class="boton_pagar">
+        <button type="submit">Pagar</button>
+    </div>
+</form>

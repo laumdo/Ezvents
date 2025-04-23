@@ -8,11 +8,20 @@
  <div id="contenedor">
  
   <%- include('./partials/cabecera.ejs', { session: locals.session, esInicio: typeof esInicio !== 'undefined' ? esInicio : false }) %>
+  <%- include('./partials/sidebarIzq.ejs', { session: locals.session})%>
+  <!--, { session: locals.session, esInicio: typeof esInicio !== 'undefined' ? esInicio : false })  -->
 
 
   <main>
     <article>
-    <%- include(contenido) %>
+      <%- include(contenido, { 
+        session: typeof session !== 'undefined' ? session : null,
+        usuario: typeof usuario !== 'undefined' ? usuario : null,
+        descuentos: typeof descuentos !== 'undefined' ? descuentos : null,
+        error: typeof error !== 'undefined' ? error : null
+    }) %>
+    
+
     </article>
   </main>
 

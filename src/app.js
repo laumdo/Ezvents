@@ -12,18 +12,25 @@ import { errorHandler } from './middleware/error.js';
 import { getConnection } from './db.js';
 import {Evento} from './eventos/Evento.js';
 import {Carrito} from './carrito/Carrito.js';
+import foroRouter from './foros/router.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
+import { Foro } from './foros/Foro.js'
 import carritoRouter from './carrito/router.js';
+import {EntradasUsuario} from './entradasUsuario/EntradasUsuario.js';
+import entradasRouter from './entradasUsuario/router.js';
 import descuentosRouter from './descuentos/router.js';
 import { DescuentosUsuario } from './descuentosUsuario/DescuentosUsuario.js';
 import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
 
 export const app = express();
 
+
 getConnection(); 
 Evento.initStatements(); 
 Carrito.initStatements();
+EntradasUsuario.initStatements();
+Foro.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();
 
@@ -57,6 +64,8 @@ app.use('/usuarios', usuariosRouter);
 app.use('/contenido', contenidoRouter);
 app.use('/eventos', eventosRouter);
 app.use('/carrito', carritoRouter);
+app.use('/entradasUsuario', entradasRouter);
+app.use('/foro', foroRouter);
 app.use('/descuentos', descuentosRouter);
 
 app.use((req, res, next) => {
@@ -73,7 +82,7 @@ app.get('/contacto', (req, res) => {
 
 app.get('/puntos', (req, res) => {
     if (!req.session.usuario) {
-        return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados
+        return res.redirect('/usuarios/login'); // Solo accesible para usuarios logueados.
     }
 
     const usuarioId = req.session.usuario.id;
@@ -114,13 +123,26 @@ app.get('/carrito', (req, res) => {
 
 // Middleware para manejar rutas no encontradas (404)
 app.use((req, res, next) => {
-    const error = new Error('Página no encontrada');
-    error.statusCode = 404;
-    next(error);
+    res.status(404).render('pagina', {
+        contenido: 'paginas/error',
+        mensaje: 'Oops, la página que buscas no existe',
+        session: req.session
+    });
 });
 
-// Middleware de manejo de errores
-//app.use(errorHandler);
+app.use(async (req, res, next) => {
+    res.locals.usuario = req.session?.usuario || null;
+
+    if (res.locals.usuario) {
+       
+        res.locals.descuentos = await Descuento.getAll();
+    } else {
+        res.locals.descuentos = [];
+    }
+
+    next();
+});
+
 app.use("/descuentosUsuario", descuentosUsuarioRouter);
 
 app.use(errorHandler);
