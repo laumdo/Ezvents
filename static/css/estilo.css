@@ -292,3 +292,9 @@ hr.separador {
     align-items: center;
 }
 
+.advertencia {
+    color: #d9534f;
+    font-weight: bold;
+    margin-top: 1em;
+  }
+  
