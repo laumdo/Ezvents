@@ -18,8 +18,8 @@ export class Usuario {
         if (this.#getByUsernameStmt !== null) return;
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos, fecha_nacimiento=@fecha_nacimiento WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
     }
 
@@ -27,9 +27,9 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
-        const { password, rol, nombre, apellidos, email, id, puntos } = usuario;
+        const { password, rol, nombre, apellidos, email, id, puntos, fecha_nacimiento } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos, fecha_nacimiento);
     }
 
     static #insert(usuario) {
@@ -42,7 +42,8 @@ export class Usuario {
             const apellidos = usuario.apellidos;
             const email = usuario.email;
             const puntos = usuario.puntos || 0; // Agregamos los puntos
-            const datos = {username, password, nombre, apellidos, email, rol, puntos};
+            const fecha_nacimiento=usuario.fecha_nacimiento;
+            const datos = {username, password, nombre, apellidos, email, rol, puntos,fecha_nacimiento};
 
             result = this.#insertStmt.run(datos);
 
@@ -64,7 +65,8 @@ export class Usuario {
         const apellidos = usuario.apellidos;
         const email = usuario.email;
         const puntos = usuario.puntos; // Agregamos los puntos
-        const datos = {username, password, nombre, apellidos, email, rol, puntos, id: usuario.#id};
+        const fecha_nacimiento=usuario.fecha_nacimiento;
+        const datos = {username, password, nombre, apellidos, email, rol, puntos,fecha_nacimiento, id: usuario.#id};
 
         const result = this.#updateStmt.run(datos);
         if (result.changes === 0) throw new UsuarioNoEncontrado(username);
@@ -122,8 +124,9 @@ export class Usuario {
     apellidos;
     email;
     puntos; // Nuevo atributo puntos
+    fecha_nacimiento;
 
-    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0) {
+    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0,fecha_nacimiento) {
         this.#username = username;
         this.#password = password;
         this.nombre = nombre;
@@ -132,6 +135,7 @@ export class Usuario {
         this.email = email;
         this.#id = id;
         this.puntos = puntos; // Inicializar con el valor pasado o 0
+        this.fecha_nacimiento=fecha_nacimiento;
     }
 
     get id() {
@@ -145,6 +149,17 @@ export class Usuario {
     get username() {
         return this.#username;
     }
+    
+    get age() {
+        const [y,m,d] = this.fechaNacimiento.split('-').map(Number);
+        const dob = new Date(y,m-1,d);
+        const diff = Date.now() - dob.getTime();
+        return Math.floor(diff / (1000*60*60*24*365.25));
+      }
+    
+      get isAdult() {
+        return this.age >= 18;
+      }
 
     persist() {
         if (this.#id === null) return Usuario.#insert(this);

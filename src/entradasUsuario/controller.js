@@ -59,6 +59,11 @@ export async function comprar(req, res){
                  // actualizar existencias
                  const evento = Evento.getEventoById(item.id_evento);
                  evento.entradas_vendidas += item.cantidad;
+                 const usuario = await Usuario.getUsuarioByUsername(req.session.username);
+                if (usuario.age < evento.edad_minima) {
+                    req.setFlash(`No tienes la edad mínima (${evento.edad_minima} años) para el evento "${evento.nombre}".`);
+                    return res.redirect('/carrito');
+                }
                  evento.persist();
                  // **añadir** lote de puntos en PuntosUsuario
                  Usuario.addPoints(id_usuario, item.precio * 5 * item.cantidad);

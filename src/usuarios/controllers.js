@@ -165,47 +165,7 @@ export function viewDatos(req, res) {
      });
 }
 
-/*export async function doRegister(req, res) {
-    const result = validationResult(req);
-    if (! result.isEmpty()) {
-        const errores = result.mapped();
-        const datos = matchedData(req);
-        return render(req, res, 'paginas/register', {
-            datos,
-            errores
-        });
-    }
 
-    // Capturo las variables username y password
-    const username = req.body.username;
-    const password = req.body.password;
-    const nombre = req.body.nombre;
-
-    try {
-        const usuario = await Usuario.creaUsuario(username, password, nombre);
-        req.session.login = true;
-        req.session.nombre = usuario.nombre;
-        req.session.rol = usuario.rol;
-        req.session.usuario = usuario.username;
-
-        return res.redirect('/usuarios/index');
-    } catch (e) {
-        let error = 'No se ha podido crear el usuario';
-        if (e instanceof UsuarioYaExiste) {
-            error = 'El nombre de usuario ya está utilizado';
-        }
-        const datos = matchedData(req);
-        delete datos.password;
-        delete datos.passwordConfirmacion;
-        req.log.error("Problemas al registrar un nuevo usuario '%s'", username);
-        req.log.debug('El usuario no ha podido registrarse: %s', e);
-        render(req, res, 'paginas/register', {
-            error,
-            datos: {},
-            errores: {}
-        });
-    }
-}*/
 export async function doRegister(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -223,6 +183,7 @@ export async function doRegister(req, res) {
     const nombre = req.body.nombre;
     const apellidos = req.body.apellidos;
     const email = req.body.email;
+    const fecha_nacimiento = req.body.fecha_nacimiento;
     const rolStr = req.body.rol.toLowerCase();
   
     // Determinar el rol según el valor seleccionado
@@ -239,7 +200,7 @@ export async function doRegister(req, res) {
   
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
-      const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
+      const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol,fecha_nacimiento);
       nuevoUsuario.persist();
   
       // Configurar la sesión con los datos del usuario

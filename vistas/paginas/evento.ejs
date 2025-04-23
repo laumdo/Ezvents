@@ -23,6 +23,11 @@
             <input type="hidden" name="precio" value="<%= evento.precio %>">
             <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %>
                 <p class="error">No hay entradas disponibles para este evento.</p>
+            <% } else if (userAge !== null && userAge < evento.edad_minima) { %>
+                <p style="color:red">
+                  Edad mínima: <%= evento.edad_minima %> – tú tienes <%= userAge %>
+                </p>
+                <button disabled>No puedes comprar</button>
             <% } else { %>
                 <button type="submit">
                         Añadir al carrito
