@@ -71,6 +71,26 @@ export class Usuario {
         return usuario;
     }
 
+    static addPoints(idUsuario, puntos) {
+        const db = getConnection();
+        const stmt = db.prepare(`
+          INSERT INTO PuntosUsuario (idUsuario, puntos)
+          VALUES (?, ?)
+        `);
+        stmt.run(idUsuario, puntos);
+    }
+
+    static getAvailablePoints(idUsuario) {
+        const db = getConnection();
+        const row = db.prepare(`
+          SELECT COALESCE(SUM(puntos),0) AS total
+          FROM PuntosUsuario
+          WHERE idUsuario = ?
+            AND fecha_obtencion >= datetime('now','-40 days')
+        `).get(idUsuario);
+        return row.total;
+    }
+
     static delete(id) {
         const result = this.#deleteStmt.run({ id });
         if (result.changes === 0) throw new UsuarioNoEncontrado(id);
