@@ -5,12 +5,13 @@ import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 export function viewDescuentos(req, res) {
     const descuentos = Descuento.getAll();
     const usuario = Usuario.getUsuarioByUsername(req.session.username); // Obtener el usuario por su ID
+    const puntosUsuario  = Usuario.getAvailablePoints(usuario.id);
 
     res.render('pagina', { 
         contenido: 'paginas/puntos', 
         session: req.session, 
         descuentos, 
-        puntosUsuario: usuario.puntos 
+        puntosUsuario
     });
 }
 
@@ -23,13 +24,14 @@ export function agregarDescuento(req,res){
         nuevoDescuento.persist();
 
         const usuario = Usuario.getUsuarioByUsername(req.session.username); 
+        const puntosUsuario = Usuario.getAvailablePoints(usuario.id);
         const descuentos = Descuento.getAll();
 
         res.render('pagina', {
             contenido: 'paginas/puntos',
             session: req.session,
             mensaje: 'Descuento agregado con éxito',
-            puntosUsuario: usuario.puntos,
+            puntosUsuario,
             descuentos
         });
     } catch (error) {
@@ -83,7 +85,7 @@ export function eliminarDescuento(req,res){
     }
 }
 
-export function canjearDescuento(req, res) {
+/*export function canjearDescuento(req, res) {
     const idDescuento = parseInt(req.params.id, 10);
     const usuario = Usuario.getUsuarioByUsername(req.session.username);
 
@@ -123,4 +125,26 @@ export function canjearDescuento(req, res) {
         message: "¡Descuento canjeado con éxito!" 
     });
     
-}
+}*/
+export function canjearDescuento(req, res) {
+    const idDescuento = parseInt(req.params.id, 10);
+    const usuario     = Usuario.getUsuarioByUsername(req.session.username);
+  
+    const puntosDisponibles = Usuario.getAvailablePoints(usuario.id);
+    const descuento         = Descuento.getDescuento(idDescuento);
+  
+    if (puntosDisponibles < descuento.puntos) {
+      return res.status(400).json({ error: "Puntos insuficientes" });
+    }
+    if (DescuentosUsuario.existe(usuario.id, idDescuento)) {
+      return res.status(400).json({ success: false, message: "Ya canjeado." });
+    }
+  
+    // restar puntos en la tabla PuntosUsuario
+    Usuario.addPoints(usuario.id, -descuento.puntos);
+    // registrar canje
+    DescuentosUsuario.insert(usuario.id, idDescuento);
+  
+    return res.json({ success: true, message: "¡Canjeado con éxito!" });
+  }
+  

@@ -21,13 +21,13 @@ function createConnection() {
     const db = new Database(join(dirname(import.meta.dirname), 'data', 'aw_sw.db'), options);
     db.pragma('journal_mode = WAL'); // Necesario para mejorar la durabilidad y el rendimiento
     db.exec(`
-             CREATE TABLE IF NOT EXISTS PuntosUsuario (
-                id             INTEGER PRIMARY KEY AUTOINCREMENT,
-                idUsuario      INTEGER NOT NULL REFERENCES Usuarios(id),
-                puntos         INTEGER NOT NULL,
-                fecha_obtencion DATETIME NOT NULL DEFAULT (datetime('now'))
-              );
-            `);
+        CREATE TABLE IF NOT EXISTS PuntosUsuario (
+          id               INTEGER PRIMARY KEY AUTOINCREMENT,
+          idUsuario        INTEGER NOT NULL REFERENCES Usuarios(id),
+          puntos           INTEGER NOT NULL,
+          fecha_obtencion  DATETIME NOT NULL DEFAULT (datetime('now'))
+        );
+    `)
     return db;
 }
 

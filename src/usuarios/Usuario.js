@@ -1,4 +1,5 @@
 import { ErrorDatos } from "../db.js";
+import { getConnection } from "../db.js"
 import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
@@ -78,9 +79,12 @@ export class Usuario {
           VALUES (?, ?)
         `);
         stmt.run(idUsuario, puntos);
-    }
-
-    static getAvailablePoints(idUsuario) {
+      }
+    
+      /**
+       * Suma sólo los puntos no caducados (últimos 40 días).
+       */
+      static getAvailablePoints(idUsuario) {
         const db = getConnection();
         const row = db.prepare(`
           SELECT COALESCE(SUM(puntos),0) AS total
@@ -89,7 +93,7 @@ export class Usuario {
             AND fecha_obtencion >= datetime('now','-40 days')
         `).get(idUsuario);
         return row.total;
-    }
+      }
 
     static delete(id) {
         const result = this.#deleteStmt.run({ id });

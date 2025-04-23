@@ -39,7 +39,7 @@ export async function comprar(req, res){
 
         const carrito = await Carrito.getCarrito(id_usuario);
 
-        for (const item of carrito) {
+        /*for (const item of carrito) {
             const id_evento = item.id_evento;
             const cantidad = item.cantidad;
             const evento = Evento.getEventoById(id_evento);
@@ -52,7 +52,18 @@ export async function comprar(req, res){
             usuario.puntos += item.precio * 5 * cantidad;
             await Carrito.deleteById(item.id);
         }
-        usuario.persist();
+        usuario.persist();*/
+        for (const item of carrito) {
+                // registrar la venta
+                 EntradasUsuario.compraEntrada(id_usuario, item.id_evento, item.cantidad);
+                 // actualizar existencias
+                 const evento = Evento.getEventoById(item.id_evento);
+                 evento.entradas_vendidas += item.cantidad;
+                 evento.persist();
+                 // **añadir** lote de puntos en PuntosUsuario
+                 Usuario.addPoints(id_usuario, item.precio * 5 * item.cantidad);
+                 await Carrito.deleteById(item.id);
+        }
 
         res.setFlash('Compra realizada con éxito');
         res.redirect('/');
