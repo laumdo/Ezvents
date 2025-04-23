@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eventos</title>
-    <link rel="stylesheet" href="/css/buscar.css"> <!-- Asegúrate de que la ruta sea correcta -->
+    <link rel="stylesheet" href="/css/buscar.css">
 </head>
 <body>
     <h2>Próximos Eventos</h2>
@@ -16,8 +16,9 @@
                     <div class="evento-info">
                         <h3 class="evento-titulo"><%= evento.nombre %></h3>
                         <p class="evento-descripcion"><%= evento.descripcion %></p>
-                        <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
+                        <p class="evento-fecha">Fecha: <%= evento.fecha %></p>
                         <a href="/eventos/<%= evento.id %>" class="evento-boton">Saber más</a>
+                        <button onclick="window.location.href='/foro/<%= evento.id %>'">Foro</button>
                     </div>
                 </div>
             <% }) %>

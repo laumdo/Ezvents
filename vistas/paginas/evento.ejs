@@ -1,31 +1,33 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= evento.nombre %></title>
-    <link rel="stylesheet" href="/css/saber_mas.css">
-</head>
-<body>
+
     <div class="container">
-        <h1><%= evento.nombre %></h1>
-        
+        <h1>
+            <%= evento.nombre %>
+        </h1>
+    
         <div class="image-container">
             <img src="/img/<%= evento.imagen %>" alt="Imagen del evento">
         </div>
-
-
-        <p><strong>Descripción:</strong> <%= evento.descripcion %></p>
-        <p><strong>Fecha:</strong> <%= evento.fecha %></p>
-        <p><strong>Lugar:</strong> <%= evento.lugar %></p>
-        <p><strong>Precio:</strong> <%= evento.precio %>€</p>
-        <p><strong>Aforo:</strong> <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+    
+    
+        <p>Descripción: <%= evento.descripcion %>
+        </p>
+        <p>Fecha: <%= evento.fecha %>
+        </p>
+        <p>Lugar: <%= evento.lugar %>
+        </p>
+        <p>Precio: <%= evento.precio %>€</p>
+        <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %>
+        </p>
         <form action="/carrito/agregar" method="POST">
-            <input type="hidden" name="id" value="<%= evento.id %>">
-            <button type="submit" <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %> disabled <% } %>>
-                Añadir al carrito
-            </button>
+            <input type="hidden" name="id_evento" value="<%= evento.id %>">
+            <input type="hidden" name="precio" value="<%= evento.precio %>">
+            <% if (evento.entradas_vendidas >= evento.aforo_maximo) { %>
+                <p class="error">No hay entradas disponibles para este evento.</p>
+            <% } else { %>
+                <button type="submit">
+                        Añadir al carrito
+                </button>
+            <% } %>
         </form>
     </div>
-</body>
-</html>
+

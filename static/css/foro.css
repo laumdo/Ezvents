@@ -1,0 +1,118 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #ff9966, #ff5e62);
+    margin: 0;
+    padding: 0;
+}
+
+.mensajes {
+    margin-top: 20px;
+}
+
+.mensaje {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mensaje p {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.mensaje p strong {
+    color: #e74c3c;
+}
+
+.mensaje p em {
+    color: #777;
+    font-style: normal;
+}
+
+.mensaje .contenido {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #444;
+}
+
+.mensaje .respuesta-form {
+    margin-top: 15px;
+    background: #f8f8f8;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.mensaje .respuesta-form textarea {
+    width: 100%;
+    height: 80px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    color: #444;
+}
+
+.mensaje .respuesta-form button {
+    background: #e74c3c;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.mensaje .respuesta-form button:hover {
+    background: #c0392b;
+}
+
+/* Estilo para las respuestas con indentación */
+.respuesta {
+    margin-left: 40px; /* Indentación */
+    background-color: #f9f9f9;
+    border-left: 5px solid #e74c3c;
+}
+
+/* Estilo del formulario principal para publicar un mensaje */
+.form-publicar {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.form-publicar textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.1em;
+    color: #444;
+}
+
+.form-publicar button {
+    background: #e74c3c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    width: 100%;
+}
+
+.form-publicar button:hover {
+    background: #c0392b;
+}
+
+

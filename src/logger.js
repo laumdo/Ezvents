@@ -3,7 +3,7 @@ import { config } from './config.js';
 import { join } from 'node:path';
 
 const now = new Date();
-const logFile = `${now.toISOString().replaceAll(/[^0-9A-Z]/gi, '_')}.log`; // ó `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}.log`;
+const logFile = `${now.toISOString().replaceAll(/[^0-9A-Z]/gi, '_')}.log`; 
 
 const transportConfig = {
     targets: [
@@ -23,7 +23,7 @@ if (!config.isProduction) {
         level: config.logger.level,
         target: 'pino/file',
         options: {
-            destination: 1 // 1 ==> stdout
+            destination: 1 
         }
     });
 }

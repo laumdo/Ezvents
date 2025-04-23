@@ -1,4 +1,4 @@
-import { getConnection } from "../db.js"; // Asegura que la conexión esté disponible
+import { getConnection } from "../db.js";
 
 export class Descuento {
     static #getByIdStmt = null;
@@ -77,7 +77,7 @@ export class Descuento {
         return Descuento.#update(this);
     }
 
-    constructor(id, titulo, condiciones, puntos, imagen='default.png') {
+    constructor(id, titulo, condiciones, puntos, imagen='descuento.png') {
         this.id = id;
         this.titulo = titulo;
         this.condiciones = condiciones;
