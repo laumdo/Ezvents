@@ -1,15 +1,139 @@
-
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
 
 <style>
     #calendar {
         max-width: 900px;
         margin: 40px auto;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 20px;
+    }
+
+    /* Estilo del título del mes */
+    .fc-toolbar-title {
+        font-size: 1.8rem;
+        color: #FF4E50;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo de los botones del header */
+    .fc-button {
+        background-color: #FF4E50;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 14px;
+        color: white;
+        font-weight: bold;
+        text-transform: capitalize;
+        transition: background-color 0.2s ease;
+    }
+
+    .fc-button:hover {
+        background-color: #FF715B;
+    }
+
+    .fc-button-primary:not(:disabled):active {
+        background-color: #FF2E3C;
+    }
+
+    .fc-button.fc-button-active {
+        background-color: #FF715B;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Estilo para el día actual */
+    .fc-day-today {
+        background-color: #FFF0EB !important;
+        border: 2px solid #FF4E50 !important;
+    }
+
+    /* Colores de los eventos (ya asignados dinámicamente) */
+    .fc-event {
+        border-radius: 6px;
+        font-size: 0.9rem;
+        padding: 2px 4px;
+    }
+
+    /* Leyenda */
+    .leyenda {
+        margin-top: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .leyenda-item {
+        display: inline-block;
+        margin: 0 12px;
+        font-size: 0.95rem;
+    }
+
+    .leyenda-color {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        margin-right: 6px;
+        vertical-align: middle;
+    }
+
+    .leyenda-verde {
+        background-color: green;
+    }
+
+    .leyenda-amarillo {
+        background-color: yellow;
+    }
+
+    .leyenda-naranja {
+        background-color: orange;
+    }
+
+    .leyenda-rojo {
+        background-color: red;
+    }
+
+    .leyenda-gris {
+        background-color: gray;
+    }
+
+    .fc-day-sat,
+    .fc-day-sun {
+        background-color: #f5f5f5;
+        /* gris claro */
+    }
+
+    .fc-day-today {
+        background-color: #fff3cd !important;
+        /* fondo amarillo suave */
+        border: 2px solid #ffa500 !important;
+        /* borde naranja */
+    }
+
+    .sin-eventos {
+        font-size: 0.7em;
+        color: #999;
+        text-align: right;
+        padding: 2px 4px;
+        font-style: italic;
+        opacity: 0.5;
     }
 </style>
 
 <h1 style="text-align: center;">Calendario de Eventos</h1>
 <div id="calendar"></div>
+
+<div class="leyenda">
+    <span class="leyenda-item"><span class="leyenda-color leyenda-verde"></span>Más del 50% de aforo disponible</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-amarillo"></span>Entre 20% y 50% de aforo
+        disponible</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-naranja"></span>Menos del 20% de aforo
+        disponible</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-rojo"></span>Sin entradas disponibles</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-gris"></span>Evento pasado</span>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -18,6 +142,8 @@
         const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'es',
+            firstDay: 1,
+            fixedWeekCount: false,
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -43,49 +169,50 @@
                 const eventoId = info.event.id;
                 window.location.href = `/eventos/${eventoId}`;
             },
+
             eventDidMount: function (info) {
-            if (calendar.view.type === 'listDay' && info.event.extendedProps.imagen) {
-                const img = document.createElement('img');
-                img.src = `/img/${info.event.extendedProps.imagen}`;
-                img.alt = info.event.title;
-                img.style.width = '60px';
-                img.style.height = '60px';
-                img.style.objectFit = 'cover';
-                img.style.marginRight = '10px';
+                if (calendar.view.type === 'listDay' && info.event.extendedProps.imagen) {
+                    const img = document.createElement('img');
+                    img.src = `/img/${info.event.extendedProps.imagen}`;
+                    img.alt = info.event.title;
+                    img.style.width = '60px';
+                    img.style.height = '60px';
+                    img.style.objectFit = 'cover';
+                    img.style.marginRight = '10px';
 
-                const contentEl = info.el.querySelector('.fc-list-event-title');
-                if (contentEl) {
-                    contentEl.prepend(img);
+                    const contentEl = info.el.querySelector('.fc-list-event-title');
+                    if (contentEl) {
+                        contentEl.prepend(img);
+                    }
                 }
-            }
 
-            const aforo = info.event.extendedProps.aforo;
-            const disponibles = info.event.extendedProps.entradasDisponibles;
+                const aforo = info.event.extendedProps.aforo;
+                const disponibles = info.event.extendedProps.entradasDisponibles;
 
-            const now = new Date();
-            const fechaEvento = new Date(info.event.start);
+                const now = new Date();
+                const fechaEvento = new Date(info.event.start);
 
-            let color = '';
+                let color = '';
 
-            if (fechaEvento < now) {
-                color = 'gray';
-            } else if (disponibles <= 0) {
-                color = 'red';
-            } else {
-                const porcentaje = (disponibles / aforo) * 100;
-                if (porcentaje > 50) {
-                    color = 'green';
-                } else if (porcentaje > 20) {
-                    color = 'yellow';
+                if (fechaEvento < now) {
+                    color = 'gray';
+                } else if (disponibles <= 0) {
+                    color = 'red';
                 } else {
-                    color = 'orange';
+                    const porcentaje = (disponibles / aforo) * 100;
+                    if (porcentaje > 50) {
+                        color = 'green';
+                    } else if (porcentaje > 20) {
+                        color = 'yellow';
+                    } else {
+                        color = 'orange';
+                    }
                 }
-            }
 
-            info.el.style.backgroundColor = color;
-            info.el.style.border = 'none';
+                info.el.style.backgroundColor = color;
+                info.el.style.border = 'none';
 
-            info.el.style.color = (color === 'yellow' || color === 'orange') ? 'black' : 'white';
+                info.el.style.color = (color === 'yellow' || color === 'orange') ? 'black' : 'white';
             }
 
         });

@@ -54,7 +54,7 @@ export function eliminarDelCarrito(req, res) {
         Carrito.deleteByEvent(id_usuario, id_evento);
 
         res.setFlash('Evento eliminado del carrito.');
-        res.redirect('/');
+        res.redirect('/carrito/carrito');
     } catch (error) {
         res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al eliminar evento del carrito' });
     }
