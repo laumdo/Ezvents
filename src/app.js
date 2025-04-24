@@ -24,6 +24,8 @@ import { DescuentosUsuario } from './descuentosUsuario/DescuentosUsuario.js';
 import descuentosUsuarioRouter from "./descuentosUsuario/router.js";
 import { EventoArtista } from './eventosArtistas/EventoArtista.js';
 import eventosArtistasRouter from "./eventosArtistas/router.js";
+import { Artista } from './artista/Artista.js';
+import artistaRouter from './artista/router.js';
 
 export const app = express();
 
@@ -36,6 +38,7 @@ Foro.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();
 EventoArtista.initStatements();
+Artista.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -71,6 +74,7 @@ app.use('/entradasUsuario', entradasRouter);
 app.use('/foro', foroRouter);
 app.use('/descuentos', descuentosRouter);
 app.use('/eventosArtistas', eventosArtistasRouter);
+app.use('/artista', artistaRouter);
 
 app.use((req, res, next) => {
     res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
