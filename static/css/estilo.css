@@ -177,14 +177,14 @@ hr.separador {
 }
 
 /*Para mostrar los eventos*/
-.eventos {
+.eventos, .artistas {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
 }
 
-.evento {
+.evento, .artista {
     display: flex;
     align-items: center;
     background: white;

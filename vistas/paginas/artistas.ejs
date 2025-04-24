@@ -3,14 +3,14 @@
     <% if (locals.artistas && locals.artistas.length > 0) { %>
         <% locals.artistas.forEach(artista => { %>
             <div class="artista">
-                <!--<img src="./img/<%= artista.imagen %>" alt="<%= artista.nombre %>" width="300" height="auto">-->
+                <img src="./img/<%= artista.imagen %>" alt="<%= artista.nombre %>" width="300" height="auto">
                 <div class="artista-info">
                     <h3 class="artista-nombre"><%= artista.nombreArtistico %></h3>
-                    <button onclick="window.location.href='/artistas/<%= artista.id %>'">Saber más</button>
+                    <button onclick="window.location.href='/artista/<%= artista.id %>'">Ver artista</button>
                 </div>
             </div>
         <% }) %>
-    <% } else { %>
+    <% } else { %> 
         <p>No hay artistas registrados.</p>
     <% } %>
 </div>

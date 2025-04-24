@@ -1,3 +1,4 @@
+import { param, validationResult } from 'express-validator';
 import { Artista } from "./Artista.js";
 
 export function viewArtistas(req, res){
@@ -6,15 +7,59 @@ export function viewArtistas(req, res){
 }
 
 export function viewArtista(req, res){
+    console.log("se mete en el viewArtista");
+    param('id').isInt().withMessage('ID de artista inválido');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });
+    }
+
+    try{
+        const artista = Artista.getArtistaById(req.params.id);
+        res.render('pagina', { contenido: 'paginas/artista', session: req.session, artista });
+    }catch(e){
+        res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Artista no encontrado' });
+    }
 
 }
 
 export function agregarArtista(req, res){
+    try{
+        const { nombreArtistico, nombre, biografia } = req.body;
+        const artista = new Artista(null, nombreArtistico, nombre, biografia);
+        artista.persist();
 
+        res.setFlash('Artista creado con exito');
+        res.redirect('/artista/');
+    }catch(e){
+        res.setFlash('Error al crear el artista');
+        res.redirect('/artista/');
+
+    }
 }
 
 export function modificarArtista(req, res){
+    try{
+        const { id, nombreArtistico, nombre, biografia } = req.body;
+        const imagen = req.file ? req.file.filename : null;
+        let artista = Artista.getArtistaById(id);
+        if (!artista) throw new ArtistaNoEncontrado(id);
 
+        artista.nombreArtistico = nombreArtistico || artista.nombreArtistico;
+        artista.nombre = nombre || artista.nombre;
+        artista.biografia = biografia || artista.biografia;
+        artista.imagen = imagen ? imagen : artista.imagen;
+
+        artista.persist();
+        console.log("error 1");
+
+        res.setFlash('Artista modificado con exito');
+        res.redirect('/artista/');
+    }catch(e){
+        console.error('Error en modificarArtista:', e);
+        res.setFlash('Error al modificar el artista');
+        res.redirect('/artista/');
+    }
 }
 
 export function eliminarArtista(req, res){
@@ -22,10 +67,10 @@ export function eliminarArtista(req, res){
         const { id } = req.body;
         Artista.delete(id);
         res.setFlash('Artista eliminado con exito');
-        res.redirect('/artistas');
+        res.redirect('/artista/');
     }catch(e){
         res.setFlash('Error al eliminar artista');
-        res.redirect('/artistas');
+        res.redirect('/artista/');
     }
 }
 
