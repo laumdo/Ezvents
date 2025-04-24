@@ -1,22 +1,6 @@
-export function viewEntradas(req, res){
-    const usuario_id = req.session.usuario_id;
-    
-    const entradas = EntradasUsuario.getEntradasByUsuario(usuario_id);
-
-    const eventos = [];
-
-    for (const entrada of entradas) {
-        const evento = Evento.getEventoById(entrada.idEvento);
-        if (evento) {
-            eventos.push({
-                ...evento,
-                cantidad: entrada.cantidad
-            });
-        }
-    }
-
-    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, eventos});
-}
+import { Evento } from "../eventos/Evento.js";
+import { EventoArtista } from './EventoArtista.js';
+import { flashMessages } from '../middleware/flash.js';
 
 export function viewCartelera(req, res){
     const id_evento = req.body.id_evento;
@@ -54,4 +38,15 @@ export function viewEventosDelArtista(req, res){
     }
 
     res.render('pagina', {contenido: 'paginas/entradas', session: req.session, asistencias});
+}
+
+
+
+export function agregarArtistaAEvento(req, res){
+    const id_artista = req.body.id_artista;
+    const id_evento = req.body.id_evento;
+
+    EventoArtista.añadirArtista(id_artista, id_evento);
+    res.setFlash('Artista añadido al evento.');
+    res.redirect('/');
 }
