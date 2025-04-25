@@ -1,0 +1,37 @@
+<h2>Artistas</h2>
+<div class="artistas">
+    <% if (locals.artistas && locals.artistas.length > 0) { %>
+        <% locals.artistas.forEach(artista => { %>
+            <div class="artista">
+                <img src="/img/<%= artista.imagen %>" alt="Imagen del artista" width="200" height="auto">
+                <div class="artista-info">
+                    <h3 class="artista-nombre"><%= artista.nombreArtistico %></h3>
+                    <p class="artista-genero">Género: <%= artista.genero %></p>
+                    <p class=""artista-canciones">Canciones: <%= artista.canciones %></p>
+                    <button onclick="window.location.href='/artista/<%= artista.id %>'">Ver artista</button>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %> 
+        <p>No hay artistas registrados.</p>
+    <% } %>
+</div>
+
+<%
+const flashMsg = getAndClearFlash();
+if(flashMsg){
+%>
+<dialog id="flashModal">
+    <form method="dialog">
+        <p><%= flashMsg %></p>
+        <button>Cerrar</button>
+    </form>
+</dialog>
+<% } %>
+<script>
+    const flashModal = document.getElementById('flashModal');
+    if (flashModal) {
+        flashModal.showModal();
+    }
+
+</script>

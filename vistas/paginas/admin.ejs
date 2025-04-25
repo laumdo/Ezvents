@@ -11,6 +11,7 @@
 <div class="admin-menu">
     <button onclick="mostrarSeccion('eventos')">Gestionar Eventos</button>
     <button onclick="mostrarSeccion('descuentos')">Gestionar Descuentos</button>
+    <button onclick="mostrarSeccion('artistas')">Gestionar Artistas</button>
 </div>
 
 <!-- Sección de gestión de eventos -->
@@ -120,43 +121,116 @@
         </div>
 
         <!-- Formulario para eliminar descuento -->
-    <div id="form-deleteDescuento" class="admin-form oculto">
-        <h2>Eliminar Descuento</h2>
-        <form action="/descuentos/eliminarDescuento" method="POST">
-            <label>ID del descuento:</label>
-            <input type="number" name="id" required>
-            <button type="submit">Eliminar Descuento</button>
-        </form>
+        <div id="form-deleteDescuento" class="admin-form oculto">
+            <h2>Eliminar Descuento</h2>
+            <form action="/descuentos/eliminarDescuento" method="POST">
+                <label>ID del descuento:</label>
+                <input type="number" name="id" required>
+                <button type="submit">Eliminar Descuento</button>
+            </form>
+        </div>
+
+        <!-- Formulario para modificar descuento -->
+        <div id="form-editDescuento" class="admin-form oculto">
+            <h2>Modificar Descuento</h2>
+            <form action="/descuentos/modificarDescuento" method="POST">
+                <label>ID del descuento:</label>
+                <input type="number" name="id" required>
+
+                <label>Nuevo Titulo:</label>
+                <input type="text" name="titulo">
+                
+                <label>Nuevas Condiciones:</label>
+                <textarea name="condiciones"></textarea>
+                
+                <label>Puntos:</label>
+                <input type="number" name="puntos">
+
+                <label>Nueva Imagen:</label>
+                <input type="file" name="imagen" accept="image/*">
+
+                <button type="submit">Modificar Descuento</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Formulario para modificar descuento -->
-    <div id="form-editDescuento" class="admin-form oculto">
-        <h2>Modificar Descuento</h2>
-        <form action="/descuentos/modificarDescuento" method="POST">
-            <label>ID del descuento:</label>
-            <input type="number" name="id" required>
+    <div id="seccion-artistas" class="admin-seccion oculto">
+        <h2>Gestionar Descuentos</h2>
+        <button onclick="mostrarFormulario('addArtista')">Añadir Artista</button>
+        <button onclick="mostrarFormulario('deleteArtista')">Eliminar Artista</button>
+        <button onclick="mostrarFormulario('editArtista')">Modificar Artista</button>
 
-            <label>Nuevo Titulo:</label>
-            <input type="text" name="titulo">
-            
-            <label>Nuevas Condiciones:</label>
-            <textarea name="condiciones"></textarea>
-            
-            <label>Puntos:</label>
-            <input type="number" name="puntos">
+        <!--Añadir artista-->
+        <div id="form-addArtista" class="admin-form oculto">
+            <h2>Añadir Artista</h2>
+            <form action="/artista/agregarArtista" method="POST">
+                <label>Nombre Artístico:</label>
+                <input type="text" name="nombreArtistico" required>
+                <label>Nombre:</label>
+                <input type="text" name="nombre" required>
+                <label>Biografía:</label>
+                <input type="text" name="biografia" required>
+                <label>Nacimiento:</label>
+                <input type="text" name="nacimiento" required>
+                <label>Género musical:</label>
+                <input type="text" name="genero" required>
+                <label>Canciones:</label>
+                <input type="text" name="canciones" required>
+                <label>Imagen:</label>
+                <input type="file" name="imagen" accept="image/*">
+                <button type="submit">Añadir Artista</button>
+            </form>
+        </div>
 
-            <label>Nueva Imagen:</label>
-            <input type="file" name="imagen" accept="image/*">
+        <!--Eliminar artista-->
+        <div id="form-deleteArtista" class="admin-form oculto">
+            <h2>Eliminar Artista</h2>
+            <form action="/artista/eliminarArtista" method="POST">
+                <label>ID del artista:</label>
+                <input type="number" name="id" required>
+                <button type="submit">Eliminar Artista</button>
+            </form>
+        </div>
 
-            <button type="submit">Modificar Evento</button>
-        </form>
-    </div>
+        <!--Modificar artista-->
+        <div id="form-editArtista" class="admin-form oculto">
+            <h2>Modificar Artista</h2>
+            <form action="/artista/modificarArtista" method="POST">
+                <label>ID del artista:</label>
+                <input type="number" name="id" required>
+
+                <label>Nuevo nombre artístico:</label>
+                <input type="text" name="nombreArtistico">
+                
+                <label>Nuevo nombre:</label>
+                <input type="text" name="nombre">
+                
+                <label>Nueva biografía:</label>
+                <input type="text" name="biografia">
+
+                <label>Nueva fecha de nacimiento:</label>
+                <input type="text" name="nacimiento">
+
+                <label>Nuevo género musical:</label>
+                <input type="text" name="genero">
+
+                <label>Nueva/s canciones populares:</label>
+                <input type="text" name="canciones">
+
+                <label>Nueva Imagen:</label>
+                <input type="file" name="imagen" accept="image/*">
+
+                <button type="submit">Modificar Artista</button>
+            </form>
+        </div>
+
     </div>
 
 <script>
     function mostrarSeccion(seccion) {
         document.getElementById('seccion-eventos').classList.add('oculto');
         document.getElementById('seccion-descuentos').classList.add('oculto');
+        document.getElementById('seccion-artistas').classList.add('oculto');
         document.getElementById('seccion-' + seccion).classList.remove('oculto');
     }
     
