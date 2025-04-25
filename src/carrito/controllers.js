@@ -53,8 +53,7 @@ export function eliminarDelCarrito(req, res) {
 
         Carrito.deleteByEvent(id_usuario, id_evento);
 
-        res.setFlash('Evento eliminado del carrito.');
-        res.redirect('/');
+        res.redirect('/carrito/carrito');
     } catch (error) {
         res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al eliminar evento del carrito' });
     }
@@ -75,11 +74,9 @@ export function actualizarCantidadCarrito(req, res) {
         } else if (accion === 'restar' && item.cantidad > 1) {
             Carrito.restarCantidad(id_usuario, id_evento);
         }else{
-            res.setFlash('No se puede actualizar la cantidad de entradas.');
-            res.redirect('/');
+            res.redirect('/carrito/carrito');
         }
 
-        res.setFlash('Cantidad de entradas actualizada.');
         res.redirect('/carrito/carrito');
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/error', mensaje: 'Error al actualizar cantidad' });

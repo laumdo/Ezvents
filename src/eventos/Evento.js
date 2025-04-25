@@ -14,8 +14,8 @@
 
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
             this.#insertStmt = db.prepare(`
-                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, imagen) 
-                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @imagen)
+                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
+                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
             `);
             this.#updateStmt = db.prepare(`
                 UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
@@ -56,6 +56,7 @@
                     lugar: evento.lugar,
                     precio: evento.precio,
                     aforo_maximo: evento.aforo_maximo,
+                    entradas_vendidas: evento.entradas_vendidas,
                     imagen: evento.imagen
                 };
 
