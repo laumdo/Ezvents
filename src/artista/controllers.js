@@ -7,7 +7,6 @@ export function viewArtistas(req, res){
 }
 
 export function viewArtista(req, res){
-    console.log("se mete en el viewArtista");
     param('id').isInt().withMessage('ID de artista inválido');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -23,10 +22,10 @@ export function viewArtista(req, res){
 
 }
 
-export function agregarArtista(req, res){
+export function agregarArtista(req, res){//falta poner la imagen
     try{
-        const { nombreArtistico, nombre, biografia } = req.body;
-        const artista = new Artista(null, nombreArtistico, nombre, biografia);
+        const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
+        const artista = new Artista(null, nombreArtistico, nombre, biografia, nacimiento, genero, canciones);
         artista.persist();
 
         res.setFlash('Artista creado con exito');
@@ -40,7 +39,7 @@ export function agregarArtista(req, res){
 
 export function modificarArtista(req, res){
     try{
-        const { id, nombreArtistico, nombre, biografia } = req.body;
+        const { id, nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
         const imagen = req.file ? req.file.filename : null;
         let artista = Artista.getArtistaById(id);
         if (!artista) throw new ArtistaNoEncontrado(id);
@@ -48,10 +47,12 @@ export function modificarArtista(req, res){
         artista.nombreArtistico = nombreArtistico || artista.nombreArtistico;
         artista.nombre = nombre || artista.nombre;
         artista.biografia = biografia || artista.biografia;
+        artista.nacimiento = nacimiento || artista.nacimiento;
+        artista.genero = genero || artista.genero;
+        artista.canciones = canciones || artista.canciones;
         artista.imagen = imagen ? imagen : artista.imagen;
 
         artista.persist();
-        console.log("error 1");
 
         res.setFlash('Artista modificado con exito');
         res.redirect('/artista/');
