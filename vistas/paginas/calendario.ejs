@@ -1,126 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
 
-<style>
-    #calendar {
-        max-width: 900px;
-        margin: 40px auto;
-        background-color: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        padding: 20px;
-    }
+<link rel="stylesheet" href="/css/calendario.css">
 
-    /* Estilo del título del mes */
-    .fc-toolbar-title {
-        font-size: 1.8rem;
-        color: #FF4E50;
-        font-weight: bold;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Estilo de los botones del header */
-    .fc-button {
-        background-color: #FF4E50;
-        border: none;
-        border-radius: 8px;
-        padding: 8px 14px;
-        color: white;
-        font-weight: bold;
-        text-transform: capitalize;
-        transition: background-color 0.2s ease;
-    }
-
-    .fc-button:hover {
-        background-color: #FF715B;
-    }
-
-    .fc-button-primary:not(:disabled):active {
-        background-color: #FF2E3C;
-    }
-
-    .fc-button.fc-button-active {
-        background-color: #FF715B;
-        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Estilo para el día actual */
-    .fc-day-today {
-        background-color: #FFF0EB !important;
-        border: 2px solid #FF4E50 !important;
-    }
-
-    /* Colores de los eventos (ya asignados dinámicamente) */
-    .fc-event {
-        border-radius: 6px;
-        font-size: 0.9rem;
-        padding: 2px 4px;
-    }
-
-    /* Leyenda */
-    .leyenda {
-        margin-top: 20px;
-        text-align: center;
-        font-weight: bold;
-        color: #333;
-    }
-
-    .leyenda-item {
-        display: inline-block;
-        margin: 0 12px;
-        font-size: 0.95rem;
-    }
-
-    .leyenda-color {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
-        margin-right: 6px;
-        vertical-align: middle;
-    }
-
-    .leyenda-verde {
-        background-color: green;
-    }
-
-    .leyenda-amarillo {
-        background-color: yellow;
-    }
-
-    .leyenda-naranja {
-        background-color: orange;
-    }
-
-    .leyenda-rojo {
-        background-color: red;
-    }
-
-    .leyenda-gris {
-        background-color: gray;
-    }
-
-    .fc-day-sat,
-    .fc-day-sun {
-        background-color: #f5f5f5;
-        /* gris claro */
-    }
-
-    .fc-day-today {
-        background-color: #fff3cd !important;
-        /* fondo amarillo suave */
-        border: 2px solid #ffa500 !important;
-        /* borde naranja */
-    }
-
-    .sin-eventos {
-        font-size: 0.7em;
-        color: #999;
-        text-align: right;
-        padding: 2px 4px;
-        font-style: italic;
-        opacity: 0.5;
-    }
-</style>
 
 <h1 style="text-align: center;">Calendario de Eventos</h1>
 <div id="calendar"></div>
@@ -147,7 +28,7 @@
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listDay'
+                right: 'dayGridMonth,customWeek,listDay'
             },
             buttonText: {
                 today: 'Hoy',
@@ -161,6 +42,13 @@
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: false
+            },
+            views: {
+                customWeek: {
+                    type: 'dayGrid',
+                    duration: { weeks: 1 },
+                    buttonText: 'Semana'
+                }
             },
             dateClick: function (info) {
                 calendar.changeView('listDay', info.dateStr);
@@ -186,6 +74,89 @@
                     }
                 }
 
+                if (calendar.view.type === 'listDay') {
+                    info.el.addEventListener('mouseenter', () => {
+                        info.el.style.backgroundColor = info.el.style.backgroundColor || 'inherit';
+                        info.el.style.color = info.el.style.color || 'inherit';
+                        const cells = info.el.querySelectorAll('td');
+                        cells.forEach(cell => {
+                            cell.style.backgroundColor = 'inherit';
+                            cell.style.color = 'inherit';
+                        });
+                        info.el.style.transition = 'transform 0.2s ease, box-shadow 0.3s ease';
+                        info.el.style.transform = 'translateY(-3px)';
+                        info.el.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.9)';
+                    });
+                    info.el.addEventListener('mouseleave', () => {
+                        info.el.style.transform = 'translateY(0)';
+                        info.el.style.boxShadow = 'none';
+                    });
+                }
+
+                if (info.event.extendedProps.tieneEntrada) {
+                    info.el.classList.add('evento-con-entrada');
+
+                    // Tooltip personalizado
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.innerText = '🎟️ Ya tienes entrada para este evento';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+                    tooltip.style.color = 'white';
+                    tooltip.style.padding = '6px 10px';
+                    tooltip.style.borderRadius = '6px';
+                    tooltip.style.fontSize = '0.9em';
+                    tooltip.style.pointerEvents = 'none';
+                    tooltip.style.zIndex = 9999;
+                    tooltip.style.display = 'none';
+
+                    document.body.appendChild(tooltip);
+
+                    info.el.addEventListener('mouseenter', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                        tooltip.style.display = 'block';
+                    });
+
+                    info.el.addEventListener('mousemove', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    });
+
+                    info.el.addEventListener('mouseleave', () => {
+                        tooltip.style.display = 'none';
+                    });
+                } else {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.innerText = 'ℹ️ Pulsa para saber más';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    tooltip.style.color = 'white';
+                    tooltip.style.padding = '5px 10px';
+                    tooltip.style.borderRadius = '6px';
+                    tooltip.style.fontSize = '0.85em';
+                    tooltip.style.pointerEvents = 'none';
+                    tooltip.style.zIndex = 9999;
+                    tooltip.style.display = 'none';
+
+                    document.body.appendChild(tooltip);
+
+                    info.el.addEventListener('mouseenter', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                        tooltip.style.display = 'block';
+                    });
+
+                    info.el.addEventListener('mousemove', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    });
+
+                    info.el.addEventListener('mouseleave', () => {
+                        tooltip.style.display = 'none';
+                    });
+                }
                 const aforo = info.event.extendedProps.aforo;
                 const disponibles = info.event.extendedProps.entradasDisponibles;
 
