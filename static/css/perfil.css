@@ -60,6 +60,12 @@
     margin-top: 20px;
 }
 
+.modificar-cuenta {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 .eliminar-cuenta button {
     padding: 10px 15px;
     background-color: #dc3545;
@@ -69,7 +75,20 @@
     cursor: pointer;
 }
 
+.modificar-cuenta button {
+    padding: 10px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .eliminar-cuenta button:hover {
+    background-color: #b52a38;
+}
+
+.modificar-cuenta button:hover {
     background-color: #b52a38;
 }
 

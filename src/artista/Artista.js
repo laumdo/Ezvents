@@ -10,8 +10,8 @@ export class Artista{
     static initStatements(){
         const db = getConnection();
 
-        this.#insertStmt = db.prepare('INSERT INTO artista (nombreArtistico, nombre, biografia, imagen) VALUES (@nombreArtistico, @nombre, @biografia, @imagen)');
-        this.#updateStmt = db.prepare('UPDATE artista SET nombreArtistico = @nombreArtistico, nombre = @nombre, biografia = @biografia, imagen = @imagen WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO artista (nombreArtistico, nombre, biografia, nacimiento, genero, canciones, imagen) VALUES (@nombreArtistico, @nombre, @biografia, @nacimiento, @genero, @canciones, @imagen)');
+        this.#updateStmt = db.prepare('UPDATE artista SET nombreArtistico = @nombreArtistico, nombre = @nombre, biografia = @biografia, nacimiento = @nacimiento, genero = @genero, canciones = @canciones, imagen = @imagen WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM artista WHERE id = @id');
         this.#getByIdStmt = db.prepare('SELECT * FROM artista WHERE id = @id');
         this.#getAllStmt = db.prepare('SELECT * FROM artista');
@@ -21,9 +21,9 @@ export class Artista{
         console.log("Se mete en el insert de artista");
         let result = null;
         try{
-            const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, imagen: artista.imagen };
-             result = this.#insertStmt.run(datos);
-             artista.#id = result.lastInsertRowid; // Asignar el ID al objeto artista
+            const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };
+            result = this.#insertStmt.run(datos);
+            artista.#id = result.lastInsertRowid; // Asignar el ID al objeto artista
         }catch(e){
             throw new ErrorDatos('No se ha podido insertar el artista', { cause: e});
         }
@@ -32,8 +32,7 @@ export class Artista{
     }
 
     static #update(artista){
-        console.log("Se mete en el update de artista");
-        const datos = { id: artista.#id, nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, imagen: artista.imagen };
+        const datos = { id: artista.#id, nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };
         
         const result = this.#updateStmt.run(datos);
         if(result.changes === 0) throw new ErrorDatos('Error al actualizar el artista');
@@ -52,8 +51,8 @@ export class Artista{
             const artista = this.#getByIdStmt.get({id: idArtista});
             if(artista === undefined) throw new ErrorDatos('No se ha encontrado el artista', {id: idArtista});
             
-            const { nombreArtistico, nombre, biografia, imagen } = artista;
-            return new Artista(idArtista, nombreArtistico, nombre, biografia, imagen);
+            const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones,imagen } = artista;
+            return new Artista(idArtista, nombreArtistico, nombre, biografia, nacimiento, genero, canciones, imagen);
         }catch(e){
             throw new ErrorDatos('Error al buscar el artista', { cause: e});
         }
@@ -72,13 +71,19 @@ export class Artista{
     nombreArtistico;
     nombre;
     biografia;
+    nacimiento;
+    genero;
+    canciones;
     imagen;
 
-    constructor(id = null, nombreArtistico, nombre, biografia, imagen = null){
+    constructor(id = null, nombreArtistico, nombre, biografia,nacimiento, genero, canciones, imagen = null){
         this.#id = id;
         this.nombreArtistico = nombreArtistico;
         this.nombre = nombre;
         this.biografia = biografia;
+        this.nacimiento = nacimiento;
+        this.genero = genero;
+        this.canciones = canciones;
         this.imagen = imagen;
     }
 
@@ -87,7 +92,6 @@ export class Artista{
     }
 
     persist(){
-        console.log("Se mete en el persist de artista");
         if(this.#id === null) return Artista.#insert(this);
         return Artista.#update(this);
     }

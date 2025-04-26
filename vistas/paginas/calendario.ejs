@@ -1,0 +1,193 @@
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+
+<link rel="stylesheet" href="/css/calendario.css">
+
+
+<h1 style="text-align: center;">Calendario de Eventos</h1>
+<div id="calendar"></div>
+
+<div class="leyenda">
+    <span class="leyenda-item"><span class="leyenda-color leyenda-verde"></span>Más del 50% de aforo disponible</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-amarillo"></span>Entre 20% y 50% de aforo
+        disponible</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-naranja"></span>Menos del 20% de aforo
+        disponible</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-rojo"></span>Sin entradas disponibles</span>
+    <span class="leyenda-item"><span class="leyenda-color leyenda-gris"></span>Evento pasado</span>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            firstDay: 1,
+            fixedWeekCount: false,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,customWeek,listDay'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            },
+            events: '/eventos/api/eventos',
+            noEventsContent: 'No hay eventos para este día',
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            views: {
+                customWeek: {
+                    type: 'dayGrid',
+                    duration: { weeks: 1 },
+                    buttonText: 'Semana'
+                }
+            },
+            dateClick: function (info) {
+                calendar.changeView('listDay', info.dateStr);
+            },
+            eventClick: function (info) {
+                const eventoId = info.event.id;
+                window.location.href = `/eventos/${eventoId}`;
+            },
+
+            eventDidMount: function (info) {
+                if (calendar.view.type === 'listDay' && info.event.extendedProps.imagen) {
+                    const img = document.createElement('img');
+                    img.src = `/img/${info.event.extendedProps.imagen}`;
+                    img.alt = info.event.title;
+                    img.style.width = '60px';
+                    img.style.height = '60px';
+                    img.style.objectFit = 'cover';
+                    img.style.marginRight = '10px';
+
+                    const contentEl = info.el.querySelector('.fc-list-event-title');
+                    if (contentEl) {
+                        contentEl.prepend(img);
+                    }
+                }
+
+                if (calendar.view.type === 'listDay') {
+                    info.el.addEventListener('mouseenter', () => {
+                        info.el.style.backgroundColor = info.el.style.backgroundColor || 'inherit';
+                        info.el.style.color = info.el.style.color || 'inherit';
+                        const cells = info.el.querySelectorAll('td');
+                        cells.forEach(cell => {
+                            cell.style.backgroundColor = 'inherit';
+                            cell.style.color = 'inherit';
+                        });
+                        info.el.style.transition = 'transform 0.2s ease, box-shadow 0.3s ease';
+                        info.el.style.transform = 'translateY(-3px)';
+                        info.el.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.9)';
+                    });
+                    info.el.addEventListener('mouseleave', () => {
+                        info.el.style.transform = 'translateY(0)';
+                        info.el.style.boxShadow = 'none';
+                    });
+                }
+
+                if (info.event.extendedProps.tieneEntrada) {
+                    info.el.classList.add('evento-con-entrada');
+
+                    // Tooltip personalizado
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.innerText = '🎟️ Ya tienes entrada para este evento';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+                    tooltip.style.color = 'white';
+                    tooltip.style.padding = '6px 10px';
+                    tooltip.style.borderRadius = '6px';
+                    tooltip.style.fontSize = '0.9em';
+                    tooltip.style.pointerEvents = 'none';
+                    tooltip.style.zIndex = 9999;
+                    tooltip.style.display = 'none';
+
+                    document.body.appendChild(tooltip);
+
+                    info.el.addEventListener('mouseenter', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                        tooltip.style.display = 'block';
+                    });
+
+                    info.el.addEventListener('mousemove', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    });
+
+                    info.el.addEventListener('mouseleave', () => {
+                        tooltip.style.display = 'none';
+                    });
+                } else {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    tooltip.innerText = 'ℹ️ Pulsa para saber más';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    tooltip.style.color = 'white';
+                    tooltip.style.padding = '5px 10px';
+                    tooltip.style.borderRadius = '6px';
+                    tooltip.style.fontSize = '0.85em';
+                    tooltip.style.pointerEvents = 'none';
+                    tooltip.style.zIndex = 9999;
+                    tooltip.style.display = 'none';
+
+                    document.body.appendChild(tooltip);
+
+                    info.el.addEventListener('mouseenter', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                        tooltip.style.display = 'block';
+                    });
+
+                    info.el.addEventListener('mousemove', (e) => {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    });
+
+                    info.el.addEventListener('mouseleave', () => {
+                        tooltip.style.display = 'none';
+                    });
+                }
+                const aforo = info.event.extendedProps.aforo;
+                const disponibles = info.event.extendedProps.entradasDisponibles;
+
+                const now = new Date();
+                const fechaEvento = new Date(info.event.start);
+
+                let color = '';
+
+                if (fechaEvento < now) {
+                    color = 'gray';
+                } else if (disponibles <= 0) {
+                    color = 'red';
+                } else {
+                    const porcentaje = (disponibles / aforo) * 100;
+                    if (porcentaje > 50) {
+                        color = 'green';
+                    } else if (porcentaje > 20) {
+                        color = 'yellow';
+                    } else {
+                        color = 'orange';
+                    }
+                }
+
+                info.el.style.backgroundColor = color;
+                info.el.style.border = 'none';
+
+                info.el.style.color = (color === 'yellow' || color === 'orange') ? 'black' : 'white';
+            }
+
+        });
+
+        calendar.render();
+    });
+</script>
