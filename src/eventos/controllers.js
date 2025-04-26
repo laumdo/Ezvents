@@ -24,10 +24,10 @@ export function viewEvento(req, res) {
 
 export function agregarEvento(req, res) {
     try {
-        const { nombre, descripcion, fecha, lugar, precio, aforo_maximo } = req.body;
+        const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, hora } = req.body;
         const imagen = req.file ? req.file.filename : 'default.png'; // Si no hay imagen, usa la predeterminada
 
-        const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
+        const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen, hora);
         nuevoEvento.persist();
 
         res.redirect('/eventos'); // Redirigir a la lista de eventos
@@ -38,7 +38,7 @@ export function agregarEvento(req, res) {
 
 export function modificarEvento(req, res) {
     try {
-        const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo } = req.body;
+        const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo, hora } = req.body;
         const imagen = req.file ? req.file.filename : null;
         let evento = Evento.getEventoById(id);
         if (!evento) throw new EventoNoEncontrado(id);
@@ -50,6 +50,7 @@ export function modificarEvento(req, res) {
         evento.precio = precio || evento.precio;
         evento.aforo_maximo = aforo_maximo || evento.aforo_maximo;
         evento.imagen = imagen ? imagen : evento.imagen;
+        evento.hora = hora || evento.hora;
 
 
         evento.persist(); 

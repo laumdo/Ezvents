@@ -14,11 +14,11 @@
 
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
             this.#insertStmt = db.prepare(`
-                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
-                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
+                INSERT INTO eventos (nombre, descripcion, fecha, hora, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
+                VALUES (@nombre, @descripcion, @fecha, @hora, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
             `);
             this.#updateStmt = db.prepare(`
-                UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
+                UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, hora = @hora,
                 lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, entradas_vendidas = @entradas_vendidas, imagen = @imagen 
                 WHERE id = @id
             `);
@@ -30,8 +30,8 @@
                 const evento = this.#getByIdStmt.get({ id: idEvento });
                 if (evento === undefined) throw new EventoNoEncontrado(idEvento);
                 
-                const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
-                return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
+                const { nombre, descripcion, fecha, hora, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
+                return new Evento(idEvento, nombre, descripcion, fecha, hora, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
             } catch (error) {
                 console.error("Error al buscar evento:", error);
                 throw error;
@@ -53,6 +53,7 @@
                     nombre: evento.nombre,
                     descripcion: evento.descripcion,
                     fecha: evento.fecha,
+                    hora: evento.hora,
                     lugar: evento.lugar,
                     precio: evento.precio,
                     aforo_maximo: evento.aforo_maximo,
@@ -77,6 +78,7 @@
             nombre: evento.nombre,
             descripcion: evento.descripcion,
             fecha: evento.fecha,
+            hora: evento.hora,
             lugar: evento.lugar,
             precio: evento.precio,
             aforo_maximo: evento.aforo_maximo,
@@ -108,8 +110,9 @@
         aforo_maximo;
         entradas_vendidas;
         imagen;
+        hora;
 
-        constructor(id = null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
+        constructor(id = null, nombre, descripcion, fecha, hora, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
             this.#id = id;
             this.nombre = nombre;
             this.descripcion = descripcion;
@@ -119,6 +122,7 @@
             this.aforo_maximo = aforo_maximo;
             this.entradas_vendidas = entradas_vendidas;
             this.imagen = imagen;
+            this.hora = hora;
         }
 
         get id() {
