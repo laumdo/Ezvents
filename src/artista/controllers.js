@@ -25,7 +25,8 @@ export function viewArtista(req, res){
 export function agregarArtista(req, res){//falta poner la imagen
     try{
         const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
-        const artista = new Artista(null, nombreArtistico, nombre, biografia, nacimiento, genero, canciones);
+        const imagen = req.file ? req.file.filename : 'defaultUser.png'; // Si no hay imagen, usa la predeterminada
+        const artista = new Artista(null, nombreArtistico, nombre, biografia, nacimiento, genero, canciones, imagen);
         artista.persist();
 
         res.setFlash('Artista creado con exito');

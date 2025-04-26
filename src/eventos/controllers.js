@@ -1,5 +1,6 @@
 import { param, validationResult } from 'express-validator';
 import { Evento } from './Evento.js';
+import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
 
 export function viewEventos(req, res) {
@@ -31,7 +32,17 @@ export function agregarEvento(req, res) {
         const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
         nuevoEvento.persist();
 
-        res.redirect('/eventos'); // Redirigir a la lista de eventos
+        const artistas = Artista.getAll();
+
+        //Igual quito la fecha
+
+        res.render('pagina', {
+            contenido: 'paginas/contratar',
+            session: req.session,
+            idEvento: nuevoEvento.id,
+            fecha: nuevoEvento.fecha,
+            artistas: artistas
+        });
     } catch (error) {
         res.status(400).send("Error al agregar el evento.");
     }

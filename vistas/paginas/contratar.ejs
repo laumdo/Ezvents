@@ -1,0 +1,49 @@
+<!--
+    - Ver como puedo enviarle el id del evento (hecho)
+    - Ver si puedo hacer que no se vean los artistas ya contratados para ese dia
+    - Comprobar que los botones se quitan bien
+    - Cambiar para que cuando sea modificar salga los contratados como contratados
+    - Redirigir a esta pagina web -> debería hacer un viewContratar? es que no se como redirigir ahi con los datos de los eventos
+-->
+
+<h2>Artistas disponibles</h2>
+<div class="artistas">
+    <% if (locals.artistas && locals.artistas.length > 0) { %>
+        <% locals.artistas.forEach(artista => { %>
+            
+            <div class="artista">
+                <img src="/img/<%= artista.imagen %>" alt="Imagen del artista" width="200" height="auto">
+                <div class="artista-info">
+                    <h3 class="artista-nombre"><%= artista.nombreArtistico %></h3>
+                    <p class="artista-genero">Género: <%= artista.genero %></p>
+                    <p class=""artista-canciones">Canciones: <%= artista.canciones %></p>
+                    <form id="form-contratar-<%= artista.id %>" action="/eventosArtistas/agregar" method="POST">
+                        <input type="hidden" name="id_evento" value="<%=locals.idEvento%>">
+                        <input type="hidden" name="id_artista" value="<%= artista.id %>">
+                        <button type="submit">Contratar</button>
+                    </form>
+
+                    <form id="form-eliminar-<%= artista.id %>" action="/eventosArtistas/eliminar" method="POST" style="display: none;">
+                        <input type="hidden" name="id_evento" value= "<%=locals.idEvento%>">
+                        <input type="hidden" name="id_artista" value="<%= artista.id %>">
+                        <button type="submit">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %> 
+        <p>No hay artistas disponibles.</p>
+    <% } %>
+</div>
+
+<script>
+    function contratarArtista(id) {
+        document.getElementById('contratar-' + id).style.display = 'none';
+        document.getElementById('eliminar-' + id).style.display = 'inline-block';
+    }
+    
+    function eliminarArtista(id) {
+        document.getElementById('eliminar-' + id).style.display = 'none';
+        document.getElementById('contratar-' + id).style.display = 'inline-block';
+    }
+    </script>

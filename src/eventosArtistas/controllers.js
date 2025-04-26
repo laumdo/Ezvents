@@ -43,10 +43,22 @@ export function viewEventosDelArtista(req, res){
 
 
 export function agregarArtistaAEvento(req, res){
-    const id_artista = req.body.id_artista;
-    const id_evento = req.body.id_evento;
+    try{
+        const id_artista = req.body.id_artista;
+        const id_evento = req.body.id_evento;
 
-    EventoArtista.añadirArtista(id_artista, id_evento);
-    res.setFlash('Artista añadido al evento.');
-    res.redirect('/');
+        console.log("Se mete en agregar artista evento, id_artista: ", id_artista);
+        console.log("id_evento: ", id_evento);
+
+        
+        EventoArtista.agregarArtista(id_artista, id_evento);
+        res.setFlash('Artista añadido al evento.');
+        res.redirect('/');
+    }catch(e){
+        res.render('pagina', { contenido: 'paginas/error', mensaje: e });
+    }
+}
+
+export function eliminarArtistaEvento(req, res){
+
 }

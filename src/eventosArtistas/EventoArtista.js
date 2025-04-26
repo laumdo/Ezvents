@@ -34,7 +34,7 @@ export class EventoArtista {
         return result;
     }
 
-    static añadirArtista(id_artista, id_evento) {
+    static agregarArtista(id_artista, id_evento) {
         const existe = this.#checkStmt.get({ id_artista, id_evento });
     
         if (existe.count === 0) {
