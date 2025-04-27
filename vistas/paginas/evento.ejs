@@ -22,6 +22,11 @@
             <p class="advertencia">¡Quedan pocas entradas!</p>
         <% } %>
 
+        <form action="/eventosArtistas/cartelera" method="GET" style="text-align: center; margin-top: 20px;">
+            <input type="hidden" name="id_evento" value="<%= evento.id %>">
+            <button type="submit" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Artistas</button>
+        </form>
+
         <form action="/carrito/agregar" method="POST">
             <input type="hidden" name="id_evento" value="<%= evento.id %>">
             <input type="hidden" name="precio" value="<%= evento.precio %>">

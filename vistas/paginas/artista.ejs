@@ -12,5 +12,8 @@
     <p>Canciones: <%= artista.canciones %></p>
     <p><%= artista.biografia %></p>
 
-    <!--Poner eventos a los que va (cuando este hecho acude a)-->
+    <form action="/eventosArtistas/asistencias" method="GET" style="text-align: center; margin-top: 20px;">
+      <input type="hidden" name="id_artista" value="<%= artista.id %>">
+      <button type="submit" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Próximos conciertos</button>
+  </form>
 </div>
