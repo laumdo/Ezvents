@@ -1,34 +1,32 @@
 import { Evento } from "../eventos/Evento.js";
 import { EventoArtista } from './EventoArtista.js';
+import { Artista } from "../artista/Artista.js";
 import { flashMessages } from '../middleware/flash.js';
 
 export function viewCartelera(req, res){
-    const id_evento = req.body.id_evento;
-    const artistas = EventoArtista.getEntradasByUsuario(id_evento);
+    const id_evento = req.query.id_evento;
+    const artistas = EventoArtista.getArtistsByEvent(id_evento);
 
     const cartelera = [];
 
     for (const uno of artistas) {
         const artista = Artista.getArtistaById(uno.idArtista);
         if (artista) {
-            cartelera.push({
-                id: artista.id,
-                nombre: artista.nombre
-            });
+            cartelera.push(artista);
         }
     }
 
-    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, cartelera});
+    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, artistas: cartelera});
 }
 
 export function viewEventosDelArtista(req, res){
-    const id_artista = req.body.id_artista;
-    const eventos = EventoArtista.getEntradasByUsuario(id_artista);
+    const id_artista = req.query.id_artista;
+    const eventos = EventoArtista.getEventByArtist(id_artista);
 
     const asistencias = [];
 
     for (const evento of eventos) {
-        const asiste = Evento.getEventById(evento.idEvento);
+        const asiste = Evento.getEventoById(evento.idEvento);
         if (asiste) {
             asistencias.push({
                 id: asiste.id,
@@ -37,7 +35,7 @@ export function viewEventosDelArtista(req, res){
         }
     }
 
-    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, asistencias});
+    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, eventos: asistencias});
 }
 
 
@@ -52,13 +50,48 @@ export function agregarArtistaAEvento(req, res){
 
         
         EventoArtista.agregarArtista(id_artista, id_evento);
-        res.setFlash('Artista añadido al evento.');
-        res.redirect('/');
+        req.session.id_evento = id_evento;
+        res.redirect('/eventosArtistas/viewContratar');
     }catch(e){
         res.render('pagina', { contenido: 'paginas/error', mensaje: e });
     }
 }
 
 export function eliminarArtistaEvento(req, res){
+    try{
+        const id_artista = req.body.id_artista;
+        const id_evento = req.body.id_evento;
+        
+        EventoArtista.eliminarArtista(id_artista, id_evento);
 
+        req.session.id_evento = id_evento;
+        res.redirect('/eventosArtistas/viewContratar');
+    }catch(e){
+        res.render('pagina', { contenido: 'paginas/error', mensaje: e });
+    }
+}
+
+export function viewContratar(req, res){
+    const id_evento = req.session.id_evento;
+
+    const artistas = Artista.getAll();
+    const artistasNoContratados = [];
+    const artistasContratados = [];
+
+    for (const artista of artistas) {
+        const contratado = EventoArtista.contratado(artista.id, id_evento);
+        if (contratado) {
+            artistasContratados.push(artista);
+        }else{
+            artistasNoContratados.push(artista)
+        }
+    }
+
+    res.render('pagina', {
+        contenido: 'paginas/contratar',
+        session: req.session,
+        idEvento: id_evento,
+        artistas: artistasNoContratados,
+        artistasContratados: artistasContratados
+    });
 }

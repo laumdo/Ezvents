@@ -2,6 +2,7 @@ import { param, validationResult } from 'express-validator';
 import { Evento } from './Evento.js';
 import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
+import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
 
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();
@@ -33,6 +34,17 @@ export function agregarEvento(req, res) {
         nuevoEvento.persist();
 
         const artistas = Artista.getAll();
+        const artistasNoContratados = [];
+        const artistasContratados = [];
+    
+        for (const artista of artistas) {
+            const contratado = EventoArtista.contratado(artista.id, nuevoEvento.id);
+            if (contratado) {
+                artistasContratados.push(artista);
+            }else{
+                artistasNoContratados.push(artista)
+            }
+        }
 
         //Igual quito la fecha
 
@@ -41,7 +53,8 @@ export function agregarEvento(req, res) {
             session: req.session,
             idEvento: nuevoEvento.id,
             fecha: nuevoEvento.fecha,
-            artistas: artistas
+            artistas: artistasNoContratados,
+            artistasContratados: artistasContratados
         });
     } catch (error) {
         res.status(400).send("Error al agregar el evento.");
@@ -66,10 +79,27 @@ export function modificarEvento(req, res) {
 
         evento.persist(); 
 
+        const artistas = Artista.getAll();
+        const artistasNoContratados = [];
+        const artistasContratados = [];
+    
+        for (const artista of artistas) {
+            const contratado = EventoArtista.contratado(artista.id, id);
+            if (contratado) {
+                artistasContratados.push(artista);
+            }else{
+                artistasNoContratados.push(artista)
+            }
+        }
+
         res.render('pagina', { 
-            contenido: 'paginas/admin', 
+            contenido: 'paginas/contratar', 
             session: req.session,
-            mensaje: 'Evento modificado con éxito' });
+            idEvento: id,
+            fecha: evento.fecha,
+            artistas: artistasNoContratados,
+            artistasContratados: artistasContratados
+        });
     } catch (error) {
         res.render('pagina', { 
             contenido: 'paginas/admin', 
