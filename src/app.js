@@ -26,6 +26,9 @@ import { EventoArtista } from './eventosArtistas/EventoArtista.js';
 import eventosArtistasRouter from "./eventosArtistas/router.js";
 import { Artista } from './artista/Artista.js';
 import artistaRouter from './artista/router.js';
+import { viewEventos } from './eventos/controllers.js';
+import { Valoraciones } from './valoraciones/Valoracion.js';
+import valoracionesRouter from './valoraciones/router.js';
 
 export const app = express();
 
@@ -39,6 +42,7 @@ Descuento.initStatements();
 DescuentosUsuario.initStatements();
 EventoArtista.initStatements();
 Artista.initStatements();
+Valoraciones.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -53,16 +57,7 @@ app.use(express.json());
 
 app.use('/', express.static(config.recursos));
 
-app.get('/', (req, res) => {
-    const eventos=Evento.getAll();
-    const params = {
-        contenido: 'paginas/index', 
-        session: req.session, 
-        eventos,
-        esInicio: true 
-    }
-    res.render('pagina', params);
-})
+app.get('/', viewEventos);
 
 
 
@@ -75,6 +70,7 @@ app.use('/foro', foroRouter);
 app.use('/descuentos', descuentosRouter);
 app.use('/eventosArtistas', eventosArtistasRouter);
 app.use('/artista', artistaRouter);
+app.use('/valoraciones', valoracionesRouter);
 
 app.use((req, res, next) => {
     res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío

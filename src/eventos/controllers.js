@@ -1,11 +1,24 @@
 import { param, validationResult } from 'express-validator';
 import { Evento } from './Evento.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
+import { Valoraciones } from '../valoraciones/Valoracion.js';
 
 export function viewEventos(req, res) {
-    const eventos = Evento.getAll();
-    res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos });
+    let eventos = Evento.getAll();
+    const ahora = new Date();
+
+    eventos = eventos.filter(evento => {
+        const [year, month, day] = evento.fecha.split('-').map(Number);
+        const [hour, minute] = evento.hora.split(':').map(Number);
+
+        const fechaEvento = new Date(year, month - 1, day, hour, minute);
+
+        return fechaEvento >= ahora;
+    });
+
+    res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos, esInicio: true });
 }
+
 
 export function viewEvento(req, res) {
     param('id').isInt().withMessage('ID de evento inválido');
@@ -54,17 +67,19 @@ export function modificarEvento(req, res) {
         evento.hora = hora || evento.hora;
 
 
-        evento.persist(); 
+        evento.persist();
 
-        res.render('pagina', { 
-            contenido: 'paginas/admin', 
+        res.render('pagina', {
+            contenido: 'paginas/admin',
             session: req.session,
-            mensaje: 'Evento modificado con éxito' });
+            mensaje: 'Evento modificado con éxito'
+        });
     } catch (error) {
-        res.render('pagina', { 
-            contenido: 'paginas/admin', 
+        res.render('pagina', {
+            contenido: 'paginas/admin',
             session: req.session,
-            error: 'Error al modificar el evento' });
+            error: 'Error al modificar el evento'
+        });
     }
 }
 
@@ -73,20 +88,21 @@ export function eliminarEvento(req, res) {
 
         const { id } = req.body;
         Evento.getEventoById(id);
-        
+
         Evento.delete(id);
 
-        res.render('pagina', { 
+        res.render('pagina', {
             contenido: 'paginas/admin',
-            session: req.session, 
-            mensaje: 'Evento eliminado con éxito' });
+            session: req.session,
+            mensaje: 'Evento eliminado con éxito'
+        });
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
     }
 }
 
 export function buscarEvento(req, res) {
-    const nombreEvento = req.query.nombre;  
+    const nombreEvento = req.query.nombre;
     if (!nombreEvento || nombreEvento.trim() === '') {
         return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'Nombre de evento no puede estar vacío.' });
     }
@@ -121,8 +137,8 @@ export function apiEventos(req, res) {
             return {
                 id: e.id,
                 title: e.nombre,
-                start: e.fecha,
-                allDay: true,
+                start: `${e.fecha}T${e.hora}`,
+                allDay: false,
                 imagen: e.imagen,
                 aforo: e.aforo_maximo,
                 entradasDisponibles,
@@ -145,6 +161,44 @@ export function viewCalendario(req, res) {
         session: req.session,
         eventos
     });
+}
+
+export function viewEventosPasados(req, res) {
+    let eventos = Evento.getAll();
+    const ahora = new Date();
+    const idUsuario = req.session && req.session.usuario_id;
+    console.log(idUsuario, "hola hola");
+    eventos = eventos.filter(evento => {
+        const [year, month, day] = evento.fecha.split('-').map(Number);
+        const [hour, minute] = evento.hora.split(':').map(Number);
+        const fechaEvento = new Date(year, month - 1, day, hour, minute);
+
+        return fechaEvento < ahora;
+    });
+
+    let eventosConAsistencia = [];
+
+    if (idUsuario) {
+        let eventos = EntradasUsuario.getEntradasByUsuario(idUsuario);
+        for (const evento of eventos) {
+            const event = Evento.getEventoById(evento.idEvento);
+            if (event) {
+                eventosConAsistencia.push(event);
+            }
+        }
+    }
+console.log(eventosConAsistencia);
+
+// También traer todas las valoraciones
+const valoraciones = Valoraciones.getAll();
+
+res.render('pagina', {
+    contenido: 'paginas/eventosPasados',
+    session: req.session,
+    eventos,
+    eventosConAsistencia,
+    valoraciones
+});
 }
 
 

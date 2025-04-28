@@ -1,0 +1,48 @@
+<h2>Eventos Pasados</h2>
+<div class="eventos">
+    <% if (locals.eventos && locals.eventos.length > 0) { %>
+        <% eventos.forEach(evento => { %>
+            <div class="evento">
+                <h3><%= evento.nombre %></h3>
+                
+                <% 
+                const haAsistido = eventosConAsistencia.includes(evento);
+                const valoracionesEvento = valoraciones.filter(v => v.id_evento === evento.id);
+                %>
+        
+                <% if (haAsistido) { %>
+                    <form action="/valoraciones/añadir" method="POST">
+                        <input type="hidden" name="id_evento" value="<%= evento.id %>">
+                        <label>Puntuación:</label>
+                        <select name="puntuacion" required>
+                            <option value="1">★☆☆☆☆</option>
+                            <option value="2">★★☆☆☆</option>
+                            <option value="3">★★★☆☆</option>
+                            <option value="4">★★★★☆</option>
+                            <option value="5">★★★★★</option>
+                        </select>
+                        <br>
+                        <textarea name="comentario" placeholder="Escribe tu opinión..." required></textarea>
+                        <br>
+                        <button type="submit">Enviar valoración</button>
+                    </form>
+                <% } %>
+        
+                <h4>Opiniones:</h4>
+                <% if (valoracionesEvento.length > 0) { %>
+                    <% valoracionesEvento.forEach(v => { %>
+                        <div class="valoracion">
+                            <p><strong><%= v.puntuacion %> estrellas</strong></p>
+                            <p><%= v.comentario %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>Aún no hay valoraciones.</p>
+                <% } %>
+        
+            </div>
+        <% }) %>
+    <% } else { %>
+        <p>No hay eventos pasados disponibles.</p>
+    <% } %>
+</div>
