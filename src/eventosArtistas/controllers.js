@@ -16,12 +16,12 @@ export function viewCartelera(req, res){
         }
     }
 
-    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, artistas: cartelera});
+    res.render('pagina', {contenido: 'paginas/artistas', session: req.session, artistas: cartelera});
 }
 
 export function viewEventosDelArtista(req, res){
     const id_artista = req.query.id_artista;
-    const eventos = EventoArtista.getEventByArtist(id_artista);
+    const eventos = EventoArtista.getEventsByArtist(id_artista);
 
     const asistencias = [];
 
@@ -35,7 +35,7 @@ export function viewEventosDelArtista(req, res){
         }
     }
 
-    res.render('pagina', {contenido: 'paginas/entradas', session: req.session, eventos: asistencias});
+    res.render('pagina', {contenido: 'paginas/index', session: req.session, eventos: asistencias});
 }
 
 
