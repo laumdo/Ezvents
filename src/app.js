@@ -47,6 +47,10 @@ app.use(pinoMiddleware);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
+app.use((req, res, next) => {
+    res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
+    next();
+});
 app.use(flashMessages);
 app.use(express.static('public'));
 app.use(express.json());
@@ -76,10 +80,7 @@ app.use('/descuentos', descuentosRouter);
 app.use('/eventosArtistas', eventosArtistasRouter);
 app.use('/artista', artistaRouter);
 
-app.use((req, res, next) => {
-    res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
-    next();
-});
+
 app.get('/contacto', (req, res) => {
     const params = {
         contenido: 'paginas/contacto',

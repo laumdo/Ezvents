@@ -271,7 +271,6 @@ export async function doRegister(req, res) {
         errores
       });
     }
-  
     // Capturar las variables del formulario
     const username = req.body.username;
     const password = req.body.password;
@@ -294,6 +293,7 @@ export async function doRegister(req, res) {
   
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
+      
       const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
       nuevoUsuario.persist();
   
@@ -306,7 +306,7 @@ export async function doRegister(req, res) {
       req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
       req.session.esEmpresa = nuevoUsuario.rol === RolesEnum.EMPRESA;
   
-      return res.redirect('/usuarios/index');
+      return res.redirect('/');
     } catch (e) {
       let error = 'No se ha podido crear el usuario';
       if (e instanceof UsuarioYaExiste) {
@@ -324,5 +324,5 @@ export async function doRegister(req, res) {
         errores: {}
       });
     }
-  }
+}
   
