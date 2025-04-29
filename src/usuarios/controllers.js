@@ -1,5 +1,5 @@
 import { body, validationResult } from 'express-validator';
-import { Usuario, RolesEnum } from './Usuario.js';
+import { Usuario, RolesEnum, UsuarioYaExiste, EmailYaExiste } from './Usuario.js';
 import { matchedData } from 'express-validator';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 
@@ -137,7 +137,9 @@ export function eliminarUsuario(req, res) {
 
 export function viewRegister(req, res){
     res.render('pagina', {contenido: 'paginas/register', 
-        session: req.session, 
+        session: req.session,
+        datos: {},
+        errores: {},
         error: null});
 }
 
@@ -264,12 +266,12 @@ export function modificarUsuario(req, res){
 export async function doRegister(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      const errores = result.mapped();
-      const datos = matchedData(req);
-      return render(req, res, 'paginas/register', {
-        datos,
-        errores
-      });
+        const errores = result.mapped();
+        const datos = req.body;
+        return render(req, res, 'paginas/register', {
+          datos,
+          errores
+        });
     }
     // Capturar las variables del formulario
     const username = req.body.username;
@@ -282,47 +284,49 @@ export async function doRegister(req, res) {
     // Determinar el rol según el valor seleccionado
     let rol;
     if (rolStr === 'usuario') {
-      rol = RolesEnum.USUARIO;
+        rol = RolesEnum.USUARIO;
     } else if (rolStr === 'empresa') {
-      rol = RolesEnum.EMPRESA;
+        rol = RolesEnum.EMPRESA;
     } else if (rolStr === 'administrador') {
-      rol = RolesEnum.ADMIN;
+        rol = RolesEnum.ADMIN;
     } else {
-      rol = RolesEnum.USUARIO;
+        rol = RolesEnum.USUARIO;
     }
   
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
       
-      const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
-      nuevoUsuario.persist();
+        const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
+        nuevoUsuario.persist();
   
       // Configurar la sesión con los datos del usuario
-      req.session.login = true;
-      req.session.nombre = nuevoUsuario.nombre;
-      req.session.username = nuevoUsuario.username;
-      req.session.rol = nuevoUsuario.rol;
-      req.session.esUsuario = nuevoUsuario.rol === RolesEnum.USUARIO;
-      req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
-      req.session.esEmpresa = nuevoUsuario.rol === RolesEnum.EMPRESA;
+        req.session.login = true;
+        req.session.nombre = nuevoUsuario.nombre;
+        req.session.username = nuevoUsuario.username;
+        req.session.rol = nuevoUsuario.rol;
+        req.session.esUsuario = nuevoUsuario.rol === RolesEnum.USUARIO;
+        req.session.esAdmin = nuevoUsuario.rol === RolesEnum.ADMIN;
+        req.session.esEmpresa = nuevoUsuario.rol === RolesEnum.EMPRESA;
   
-      return res.redirect('/');
+        return res.redirect('/');
     } catch (e) {
-      let error = 'No se ha podido crear el usuario';
-      if (e instanceof UsuarioYaExiste) {
-        error = 'El nombre de usuario ya está utilizado';
-      }
-      const datos = matchedData(req);
-      // Eliminar datos sensibles
-      delete datos.password;
-      delete datos.passwordConfirmacion;
-      req.log.error("Problemas al registrar un nuevo usuario '%s'", username);
-      req.log.debug('El usuario no ha podido registrarse: %s', e);
-      render(req, res, 'paginas/register', {
-        error,
-        datos: {},
-        errores: {}
-      });
+        let error = 'No se ha podido crear el usuario'; // Esto son errores que no son de express-validator como que el usuario o el correo ya estén registrados
+        if (e instanceof UsuarioYaExiste) {
+            error = 'El nombre de usuario ya está utilizado';
+        } else if (e instanceof EmailYaExiste) {
+            error = 'El email ya está registrado' ;
+        }
+        const datos = req.body;
+        // Eliminar datos sensibles
+        delete datos.password;
+        delete datos.passwordConfirmacion;
+
+        const errores = {};
+        render(req, res, 'paginas/register', {
+            error,
+            datos,
+            errores
+        });
     }
 }
   

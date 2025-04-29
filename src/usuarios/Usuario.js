@@ -57,8 +57,13 @@ export class Usuario {
 
             usuario.#id = result.lastInsertRowid;
         } catch(e) { 
-            if (e.code === 'SQLITE_CONSTRAINT') {
-                throw new UsuarioYaExiste(usuario.#username);
+            if (e.code && e.code.startsWith('SQLITE_CONSTRAINT')) {
+                if (e.message.includes('Usuarios.username')) {
+                    throw new UsuarioYaExiste(usuario.#username);
+                }
+                if (e.message.includes('Usuarios.email')) {
+                    throw new EmailYaExiste(usuario.email);  // AÑADE ESTA LÍNEA
+                }
             }
             throw new ErrorDatos('No se ha insertado el usuario', { cause: e });
         }
@@ -168,5 +173,12 @@ export class UsuarioYaExiste extends Error {
     constructor(username, options) {
         super(`Usuario ya existe: ${username}`, options);
         this.name = 'UsuarioYaExiste';
+    }
+}
+
+export class EmailYaExiste extends Error {
+    constructor(email, options) {
+        super(`Email ya existe: ${email}`, options);
+        this.name = 'EmailYaExiste';
     }
 }
