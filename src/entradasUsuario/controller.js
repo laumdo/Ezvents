@@ -42,11 +42,14 @@ export async function comprar(req, res){
         for (const item of carrito) {
             const id_evento = item.id_evento;
             const cantidad = item.cantidad;
-            
+            const evento = Evento.getEventoById(id_evento);
+
             EntradasUsuario.compraEntrada(id_usuario, id_evento, cantidad);
 
-            usuario.puntos += item.precio * 5;
+            evento.entradas_vendidas += cantidad;
+            evento.persist();
 
+            usuario.puntos += item.precio * 5 * cantidad;
             await Carrito.deleteById(item.id);
         }
         usuario.persist();
