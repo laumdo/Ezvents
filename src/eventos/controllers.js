@@ -1,5 +1,8 @@
 import { param, validationResult } from 'express-validator';
 import { Evento } from './Evento.js';
+import { Artista } from '../artista/Artista.js';
+import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
+import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
 
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();
@@ -30,7 +33,29 @@ export function agregarEvento(req, res) {
         const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
         nuevoEvento.persist();
 
-        res.redirect('/eventos'); // Redirigir a la lista de eventos
+        const artistas = Artista.getAll();
+        const artistasNoContratados = [];
+        const artistasContratados = [];
+    
+        for (const artista of artistas) {
+            const contratado = EventoArtista.contratado(artista.id, nuevoEvento.id);
+            if (contratado) {
+                artistasContratados.push(artista);
+            }else{
+                artistasNoContratados.push(artista)
+            }
+        }
+
+        //Igual quito la fecha
+
+        res.render('pagina', {
+            contenido: 'paginas/contratar',
+            session: req.session,
+            idEvento: nuevoEvento.id,
+            fecha: nuevoEvento.fecha,
+            artistas: artistasNoContratados,
+            artistasContratados: artistasContratados
+        });
     } catch (error) {
         res.status(400).send("Error al agregar el evento.");
     }
@@ -54,10 +79,27 @@ export function modificarEvento(req, res) {
 
         evento.persist(); 
 
+        const artistas = Artista.getAll();
+        const artistasNoContratados = [];
+        const artistasContratados = [];
+    
+        for (const artista of artistas) {
+            const contratado = EventoArtista.contratado(artista.id, id);
+            if (contratado) {
+                artistasContratados.push(artista);
+            }else{
+                artistasNoContratados.push(artista)
+            }
+        }
+
         res.render('pagina', { 
-            contenido: 'paginas/admin', 
+            contenido: 'paginas/contratar', 
             session: req.session,
-            mensaje: 'Evento modificado con éxito' });
+            idEvento: id,
+            fecha: evento.fecha,
+            artistas: artistasNoContratados,
+            artistasContratados: artistasContratados
+        });
     } catch (error) {
         res.render('pagina', { 
             contenido: 'paginas/admin', 
@@ -103,3 +145,47 @@ export function buscarEvento(req, res) {
         res.status(500).send('Error al buscar eventos');
     }
 }
+
+
+export function apiEventos(req, res) {
+    try {
+        const eventos = Evento.getAll();
+        const usuario_id = req.session && req.session.usuario_id;
+        let eventosConEntrada = [];
+        if (usuario_id) {
+            const entradas = EntradasUsuario.getEntradasByUsuario(usuario_id);
+            eventosConEntrada = entradas.map(e => e.idEvento);
+        }
+        const eventosFormateados = eventos.map(e => {
+            const entradasDisponibles = e.aforo_maximo - e.entradas_vendidas;
+            return {
+                id: e.id,
+                title: e.nombre,
+                start: e.fecha,
+                allDay: true,
+                imagen: e.imagen,
+                aforo: e.aforo_maximo,
+                entradasDisponibles,
+                tieneEntrada: eventosConEntrada.includes(e.id)
+            };
+        });
+        res.json(eventosFormateados);
+    } catch (err) {
+        console.error('Error al obtener eventos:', err);
+        res.status(500).json({ error: 'Error al obtener eventos' });
+    }
+}
+
+
+
+export function viewCalendario(req, res) {
+    const eventos = Evento.getAll();
+    res.render('pagina', {
+        contenido: 'paginas/calendario',
+        session: req.session,
+        eventos
+    });
+}
+
+
+

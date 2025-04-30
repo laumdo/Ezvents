@@ -166,6 +166,60 @@ export function viewDatos(req, res) {
      });
 }
 
+export function viewModificarUsuario(req, res) {
+    if (!req.session || !req.session.username) {
+        return res.redirect('/usuarios/login'); 
+    }
+
+    let usuario = null;
+    try {
+        console.log(req.session.username);
+        usuario = Usuario.getUsuarioById(req.session.usuario_id);
+    } catch (e) {
+        console.error("Error obteniendo usuario:", e);
+        usuario = null; 
+    }
+
+    res.render('pagina', { contenido: 'paginas/modificarUsuario', 
+        session: req.session, 
+        usuario
+     });
+}
+
+export function modificarUsuario(req, res){
+    try{
+        const {username, password, nombre, apellidos, email, rol} = req.body;
+        let usuario = Usuario.getUsuarioById(req.session.usuario_id);
+        if(!usuario) throw new UsuarioNoEncontrado(req.session.usuario_id);
+
+        let rolEnum = null;
+        if (rol === 'empresa') {
+            rolEnum = RolesEnum.EMPRESA;
+        } else if (rol === 'administrador') {
+            rolEnum = RolesEnum.ADMIN;
+        } else {
+            rolEnum = RolesEnum.USUARIO;
+        }
+
+        //usuario.username = username || usuario.username;
+        console.log("ok 1");
+        //usuario.password = bcrypt.hashSync(password) || usuario.password;
+        console.log("ok 2");
+        usuario.nombre = nombre || usuario.nombre;
+        usuario.apellidos = apellidos || usuario.apellidos;
+        usuario.email = email || usuario.email;
+        usuario.rol = rolEnum || usuario.rol;
+
+        usuario.persist();
+
+        res.setFlash('Usuario modificado con éxito');
+        res.redirect('/');
+    }catch(error){
+        res.setFlash('Error al modificar el usuario');
+        res.redirect('/');
+    }
+}
+
 /*export async function doRegister(req, res) {
     const result = validationResult(req);
     if (! result.isEmpty()) {
