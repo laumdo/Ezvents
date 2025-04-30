@@ -74,7 +74,7 @@ export class Usuario {
         return usuario;
     }
 
-    static addPoints(idUsuario, puntos) {
+    /*static addPoints(idUsuario, puntos) {
         const db = getConnection();
         const stmt = db.prepare(`
           INSERT INTO PuntosUsuario (idUsuario, puntos)
@@ -82,7 +82,7 @@ export class Usuario {
         `);
         stmt.run(idUsuario, puntos);
       }
-    
+    */
       /**
        * Suma sólo los puntos no caducados (últimos 40 días).
        */

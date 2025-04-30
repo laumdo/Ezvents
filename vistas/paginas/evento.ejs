@@ -16,6 +16,7 @@
         <p>Lugar: <%= evento.lugar %>
         </p>
         <p>Precio: <%= evento.precio %>€</p>
+        <p>Edad minima: <%=evento.edad_minima %></p>
         <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %>
         </p>
         <form action="/carrito/agregar" method="POST">

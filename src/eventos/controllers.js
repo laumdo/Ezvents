@@ -1,5 +1,13 @@
 import { param, validationResult } from 'express-validator';
 import { Evento } from './Evento.js';
+import { Usuario } from '../usuarios/Usuario.js';
+
+function calcularEdad(fechaNacimiento) {
+  const [y, m, d] = fechaNacimiento.split('-').map(Number);
+  const dob = new Date(y, m - 1, d);
+  const diff = Date.now() - dob.getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+}
 
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();
@@ -15,7 +23,14 @@ export function viewEvento(req, res) {
 
     try {
         const evento = Evento.getEventoById(req.params.id);
-        res.render('pagina', { contenido: 'paginas/evento', session: req.session, evento });
+        let userAge = null;
+    if (req.session.username) {
+      const u = Usuario.getUsuarioByUsername(req.session.username);
+      if (u.fecha_nacimiento) {
+        userAge = calcularEdad(u.fecha_nacimiento);
+      }
+    }
+        res.render('pagina', { contenido: 'paginas/evento', session: req.session, evento,userAge });
     } catch (error) {
         res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Evento no encontrado' });
     }
