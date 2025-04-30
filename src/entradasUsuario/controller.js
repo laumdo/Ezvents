@@ -60,4 +60,5 @@ export async function comprar(req, res){
         res.setFlash('Hubo un error al realizar la compra');
         res.redirect('/');
     }
+    
 }

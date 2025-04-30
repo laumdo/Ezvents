@@ -31,8 +31,34 @@
             </div>
         <% }); %>
     </ul>
+
+    <% if (cuponesInternos && cuponesInternos.length > 0) { %>
+        <section class="mis-cupones">
+            <h3>Dispones de los siguientes cupones para canjear</h3>
+            <ul class="descuentos-internos">
+                <% descuentosInternos.forEach(desc => { %>
+                <li>
+                    <strong><%= desc.titulo %></strong> – <%= desc.condiciones %>
+                    <br>
+                    Código: <%= desc.codigo %>
+                    <form action="/carrito/aplicar-descuento" method="POST" style="display:inline">
+                    <input type="hidden" name="codigo" value="<%= desc.codigo %>">
+                    <button type="submit">Aplicar</button>
+                    </form>
+                </li>
+                <% }) %>
+            </ul>
+        </section>
+    <% } %>
+
     <div class="precio-total" style="margin-top: 20px;">
-        <h3>Total a pagar: <%= precioTotal.toFixed(2) %> €</h3>
+        <% if (cupónAplicado) { %>
+            <p>Total original: <del><%= precioBruto.toFixed(2) %>€</del></p>
+            <p>Descuento: -<%= descuentoAplicado.toFixed(2) %>€</p>
+            <h3>Total a pagar: <%= (precioBruto - descuentoAplicado).toFixed(2) %> €</h3>
+        <% } else { %>
+            <h3>Total a pagar: <%= precioBruto.toFixed(2) %> €</h3>
+        <% } %>
     </div>
     <div class="boton_compra">
         <button onclick="window.location.href='/entradasUsuario/comprar'">Finalizar compra</button>

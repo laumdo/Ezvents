@@ -6,6 +6,8 @@ export class DescuentosUsuario {
     static #getByUsuarioStmt;
     static #getByUsuarioDescuentoStmt;
     static #existsStmt;
+    static #deleteStmt;
+
 
     static initStatements() {
         const db = getConnection();
@@ -36,6 +38,11 @@ export class DescuentosUsuario {
             SELECT COUNT(*) as count FROM DescuentosUsuario 
             WHERE idUsuario = ? AND idDescuento = ?
         `);
+
+        this.#deleteStmt = db.prepare(`
+            DELETE FROM DescuentosUsuario 
+            WHERE idUsuario = ? AND idDescuento = ?
+    `);
     }
 
     static insert(idUsuario, idDescuento) {
@@ -67,6 +74,17 @@ export class DescuentosUsuario {
             WHERE du.idUsuario = ?
         `);
         return stmt.all(idUsuario);
+    }
+
+    /**
+   * Elimina el canje del descuento para ese usuario.
+   * @param {number} idUsuario 
+   * @param {number} idDescuento 
+   */
+    static delete(idUsuario, idDescuento) {
+        this.initStatements();               // asegurar que están los stmts
+        const info = this.#deleteStmt.run(idUsuario, idDescuento);
+        return info.changes > 0;             // true si borró algo
     }
 
     static obtenerPorUsuarioYDescuento(idUsuario, idDescuento) {
