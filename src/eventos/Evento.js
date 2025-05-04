@@ -3,6 +3,7 @@
 
     export class Evento {
         static #getByIdStmt = null;
+        static #getByIdEmpresaStmt = null;
         static #insertStmt = null;
         static #updateStmt = null;
         static #deleteStmt = null; 
@@ -13,6 +14,7 @@
             if (this.#getByIdStmt !== null) return;
 
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
+            this.#getByIdEmpresaStmt = db.prepare('SELECT * FROM eventos WHERE idEmpresa = ?');
             this.#insertStmt = db.prepare(`
                 INSERT INTO eventos (idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
                 VALUES (@idEmpresa, @nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
@@ -40,6 +42,16 @@
             }
 
             return map;
+        }
+
+        static getEventosByIdEmpresa(idEmpresa) {
+            try {
+                const rows = this.#getByIdEmpresaStmt.all(idEmpresa);
+                return rows.map(row => new Evento(row));
+            } catch (error) {
+                console.error("Error al obtener eventos por idEmpresa:", error);
+                throw error;
+            }
         }
         
         static getEventoById(idEvento) { 

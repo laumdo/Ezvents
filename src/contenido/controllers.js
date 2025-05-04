@@ -1,4 +1,5 @@
 import { render } from '../utils/render.js';
+import { Evento } from '../eventos/Evento.js';
 
 export function viewContenidoNormal(req, res) {
     render(req, res, 'paginas/normal');
@@ -9,5 +10,9 @@ export function viewContenidoAdmin(req, res) {
 }
 
 export function viewContenidoEmpresa(req,res){
-    render(req,res,'paginas/empresa');
+    const idEmpresa = req.session.usuario_id;
+
+    const eventos = Evento.getEventosByEmpresaId(idEmpresa);
+
+    render(req, res, 'paginas/empresa', { eventos });
 }
