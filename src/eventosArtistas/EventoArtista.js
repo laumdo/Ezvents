@@ -18,7 +18,7 @@ export class EventoArtista {
         this.#getAllEventsStmt = db.prepare('SELECT * FROM acudeA WHERE idArtista = @id_artista');
     }
 
-    static getArtistsByEvent(id_evento){
+    static getArtistsByEvent(id_evento){//cambiar?
         return this.#getAllArtistsStmt.all({id_evento});
     }
 
@@ -56,7 +56,7 @@ export class EventoArtista {
         }
     }
 
-    static agregarArtista(id_artista, id_evento) {
+    static agregarArtista(id_artista, id_evento) {//QUITAR ESTO Y USAR EL PERSIST
         const existe = this.#checkStmt.get({ id_artista, id_evento });
     
         if (existe.count === 0) {
@@ -87,7 +87,7 @@ export class EventoArtista {
         this.idEvento = idEvento;
     }
 
-    persist() {
+    persist() {//PREGUNTAR SI AQUI PUEDO PONER LO DE CHECK
         if (this.#id === null) return EventoArtista.#insert(this);
     }
 }

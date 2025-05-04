@@ -18,17 +18,16 @@ export class Artista{
     }
 
     static #insert(artista){
-        console.log("Se mete en el insert de artista");
         let result = null;
         try{
             const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };
             result = this.#insertStmt.run(datos);
-            artista.#id = result.lastInsertRowid; // Asignar el ID al objeto artista
+            artista.#id = result.lastInsertRowid;
         }catch(e){
             throw new ErrorDatos('No se ha podido insertar el artista', { cause: e});
         }
         
-        return result.lastInsertRowid;//Ver si quiero poner esto o mejor modificar la bd
+        return result.lastInsertRowid;
     }
 
     static #update(artista){
@@ -51,20 +50,15 @@ export class Artista{
             const artista = this.#getByIdStmt.get({id: idArtista});
             if(artista === undefined) throw new ErrorDatos('No se ha encontrado el artista', {id: idArtista});
             
-            const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones,imagen } = artista;
-            return new Artista(idArtista, nombreArtistico, nombre, biografia, nacimiento, genero, canciones, imagen);
+            return new Artista(artista);
         }catch(e){
             throw new ErrorDatos('Error al buscar el artista', { cause: e});
         }
     }
 
     static getAll(){
-        try{
-            const artistas = this.#getAllStmt.all();
-            return artistas;
-        }catch(e){
-            throw new ErrorDatos('Error al buscar los artistas', { cause: e});
-        }
+        const rows = this.#getAllStmt.all();
+        return rows.map(row => new Artista(row));
     }
 
     #id;
@@ -76,7 +70,7 @@ export class Artista{
     canciones;
     imagen;
 
-    constructor(id = null, nombreArtistico, nombre, biografia,nacimiento, genero, canciones, imagen = null){
+    constructor({id = null, nombreArtistico, nombre, biografia,nacimiento, genero, canciones, imagen = null}){
         this.#id = id;
         this.nombreArtistico = nombreArtistico;
         this.nombre = nombre;
