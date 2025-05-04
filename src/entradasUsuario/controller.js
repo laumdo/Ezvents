@@ -10,17 +10,17 @@ export function viewEntradas(req, res){
     
     const entradas = EntradasUsuario.getEntradasByUsuario(usuario_id);
 
-    const eventos = [];
+    const ids_eventos = entradas.map(entrada => entrada.idEvento);
 
-    for (const entrada of entradas) {
-        const evento = Evento.getEventoById(entrada.idEvento);
-        if (evento) {
-            eventos.push({
-                ...evento,
-                cantidad: entrada.cantidad
-            });
-        }
-    }
+    const eventosMap = Evento.getEventosById(ids_eventos);
+
+    const eventos = entradas.map(entrada => {
+        const evento = eventosMap[entrada.idEvento];
+        return {
+            ...evento,
+            cantidad: entrada.cantidad
+        };
+    });
 
     res.render('pagina', {contenido: 'paginas/entradas', session: req.session, eventos});
 }
@@ -49,7 +49,7 @@ export async function comprar(req, res){
             evento.entradas_vendidas += cantidad;
             evento.persist();
 
-            usuario.puntos += item.precio * 5 * cantidad;
+            usuario.puntos += Math.round(item.precio * 5 * cantidad);
             await Carrito.deleteById(item.id);
         }
         usuario.persist();

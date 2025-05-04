@@ -24,14 +24,30 @@
             `);
             this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
         }
+
+        static getEventosById(entradas){
+            if(entradas.length === 0) return {};
+
+            const db = getConnection();
+
+            const placeholders = entradas.map(() => '?').join(', ');
+            const stmt = db.prepare(`SELECT * FROM eventos WHERE id IN (${placeholders})`);
+            const rows = stmt.all(...entradas);
+
+            const map ={};
+            for(const row of rows){
+                map[row.id] = new Evento(row);
+            }
+
+            return map;
+        }
         
         static getEventoById(idEvento) { 
             try {
                 const evento = this.#getByIdStmt.get({ id: idEvento });
                 if (evento === undefined) throw new EventoNoEncontrado(idEvento);
                 
-                const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
-                return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
+                return new Evento(evento);
             } catch (error) {
                 console.error("Error al buscar evento:", error);
                 throw error;
@@ -111,7 +127,7 @@
         entradas_vendidas;
         imagen;
 
-        constructor(id = null, idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
+        constructor({ id = null, idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png' }) {
             this.#id = id;
             this.idEmpresa = idEmpresa;
             this.nombre = nombre;
@@ -122,7 +138,6 @@
             this.aforo_maximo = aforo_maximo;
             this.entradas_vendidas = entradas_vendidas;
             this.imagen = imagen;
-            console.log("idEmpresa constructor: ", this.idEmpresa);
         }
 
         get id() {
