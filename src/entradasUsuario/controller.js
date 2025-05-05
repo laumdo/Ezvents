@@ -2,6 +2,7 @@ import { Carrito } from '../carrito/Carrito.js';
 import { Usuario } from '../usuarios/Usuario.js';
 import { Evento } from "../eventos/Evento.js";
 import { EntradasUsuario } from './EntradasUsuario.js';
+import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 import { render } from '../utils/render.js';
 import { flashMessages } from '../middleware/flash.js';
 
@@ -39,6 +40,11 @@ export async function comprar(req, res){
 
         const carrito = await Carrito.getCarrito(id_usuario);
 
+        const cupon = req.session.appliedCoupon;
+        if (cupon) { //si hemos aplicado un cupon hay que eliminarlo del usuario
+            DescuentosUsuario.delete(id_usuario, cupon.id);
+        }
+
         for (const item of carrito) {
             const id_evento = item.id_evento;
             const cantidad = item.cantidad;
@@ -53,6 +59,8 @@ export async function comprar(req, res){
             await Carrito.deleteById(item.id);
         }
         usuario.persist();
+
+        delete req.session.appliedCoupon;
 
         res.setFlash('Compra realizada con éxito');
         res.redirect('/');

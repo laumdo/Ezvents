@@ -7,7 +7,7 @@ CREATE TABLE Descuento (
     puntos      INTEGER NOT NULL,
     imagen      TEXT    DEFAULT 'descuento.png',
     interno     INTEGER NOT NULL DEFAULT 0,    -- 0 = externo, 1 = interno
-    valor   REAL    DEFAULT NULL    -- ¡aquí!
+    valor   REAL    DEFAULT NULL    
 );
 DROP TABLE IF EXISTS "DescuentosUsuario";
 CREATE TABLE DescuentosUsuario (

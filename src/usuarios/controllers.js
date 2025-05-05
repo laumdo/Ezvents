@@ -27,6 +27,7 @@ export async function doLogin(req, res) {
     }
 
     const username = req.body.username;
+    
     const password = req.body.password;
 
     try {

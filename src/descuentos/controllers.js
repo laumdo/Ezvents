@@ -16,10 +16,10 @@ export function viewDescuentos(req, res) {
 
 export function agregarDescuento(req,res){
     try {
-        const { titulo, condiciones, puntos } = req.body;
+        const { titulo, condiciones, puntos,interno,valor } = req.body;
         const imagen = req.file ? req.file.filename : 'descuento.png';
 
-        const nuevoDescuento = new Descuento(null, titulo, condiciones, puntos, imagen);
+        const nuevoDescuento = new Descuento(null, titulo, condiciones, puntos, imagen,interno,valor);
         nuevoDescuento.persist();
 
         const usuario = Usuario.getUsuarioByUsername(req.session.username); 
@@ -40,7 +40,7 @@ export function agregarDescuento(req,res){
 
 export function modificarDescuento(req,res){
     try{
-        const{ id,titulo, condiciones, puntos}=req.body;
+        const{ id,titulo, condiciones, puntos,interno,valor}=req.body;
         const imagen = req.file ? req.file.filename : null;
         let descuento = Descuento.getDescuento(id);
         if(!descuento) throw new DescuentoNoEncontrado(id);
@@ -49,6 +49,8 @@ export function modificarDescuento(req,res){
         descuento.condiciones=condiciones || descuento.condiciones;
         descuento.puntos=puntos || descuento.puntos;
         descuento.imagen=imagen ? imagen : descuento.imagen;
+        descuento.interno=interno || descuento.interno;
+        descuento.valor=valor || descuento.valor;
 
         descuento.persist();
         res.render('pagina',{

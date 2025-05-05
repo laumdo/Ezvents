@@ -68,7 +68,7 @@ export class DescuentosUsuario {
     static obtenerPorUsuario(idUsuario) {
         const db = getConnection(); 
         const stmt = db.prepare(`
-            SELECT d.id AS idDescuento, d.titulo, d.condiciones, d.imagen, du.codigo
+            SELECT d.id AS idDescuento, d.titulo, d.condiciones, d.imagen, d.interno, d.valor, du.codigo
             FROM DescuentosUsuario du
             JOIN Descuento d ON du.idDescuento = d.id
             WHERE du.idUsuario = ?

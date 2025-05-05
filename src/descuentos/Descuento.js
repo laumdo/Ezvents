@@ -12,7 +12,7 @@ export class Descuento {
         if (this.#getByIdStmt !== null) return;
         
         this.#getByIdStmt = db.prepare('SELECT * FROM Descuento WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO Descuento(id, titulo, condiciones, puntos, imagen, interno, descuento) VALUES (@id, @titulo, @condiciones, @puntos, @imagen, @interno, @valor)');
+        this.#insertStmt = db.prepare('INSERT INTO Descuento(id, titulo, condiciones, puntos, imagen, interno, valor) VALUES (@id, @titulo, @condiciones, @puntos, @imagen, @interno, @valor)');
         this.#updateStmt = db.prepare(`UPDATE Descuento SET titulo=@titulo, condiciones=@condiciones, puntos=@puntos, imagen=@imagen, interno=@interno, valor=@valor WHERE id=@id`);
         this.#deleteStmt = db.prepare('DELETE FROM Descuento WHERE id = @id'); 
     }
