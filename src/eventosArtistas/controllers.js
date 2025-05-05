@@ -28,14 +28,11 @@ export function viewEventosDelArtista(req, res){
     for (const evento of eventos) {
         const asiste = Evento.getEventoById(evento.idEvento);
         if (asiste) {
-            asistencias.push({
-                id: asiste.id,
-                nombre: asiste.nombre
-            });
+            asistencias.push(asiste);
         }
     }
 
-    res.render('pagina', {contenido: 'paginas/index', session: req.session, eventos: asistencias});
+    res.render('pagina', {contenido: 'paginas/eventos', session: req.session, eventos: asistencias});
 }
 
 

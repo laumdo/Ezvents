@@ -1,12 +1,12 @@
 import { param, validationResult } from 'express-validator';
 import { Artista } from "./Artista.js";
 
-export function viewArtistas(req, res){
+export function viewArtistas(req, res) {
     const artistas = Artista.getAll();
-    res.render('pagina', { contenido: 'paginas/artistas', session: req.session, artistas });    
+    res.render('pagina', { contenido: 'paginas/artistas', session: req.session, artistas });
 }
 
-export function viewArtista(req, res){
+export function viewArtista(req, res){//Algo de aqui tiene que estar en el router
     param('id').isInt().withMessage('ID de artista inválido');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -22,8 +22,8 @@ export function viewArtista(req, res){
 
 }
 
-export function agregarArtista(req, res){//falta poner la imagen
-    try{
+export function agregarArtista(req, res){//Poner lo de la imagen, comprobar roles, validacion + lógica
+    try{//gestion centralizada de errores del ejercicio 3??
         const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
         const imagen = req.file ? req.file.filename : 'defaultUser.png'; // Si no hay imagen, usa la predeterminada
         const artista = new Artista(null, nombreArtistico, nombre, biografia, nacimiento, genero, canciones, imagen);
@@ -38,7 +38,7 @@ export function agregarArtista(req, res){//falta poner la imagen
     }
 }
 
-export function modificarArtista(req, res){
+export function modificarArtista(req, res){//comprobar roles, validacion+ logica usar matchedData?
     try{
         const { id, nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
         const imagen = req.file ? req.file.filename : null;
@@ -64,7 +64,7 @@ export function modificarArtista(req, res){
     }
 }
 
-export function eliminarArtista(req, res){
+export function eliminarArtista(req, res){//comprobar roles, validacion+ logica usar matchedData?
     try{
         const { id } = req.body;
         Artista.delete(id);
@@ -75,5 +75,3 @@ export function eliminarArtista(req, res){
         res.redirect('/artista/');
     }
 }
-
-//Buscar artista??

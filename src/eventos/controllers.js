@@ -29,8 +29,10 @@ export function agregarEvento(req, res) {
     try {
         const { nombre, descripcion, fecha, lugar, precio, aforo_maximo } = req.body;
         const imagen = req.file ? req.file.filename : 'default.png'; // Si no hay imagen, usa la predeterminada
+        const id_empresa = req.session.usuario_id;
 
-        const nuevoEvento = new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
+        console.log("idEmpresa1: ", id_empresa);
+        const nuevoEvento = new Evento(null, id_empresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
         nuevoEvento.persist();
 
         const artistas = Artista.getAll();

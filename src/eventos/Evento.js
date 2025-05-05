@@ -14,8 +14,8 @@
 
             this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
             this.#insertStmt = db.prepare(`
-                INSERT INTO eventos (nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
-                VALUES (@nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
+                INSERT INTO eventos (idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
+                VALUES (@idEmpresa, @nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
             `);
             this.#updateStmt = db.prepare(`
                 UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
@@ -24,14 +24,30 @@
             `);
             this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
         }
+
+        static getEventosById(entradas){
+            if(entradas.length === 0) return {};
+
+            const db = getConnection();
+
+            const placeholders = entradas.map(() => '?').join(', ');
+            const stmt = db.prepare(`SELECT * FROM eventos WHERE id IN (${placeholders})`);
+            const rows = stmt.all(...entradas);
+
+            const map ={};
+            for(const row of rows){
+                map[row.id] = new Evento(row);
+            }
+
+            return map;
+        }
         
         static getEventoById(idEvento) { 
             try {
                 const evento = this.#getByIdStmt.get({ id: idEvento });
                 if (evento === undefined) throw new EventoNoEncontrado(idEvento);
                 
-                const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen } = evento;
-                return new Evento(idEvento, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen);
+                return new Evento(evento);
             } catch (error) {
                 console.error("Error al buscar evento:", error);
                 throw error;
@@ -50,6 +66,7 @@
             let result = null;
             try {
                 const datos = {
+                    idEmpresa: evento.idEmpresa,
                     nombre: evento.nombre,
                     descripcion: evento.descripcion,
                     fecha: evento.fecha,
@@ -100,6 +117,7 @@
     }
 
         #id;
+        idEmpresa;
         nombre;
         descripcion;
         fecha;
@@ -109,8 +127,9 @@
         entradas_vendidas;
         imagen;
 
-        constructor(id = null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png') {
+        constructor({ id = null, idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png' }) {
             this.#id = id;
+            this.idEmpresa = idEmpresa;
             this.nombre = nombre;
             this.descripcion = descripcion;
             this.fecha = fecha;

@@ -3,6 +3,8 @@ import { viewArtistas, viewArtista, agregarArtista, modificarArtista, eliminarAr
 
 const artistasRouter = express.Router();
 
+//CAMBIAR MUCHAS COSAS DE EXPRESS VALIDATOR
+
 artistasRouter.get("/", viewArtistas);
 artistasRouter.get("/:id", viewArtista);
 artistasRouter.post("/agregarArtista", agregarArtista);
