@@ -4,7 +4,7 @@ import { Evento } from "../eventos/Evento.js";
 import { EntradasUsuario } from './EntradasUsuario.js';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 import { render } from '../utils/render.js';
-import { flashMessages } from '../middleware/flash.js';
+import { validationResult } from 'express-validator';
 
 export function viewEntradas(req, res){
     const usuario_id = req.session.usuario_id;
@@ -34,6 +34,11 @@ export function viewComprar(req, res){
 }
 
 export async function comprar(req, res){
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        return res.status(400).json({ errors: errores.array() });
+    }
+
     try{
         const id_usuario = req.session.usuario_id;
         const usuario = Usuario.getUsuarioByUsername(req.session.username);
