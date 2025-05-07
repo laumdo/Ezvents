@@ -232,7 +232,7 @@ export function modificarUsuario(req, res){
             errores
         });
     }
-
+}*/
 export async function doRegister(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -266,10 +266,8 @@ export async function doRegister(req, res) {
   
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
-      const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
-      nuevoUsuario.persist();
       
-        const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
+        const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
         nuevoUsuario.persist();
   
       // Configurar la sesión con los datos del usuario
@@ -302,4 +300,5 @@ export async function doRegister(req, res) {
         });
     }
 }
+
   
