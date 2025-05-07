@@ -3,9 +3,9 @@ import { viewCartelera, viewEventosDelArtista, agregarArtistaAEvento, viewContra
 
 const eventosArtistasRouter = express.Router();
 
-eventosArtistasRouter.get('/cartelera', viewCartelera);
-eventosArtistasRouter.get('/asistencias', viewEventosDelArtista);
-eventosArtistasRouter.get('/viewContratar', viewContratar);
+eventosArtistasRouter.get('/cartelera/:id_evento', viewCartelera);
+eventosArtistasRouter.get('/asistencias/:id_artista', viewEventosDelArtista);
+eventosArtistasRouter.get('/viewContratar/:id_evento', viewContratar);
 eventosArtistasRouter.post('/agregar', agregarArtistaAEvento);
 eventosArtistasRouter.post('/eliminar', eliminarArtistaEvento);
 

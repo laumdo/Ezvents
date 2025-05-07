@@ -4,7 +4,8 @@ import { Artista } from "../artista/Artista.js";
 import { flashMessages } from '../middleware/flash.js';
 
 export function viewCartelera(req, res){
-    const id_evento = req.query.id_evento;//esto tiene que cambiar
+    const id_evento = req.params.id_evento;
+    
     const artistas = EventoArtista.getArtistsByEvent(id_evento);
     
     const idsArtistas = artistas.map(artista => artista.idArtista);
@@ -15,7 +16,7 @@ export function viewCartelera(req, res){
 }
 
 export function viewEventosDelArtista(req, res){
-    const id_artista = req.query.id_artista;
+    const id_artista = req.params.id_artista;
     const eventos = EventoArtista.getEventsByArtist(id_artista);
 
     const idsEventos = eventos.map(evento => evento.idEvento);
@@ -34,8 +35,8 @@ export function agregarArtistaAEvento(req, res){
         const datos = { idArtista: id_artista, idEvento: id_evento };
         const artistaEvento = new EventoArtista(datos);
         artistaEvento.persist();
-        req.session.id_evento = id_evento;
-        res.redirect('/eventosArtistas/viewContratar');
+        
+        res.redirect(`/eventosArtistas/viewContratar/${id_evento}`);
     }catch(e){
         res.render('pagina', { contenido: 'paginas/error', mensaje: e });
     }
@@ -48,15 +49,14 @@ export function eliminarArtistaEvento(req, res){
         
         EventoArtista.eliminarArtista(id_artista, id_evento);
 
-        req.session.id_evento = id_evento;
-        res.redirect('/eventosArtistas/viewContratar');
+        res.redirect(`/eventosArtistas/viewContratar/${id_evento}`);
     }catch(e){
         res.render('pagina', { contenido: 'paginas/error', mensaje: e });
     }
 }
 
-export function viewContratar(req, res){
-    const id_evento = req.session.id_evento;
+export function viewContratar(req, res){//Cambiar, hace N+1 con lo de contratado
+    const id_evento = req.params.id_evento;
 
     const artistas = Artista.getAll();
     const artistasNoContratados = [];
