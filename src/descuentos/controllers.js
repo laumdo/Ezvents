@@ -1,6 +1,8 @@
 import { Descuento } from './Descuento.js';
 import { Usuario } from '../usuarios/Usuario.js';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
+import { render } from '../utils/render.js';
+import { matchedData, validationResult } from 'express-validator';
 
 export function viewDescuentos(req, res) {
     const descuentos = Descuento.getAll();
@@ -10,16 +12,92 @@ export function viewDescuentos(req, res) {
         contenido: 'paginas/puntos', 
         session: req.session, 
         descuentos, 
-        puntosUsuario: usuario.puntos 
+        puntosUsuario: usuario.puntos,
+        datos: {},      
+        errores: {}    
     });
 }
 
 export function agregarDescuento(req,res){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/admin', {
+            session: req.session,
+            errores,
+            datos,
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            // flags para mantener la sección y formulario abiertos
+            activeSection: 'descuentos',
+            activeForm:    'addDescuento'
+            });
+    }
+
     try {
-        const { titulo, condiciones, puntos,interno,valor } = req.body;
+        const { titulo, condiciones, puntos, interno, valor } = matchedData(req);
+        const imagen = req.file?.filename ?? 'descuento.png';
+
+        const nuevo = new Descuento(
+            null,
+            titulo,
+            condiciones,
+            parseInt(puntos, 10),
+            imagen,
+            interno === 'on',           // checkbox marca interno
+            valor != null ? parseFloat(valor) : null
+        );
+        nuevo.persist();
+
+        req.log.info("Descuento '%s' creado por %s", titulo, req.session.username);
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/puntos', {
+            session: req.session,
+            mensaje: 'Descuento agregado con éxito',
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            // flags para mantener la sección y formulario abiertos
+            activeSection: 'descuentos',
+            activeForm:    'addDescuento',
+            datos: {},
+            errores: {}
+        });
+
+    } catch (e) {
+        const datos = matchedData(req);
+        req.log.warn("Error al crear descuento '%s': %s", datos.titulo, e.message);
+        req.log.debug(e);
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/admin', {
+            session: req.session,
+            error: 'No se pudo crear el descuento: ' + e.message,
+            datos,
+            errores: {},
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            // flags para mantener la sección y formulario abiertos
+            activeSection: 'descuentos',
+            activeForm:    'addDescuento'
+        });
+    }
+
+    /*try {
+        const { titulo, condiciones, puntos} = req.body;
+            const interno = req.body.interno === '1' ? 1 : 0;
+
+        // Valor vendrá como cadena si se rellena, o undefined si queda en blanco
+        const valor = req.body.valor
+        ? parseFloat(req.body.valor)
+        : null;
+
         const imagen = req.file ? req.file.filename : 'descuento.png';
 
-        const nuevoDescuento = new Descuento(null, titulo, condiciones, puntos, imagen,interno,valor);
+        const nuevoDescuento = new Descuento(null, titulo, condiciones, parseInt(puntos, 10), imagen,interno,valor);
         nuevoDescuento.persist();
 
         const usuario = Usuario.getUsuarioByUsername(req.session.username); 
@@ -34,7 +112,7 @@ export function agregarDescuento(req,res){
         });
     } catch (error) {
         res.status(400).send("Error al agregar descuento");
-    }
+    }*/
 }
 
 
