@@ -267,7 +267,8 @@ export async function doRegister(req, res) {
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
       
-        const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
+        const nuevoUsuario = new Usuario(username,null, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
+        nuevoUsuario.password=password;
         nuevoUsuario.persist();
   
       // Configurar la sesión con los datos del usuario

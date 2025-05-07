@@ -1,39 +1,55 @@
 import express from 'express';
 import multer from 'multer';
-import { 
-  viewEventos, 
-  viewEvento, 
-  agregarEvento, 
-  eliminarEvento, 
-  modificarEvento, 
-  buscarEvento,
-  apiEventos,
-  viewCalendario
-} from './controllers.js';
+import { body, param, query } from 'express-validator';
+import { viewEventos, viewEvento, agregarEvento, modificarEvento, eliminarEvento, buscarEvento } from './controllers.js';
 
-// Configuración de multer para manejar la subida de archivos
-const storage = multer.diskStorage({
-  destination: 'static/img/',
-  filename: (req, file, cb) => {
-    // Se genera un nombre único para evitar colisiones
-    cb(null, Date.now() + '-' + file.originalname);
-  }
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: 'static/img/',
+    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+  })
 });
-const upload = multer({ storage });
 
-const eventosRouter = express.Router();
+const router = express.Router();
 
-// Rutas de eventos
-eventosRouter.get('/', viewEventos);
-eventosRouter.get('/buscarEvento', buscarEvento);
-eventosRouter.get('/api/eventos', apiEventos);
-eventosRouter.get('/calendario', viewCalendario); 
+router.get('/', viewEventos);
 
-// La ruta para agregar evento se define como POST, ya que el formulario usa method="POST"
-eventosRouter.post('/agregarEvento', upload.single('imagen'), agregarEvento);
+router.get('/buscarEvento',
+  query('nombre').trim().notEmpty().withMessage('El nombre no puede estar vacío'),
+  buscarEvento
+);
 
-eventosRouter.get('/:id', viewEvento);
-eventosRouter.post('/eliminarEvento', eliminarEvento);
-eventosRouter.post('/modificarEvento', modificarEvento);
+router.get('/:id',
+  param('id').isInt().withMessage('ID inválido'),
+  viewEvento
+);
 
-export default eventosRouter;
+router.post('/agregarEvento',
+  body('nombre').trim().notEmpty(),
+  body('descripcion').trim().notEmpty(),
+  body('fecha').isISO8601(),
+  body('lugar').trim().notEmpty(),
+  body('precio').isFloat({ min: 0 }),
+  body('aforo_maximo').isInt({ min: 1 }),
+  agregarEvento
+);
+
+router.post('/modificarEvento',
+  body('id').isInt(),
+  body('nombre').optional().trim(),
+  body('descripcion').optional().trim(),
+  body('fecha').optional().isISO8601(),
+  body('lugar').optional().trim(),
+  body('precio').optional().isFloat({ min: 0 }),
+  body('aforo_maximo').optional().isInt({ min: 1 }),
+  modificarEvento
+);
+
+router.post('/eliminarEvento',
+  //body('id').isInt(),
+  body('id', 'ID inválido').isInt(),
+  eliminarEvento
+);
+
+export default router;
+

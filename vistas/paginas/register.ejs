@@ -5,18 +5,6 @@
     <fieldset>
         <legend>Datos a rellenar:</legend>
 
-<<<<<<< HEAD
-        <div><label>Nombre:</label> <input type="text" name="nombre" required/></div>
-        <div><label>Apellidos:</label> <input type="text" name="apellidos" required/></div>
-        <div><label>Email:</label> <input type="text" name="email" required  pattern=".+@(gmail\.com|ucm\.es)" title="El email debe ser válido"/></div>
-        <div><label>Usuario:</label> <input type="text" name="username" required/></div>
-        <div><label>Contraseña:</label> <input type="password" name="password" required/></div>
-        <div>
-            <label>Fecha de Nacimiento:</label>
-            <input type="date" name="fecha_nacimiento" required 
-                   max="<%= new Date().toISOString().split('T')[0] %>" />
-          </div>
-=======
         <!-- Nombre -->
         <div>
             <label>Nombre:</label>
@@ -25,7 +13,6 @@
                 <span style="color: red;"><%= errores.nombre.msg %></span>
             <% } %>
         </div>
->>>>>>> origin/main
 
         <!-- Apellidos -->
         <div>
@@ -70,6 +57,12 @@
             <% if (errores?.passwordConfirmacion) { %>
                 <span style="color: red;"><%= errores.passwordConfirmacion.msg %></span>
             <% } %>
+        </div>
+
+        <div>
+            <label>Fecha de Nacimiento:</label>
+            <input type="date" name="fecha_nacimiento" required 
+                   max="<%= new Date().toISOString().split('T')[0] %>" />
         </div>
 
         <!-- Tipo de cuenta -->

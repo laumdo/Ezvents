@@ -30,10 +30,12 @@ import artistaRouter from './artista/router.js';
 export const app = express();
 
 
-getConnection(); 
-Evento.initStatements(); 
-Carrito.initStatements();
-EntradasUsuario.initStatements();
+//getConnection(); 
+const db = getConnection();
+Usuario.initStatements(db);
+Evento.initStatements(db); 
+Carrito.initStatements(db);
+EntradasUsuario.initStatements(db);
 Foro.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();

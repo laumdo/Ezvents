@@ -18,6 +18,7 @@ export class Usuario {
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
 
+        this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#getByIdStmt = db.prepare('SELECT * FROM Usuarios WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
@@ -27,9 +28,9 @@ export class Usuario {
     static getUsuarioById(id){
         const usuario = this.#getByIdStmt.get({ id });
         if(usuario == undefined) throw new UsuarioNoEncontrado(id);
-        const { password, rol, nombre, apellidos, email, username, puntos } = usuario;
+        const { password, rol, nombre, apellidos, email, username, puntos,fecha_nacimiento } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos,fecha_nacimiento);
     }
 
     static getUsuarioByUsername(username) {
@@ -63,7 +64,7 @@ export class Usuario {
                     throw new UsuarioYaExiste(usuario.#username);
                 }
                 if (e.message.includes('Usuarios.email')) {
-                    throw new EmailYaExiste(usuario.email);  // AÑADE ESTA LÍNEA
+                    throw new EmailYaExiste(usuario.email);
                 }
             }
             throw new ErrorDatos('No se ha insertado el usuario', { cause: e });
@@ -81,7 +82,7 @@ export class Usuario {
         const email = usuario.email;
         const puntos = usuario.puntos; // Agregamos los puntos
         const fecha_nacimiento=usuario.fecha_nacimiento;
-        const datos = { nombre: nombre, apellidos: apellidos, email: email, rol: rol, puntos: puntos,fecha_nacimiento:fecha_nacimiento, id: Number.parseInt(usuario.#id)};
+        const datos = { nombre, apellidos, email, rol, puntos,fecha_nacimiento, id: Number.parseInt(usuario.#id)};
 
         console.log("antes del stmt, datos: ", datos);
         try{
