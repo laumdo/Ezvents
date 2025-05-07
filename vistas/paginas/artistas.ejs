@@ -1,7 +1,7 @@
 <h2>Artistas</h2>
 <div class="artistas">
-    <% if (locals.artistas && locals.artistas.length > 0) { %>
-        <% locals.artistas.forEach(artista => { %>
+    <% if (artistas && artistas.length > 0) { %>
+        <% artistas.forEach(artista => { %>
             <div class="artista">
                 <img src="/img/<%= artista.imagen %>" alt="Imagen del artista" width="200" height="auto">
                 <div class="artista-info">

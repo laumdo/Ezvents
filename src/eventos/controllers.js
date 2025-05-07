@@ -32,7 +32,8 @@ export function agregarEvento(req, res) {
         const id_empresa = req.session.usuario_id;
 
         console.log("idEmpresa1: ", id_empresa);
-        const nuevoEvento = new Evento(null, id_empresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen);
+        const datos = { id: null, idEmpresa: id_empresa, nombre: nombre, descripcion: descripcion, fecha: fecha, lugar: lugar, precio: precio, aforo_maximo: aforo_maximo, entradas_vendidas: 0, imagen: imagen };
+        const nuevoEvento = new Evento(datos);
         nuevoEvento.persist();
 
         const artistas = Artista.getAll();
