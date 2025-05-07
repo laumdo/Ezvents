@@ -6,7 +6,9 @@ import {
   agregarEvento, 
   eliminarEvento, 
   modificarEvento, 
-  buscarEvento 
+  buscarEvento,
+  apiEventos,
+  viewCalendario
 } from './controllers.js';
 
 // Configuración de multer para manejar la subida de archivos
@@ -24,6 +26,9 @@ const eventosRouter = express.Router();
 // Rutas de eventos
 eventosRouter.get('/', viewEventos);
 eventosRouter.get('/buscarEvento', buscarEvento);
+eventosRouter.get('/api/eventos', apiEventos);
+eventosRouter.get('/calendario', viewCalendario); 
+
 // La ruta para agregar evento se define como POST, ya que el formulario usa method="POST"
 eventosRouter.post('/agregarEvento', upload.single('imagen'), agregarEvento);
 

@@ -5,7 +5,7 @@
         </h1>
     
         <div class="image-container">
-            <img src="/img/<%= evento.imagen %>" alt="Imagen del evento">
+            <img src="/img/<%= evento.imagen %>" alt="Imagen del evento" width="300" height="auto">
         </div>
     
     
@@ -16,9 +16,23 @@
         <p>Lugar: <%= evento.lugar %>
         </p>
         <p>Precio: <%= evento.precio %>€</p>
+<<<<<<< HEAD
         <p>Edad minima: <%=evento.edad_minima %></p>
         <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %>
         </p>
+=======
+        <%if(session && (session.esAdmin || session.esEmpresa)){%>
+            <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+        <% } else if ((evento.aforo_maximo - evento.entradas_vendidas) < (evento.aforo_maximo * 0.9)) { %>
+            <p class="advertencia">¡Quedan pocas entradas!</p>
+        <% } %>
+
+        <form action="/eventosArtistas/cartelera" method="GET" style="text-align: center; margin-top: 20px;">
+            <input type="hidden" name="id_evento" value="<%= evento.id %>">
+            <button type="submit" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">Artistas</button>
+        </form>
+
+>>>>>>> origin/main
         <form action="/carrito/agregar" method="POST">
             <input type="hidden" name="id_evento" value="<%= evento.id %>">
             <input type="hidden" name="precio" value="<%= evento.precio %>">

@@ -1,13 +1,11 @@
-<h1>Crear cuenta</h1>
-
-<% if (error) { %>
-    <p style="color: red;"><%= error %></p>
-<% } %>
-
 <form action="/usuarios/register" method="POST">
+    <% if (error) { %>
+        <div style="color: red; font-weight: bold;"><%= error %></div>
+      <% } %>
     <fieldset>
         <legend>Datos a rellenar:</legend>
 
+<<<<<<< HEAD
         <div><label>Nombre:</label> <input type="text" name="nombre" required/></div>
         <div><label>Apellidos:</label> <input type="text" name="apellidos" required/></div>
         <div><label>Email:</label> <input type="text" name="email" required  pattern=".+@(gmail\.com|ucm\.es)" title="El email debe ser válido"/></div>
@@ -18,35 +16,86 @@
             <input type="date" name="fecha_nacimiento" required 
                    max="<%= new Date().toISOString().split('T')[0] %>" />
           </div>
+=======
+        <!-- Nombre -->
+        <div>
+            <label>Nombre:</label>
+            <input type="text" name="nombre" value="<%= datos?.nombre || '' %>" required />
+            <% if (errores?.nombre) { %>
+                <span style="color: red;"><%= errores.nombre.msg %></span>
+            <% } %>
+        </div>
+>>>>>>> origin/main
 
+        <!-- Apellidos -->
+        <div>
+            <label>Apellidos:</label>
+            <input type="text" name="apellidos" value="<%= datos?.apellidos || '' %>" required />
+            <% if (errores?.apellidos) { %>
+                <span style="color: red;"><%= errores.apellidos.msg %></span>
+            <% } %>
+        </div>
+
+        <!-- Email -->
+        <div>
+            <label>Email:</label>
+            <input type="text" name="email" value="<%= datos?.email || '' %>" required pattern=".+@(gmail\.com|ucm\.es)" title="El email debe ser válido" />
+            <% if (errores?.email) { %>
+                <span style="color: red;"><%= errores.email.msg %></span>
+            <% } %>
+        </div>
+
+        <!-- Username -->
+        <div>
+            <label>Usuario:</label>
+            <input type="text" name="username" value="<%= datos?.username || '' %>" required />
+            <% if (errores?.username) { %>
+                <span style="color: red;"><%= errores.username.msg %></span>
+            <% } %>
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+            <label>Contraseña:</label>
+            <input type="password" name="password" required />
+            <% if (errores?.password) { %>
+                <span style="color: red;"><%= errores.password.msg %></span>
+            <% } %>
+        </div>
+
+        <!-- Confirmación de Contraseña -->
+        <div>
+            <label>Confirmar contraseña:</label>
+            <input type="password" name="passwordConfirmacion" required />
+            <% if (errores?.passwordConfirmacion) { %>
+                <span style="color: red;"><%= errores.passwordConfirmacion.msg %></span>
+            <% } %>
+        </div>
+
+        <!-- Tipo de cuenta -->
         <div>
             <label for="rol">Tipo de cuenta:</label>
             <select name="rol" id="rol" required>
-                <option value="usuario">Usuario</option>
-                <option value="empresa">Empresa</option>
-                <option value="administrador">Administrador</option>
+                <option value="usuario" <%= datos?.rol === 'usuario' ? 'selected' : '' %>>Usuario</option>
+                <option value="empresa" <%= datos?.rol === 'empresa' ? 'selected' : '' %>>Empresa</option>
+                <option value="administrador" <%= datos?.rol === 'administrador' ? 'selected' : '' %>>Administrador</option>
             </select>
         </div>
 
-        <!--checkbox-->
+        <!-- Términos y condiciones -->
         <p>
-        <input name="terminos" type="checkbox" value="marcado"/>
-        Marque esta casilla para verificar que ha leído nuestros términos y condiciones del servicio.
-        </p>
-            
-        </textarea>
-
-        <!--Botón para enviar el formulario-->
-        <p>
-        <input type="submit" name="enviar" value="Enviar"/>
+            <input name="terminos" type="checkbox" value="marcado" <%= datos?.terminos ? 'checked' : '' %> />
+            Marque esta casilla para verificar que ha leído nuestros términos y condiciones del servicio.
         </p>
 
-        <!--Botón para ressetear los datos del formulario-->
+        <!-- Botón para enviar el formulario -->
         <p>
-        <input type="reset" name="borrar" value="Borrar datos"/>
+            <input type="submit" name="enviar" value="Enviar"/>
         </p>
 
-        <!--<label for="consulta">Consulta:</label>
-        <input id="consulta" type="text" name="consulta" value=""/>-->
+        <!-- Botón para resetear los datos del formulario -->
+        <p>
+            <input type="reset" name="borrar" value="Borrar datos"/>
+        </p>
     </fieldset>
 </form>

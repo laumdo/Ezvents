@@ -10,6 +10,7 @@ export const RolesEnum = Object.freeze({
 
 export class Usuario {
     static #getByUsernameStmt = null;
+    static #getByIdStmt = null;
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
@@ -17,10 +18,18 @@ export class Usuario {
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
 
-        this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
+        this.#getByIdStmt = db.prepare('SELECT * FROM Usuarios WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos, fecha_nacimiento=@fecha_nacimiento WHERE id = @id');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
+    }
+
+    static getUsuarioById(id){
+        const usuario = this.#getByIdStmt.get({ id });
+        if(usuario == undefined) throw new UsuarioNoEncontrado(id);
+        const { password, rol, nombre, apellidos, email, username, puntos } = usuario;
+
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
     }
 
     static getUsuarioByUsername(username) {
@@ -49,8 +58,13 @@ export class Usuario {
 
             usuario.#id = result.lastInsertRowid;
         } catch(e) { 
-            if (e.code === 'SQLITE_CONSTRAINT') {
-                throw new UsuarioYaExiste(usuario.#username);
+            if (e.code && e.code.startsWith('SQLITE_CONSTRAINT')) {
+                if (e.message.includes('Usuarios.username')) {
+                    throw new UsuarioYaExiste(usuario.#username);
+                }
+                if (e.message.includes('Usuarios.email')) {
+                    throw new EmailYaExiste(usuario.email);  // AÑADE ESTA LÍNEA
+                }
             }
             throw new ErrorDatos('No se ha insertado el usuario', { cause: e });
         }
@@ -58,20 +72,31 @@ export class Usuario {
     }
 
     static #update(usuario) {
-        const username = usuario.#username;
-        const password = usuario.#password;
+        console.log("update");
+        //const username = usuario.#username;
+        //const password = usuario.#password;
         const nombre = usuario.nombre;
         const rol = usuario.rol;
         const apellidos = usuario.apellidos;
         const email = usuario.email;
         const puntos = usuario.puntos; // Agregamos los puntos
         const fecha_nacimiento=usuario.fecha_nacimiento;
-        const datos = {username, password, nombre, apellidos, email, rol, puntos,fecha_nacimiento, id: usuario.#id};
+        const datos = { nombre: nombre, apellidos: apellidos, email: email, rol: rol, puntos: puntos,fecha_nacimiento:fecha_nacimiento, id: Number.parseInt(usuario.#id)};
 
-        const result = this.#updateStmt.run(datos);
-        if (result.changes === 0) throw new UsuarioNoEncontrado(username);
+        console.log("antes del stmt, datos: ", datos);
+        try{
+            const result = this.#updateStmt.run(datos);
 
-        return usuario;
+            console.log("despues del stmt");
+            if (result.changes === 0) throw new UsuarioNoEncontrado(usuario.#id);
+
+            console.log("fin update");
+
+            return usuario;
+        }catch(e){
+            console.error("Error en el update:", e);
+            throw new ErrorDatos('No se ha podido actualizar el usuario', { cause: e });
+        }
     }
 
     /*static addPoints(idUsuario, puntos) {
@@ -162,6 +187,7 @@ export class Usuario {
       }
 
     persist() {
+        console.log("persist");
         if (this.#id === null) return Usuario.#insert(this);
         return Usuario.#update(this);
     }
@@ -185,5 +211,12 @@ export class UsuarioYaExiste extends Error {
     constructor(username, options) {
         super(`Usuario ya existe: ${username}`, options);
         this.name = 'UsuarioYaExiste';
+    }
+}
+
+export class EmailYaExiste extends Error {
+    constructor(email, options) {
+        super(`Email ya existe: ${email}`, options);
+        this.name = 'EmailYaExiste';
     }
 }

@@ -17,7 +17,8 @@ export class EntradasUsuario {
     }
 
     static getEntradasByUsuario(id_usuario){
-        return this.#getAllStmt.all({id_usuario});
+        const rows = this.#getAllStmt.all({id_usuario});
+        return rows.map(row => new EntradasUsuario(row));
     }
 
     static #insert(id_usuario, id_evento, cantidad,fecha_compra){
@@ -54,8 +55,10 @@ export class EntradasUsuario {
     cantidad;
     fecha_compra;
 
-    constructor(idUsuario, idEvento, cantidad,fecha_compra){
-        this.#id = null;
+    //constructor(idUsuario, idEvento, cantidad,fecha_compra){ EXPIRACION DE PUNTOS
+     //   this.#id = null;
+    constructor({id = null, idUsuario, idEvento, cantidad}){
+        this.#id = id;
         this.idUsuario = idUsuario;
         this.idEvento = idEvento;
         this.cantidad = cantidad;
