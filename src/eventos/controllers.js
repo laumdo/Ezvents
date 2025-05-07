@@ -60,7 +60,7 @@ export function modificarEvento(req, res) {
 
         evento.persist(); 
 
-        res.redirect(`/eventosArtistas/viewContratar/${nuevoEvento.id}`);
+        res.redirect(`/eventosArtistas/viewContratar/${evento.id}`);
     } catch (error) {
         res.render('pagina', { 
             contenido: 'paginas/admin', 

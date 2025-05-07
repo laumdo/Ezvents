@@ -7,6 +7,7 @@ export class EventoArtista {
     static #checkStmt = null;
     static #getAllArtistsStmt = null;
     static #getAllEventsStmt = null;
+    static #getArtistIdsByEventStmt = null;
 
     static initStatements(){
         const db = getConnection();
@@ -16,6 +17,12 @@ export class EventoArtista {
         this.#checkStmt = db.prepare('SELECT COUNT(*) as count FROM acudeA WHERE idArtista = @id_artista AND idEvento = @id_evento');
         this.#getAllArtistsStmt = db.prepare('SELECT * FROM acudeA WHERE idEvento = @id_evento');
         this.#getAllEventsStmt = db.prepare('SELECT * FROM acudeA WHERE idArtista = @id_artista');
+        this.#getArtistIdsByEventStmt = db.prepare('SELECT idArtista FROM acudeA WHERE idEvento = @id_evento');
+    }
+
+    static getArtistIdsByEvent(id_evento) {
+        const rows = this.#getArtistIdsByEventStmt.all({id_evento});
+        return rows.map(row => row.idArtista);
     }
 
     static getArtistsByEvent(id_evento){
