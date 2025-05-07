@@ -55,19 +55,20 @@ export function eliminarArtistaEvento(req, res){
     }
 }
 
-export function viewContratar(req, res){//Cambiar, hace N+1 con lo de contratado
+export function viewContratar(req, res){
     const id_evento = req.params.id_evento;
 
     const artistas = Artista.getAll();
-    const artistasNoContratados = [];
+    const idsContratados = EventoArtista.getArtistIdsByEvent(id_evento);
+
     const artistasContratados = [];
+    const artistasNoContratados = [];
 
     for (const artista of artistas) {
-        const contratado = EventoArtista.contratado(artista.id, id_evento);
-        if (contratado) {
+        if (idsContratados.includes(artista.id)) {
             artistasContratados.push(artista);
-        }else{
-            artistasNoContratados.push(artista)
+        } else {
+            artistasNoContratados.push(artista);
         }
     }
 
