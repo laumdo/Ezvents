@@ -1,75 +1,67 @@
-import { escapeXML } from 'ejs';
+import { matchedData, validationResult } from 'express-validator';
 import { Foro } from './Foro.js';
-import { validationResult } from 'express-validator';
+import { render } from '../utils/render.js';
 
-
-export const mostrarForo = (req, res) => {
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
-        return res.status(400).render('pagina', {
-            contenido: 'paginas/error',
+export function mostrarForo(req, res) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        return render(req, res, 'paginas/error', {
             mensaje: 'ID del evento inválido',
-            errores: errores.array()
+            errores: result.mapped()
         });
     }
 
-    const eventoId = parseInt(req.params.id, 10);
-    const mensajes = Foro.getMensajesByEvento(eventoId);
+    const { id } = matchedData(req);
+    const mensajes = Foro.getMensajesByEvento(id);
 
-    const params = {
-        contenido: 'paginas/foro',
+    render(req, res, 'paginas/foro', {
         session: req.session,
         mensajes,
-        evento_id: eventoId
-    };
+        evento_id: id
+    });
+}
 
-    res.render('pagina', params);
-};
+export function viewForoError(res, mensaje, errores = {}) {
+    return render(null, res, 'paginas/error', {
+        mensaje,
+        errores
+    });
+}
 
-export const agregarMensaje = (req, res) => {
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
-        return res.status(400).render('pagina', {
-            contenido: 'paginas/error',
-            mensaje: 'Datos del mensaje no válidos',
-            errores: errores.array()
-        });
+export function agregarMensaje(req, res) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        return viewForoError(res, 'Datos del mensaje no válidos', errores);
     }
 
-    const { contenido, parent_id, idEvento } = req.body;
+    const { contenido, parent_id, idEvento } = matchedData(req);
     const usuario = req.session.usuario;
 
-    if (!usuario) {
-        return res.redirect('/usuarios/login');
+
+    const contenidoLimpio = contenido.trim();
+    if (!contenidoLimpio) {
+        return viewForoError(res, 'El contenido del mensaje no puede estar vacío');
     }
 
-    const parentId = parent_id || null;
-
-    Foro.insertMensaje(usuario, contenido, idEvento, parentId);
-
+    Foro.insertMensaje(usuario, contenidoLimpio, idEvento, parent_id || null);
     res.redirect(`/foro/${idEvento}`);
-};
+}
 
-
-export const eliminarMensaje = (req, res) => {
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
-        return res.status(400).render('pagina', {
-            contenido: 'paginas/error',
-            mensaje: 'Datos inválidos para eliminar el mensaje',
-            errores: errores.array()
-        });
+export function eliminarMensaje(req, res) {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        return viewForoError(res, 'Datos inválidos para eliminar el mensaje', errores);
     }
 
     try {
-        const { idMensaje, idEvento } = req.body;
+        const { idMensaje, idEvento } = matchedData(req);
         Foro.borrarMensaje(idMensaje);
         res.redirect(`/foro/${idEvento}`);
     } catch (error) {
-        res.status(500).render('pagina', {
-            contenido: 'paginas/error',
-            mensaje: 'Error al eliminar el mensaje del foro'
-        });
+        return viewForoError(res, 'Error al eliminar el mensaje del foro');
     }
-};
-
+}

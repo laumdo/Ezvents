@@ -2,19 +2,18 @@
 
 <link rel="stylesheet" href="/css/foro.css">
 
-<!-- Formulario único para publicar un mensaje -->
+<!-- Formulario para publicar un nuevo mensaje -->
 <form class="form-publicar" action="/foro/agregar" method="POST">
-    <input type="hidden" name="id" value="<%= evento_id %>">
-    <textarea name="mensaje" required placeholder="Escribe tu mensaje aquí..."></textarea>
+    <input type="hidden" name="idEvento" value="<%= evento_id %>">
+    <textarea name="contenido" required placeholder="Escribe tu mensaje aquí..." rows="3"></textarea>
     <button type="submit">Publicar mensaje</button>
 </form>
 
 <hr>
 
 <div class="mensajes">
-    <% function renderMensajes(mensajes, parentId=null, nivel=0) { %>
-        <% mensajes .filter(m=> m.parent_id === parentId)
-            .forEach(m => { %>
+    <% function renderMensajes(mensajes, parentId = null, nivel = 0) { %>
+        <% mensajes.filter(m => m.parent_id === parentId).forEach(m => { %>
             <div class="mensaje <%= parentId !== null ? 'respuesta' : '' %>">
                 <p>👤 <%= m.usuario %> <em><%= m.fecha %></em></p>
 
@@ -24,25 +23,25 @@
 
                 <% if (session && session.esAdmin) { %>
                     <form action="/foro/eliminar" method="POST" style="display:inline;">
-                        <input type="hidden" name="id" value="<%= evento_id %>">
-                        <input type="hidden" name="mensaje_id" value="<%= m.id %>">
+                        <input type="hidden" name="idEvento" value="<%= evento_id %>">
+                        <input type="hidden" name="idMensaje" value="<%= m.id %>">
                         <button type="submit">Eliminar</button>
                     </form>
-                    <% } %>
-
-                        <% if (parentId===null) { %>
-                            <form class="respuesta-form" action="/foro/agregar" method="POST">
-                                <input type="hidden" name="id" value="<%= evento_id %>">
-                                <input type="hidden" name="parent_id" value="<%= m.id %>">
-                                <textarea name="mensaje" required placeholder="Escribe tu respuesta aquí..."></textarea>
-                                <button type="submit">Responder</button>
-                            </form>
-                            <% } %>
-
-                                <% renderMensajes(mensajes, m.id, nivel + 1); %>
-            </div>
-            <% }); %>
                 <% } %>
 
-                    <% renderMensajes(mensajes); %>
+                <% if (parentId === null) { %>
+                    <form class="respuesta-form" action="/foro/agregar" method="POST">
+                        <input type="hidden" name="idEvento" value="<%= evento_id %>">
+                        <input type="hidden" name="parent_id" value="<%= m.id %>">
+                        <textarea name="contenido" required placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button type="submit">Responder</button>
+                    </form>
+                <% } %>
+
+                <% renderMensajes(mensajes, m.id, nivel + 1); %>
+            </div>
+        <% }); %>
+    <% } %>
+
+    <% renderMensajes(mensajes); %>
 </div>
