@@ -1,9 +1,15 @@
 import { Evento } from "../eventos/Evento.js";
 import { EventoArtista } from './EventoArtista.js';
 import { Artista } from "../artista/Artista.js";
+import { validationResult } from 'express-validator';
 import { flashMessages } from '../middleware/flash.js';
 
 export function viewCartelera(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const id_evento = req.params.id_evento;
     
     const artistas = EventoArtista.getArtistsByEvent(id_evento);
@@ -16,6 +22,11 @@ export function viewCartelera(req, res){
 }
 
 export function viewEventosDelArtista(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const id_artista = req.params.id_artista;
     const eventos = EventoArtista.getEventsByArtist(id_artista);
 
@@ -28,6 +39,11 @@ export function viewEventosDelArtista(req, res){
 }
 
 export function agregarArtistaAEvento(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try{
         const id_artista = req.body.id_artista;
         const id_evento = req.body.id_evento;
@@ -43,6 +59,11 @@ export function agregarArtistaAEvento(req, res){
 }
 
 export function eliminarArtistaEvento(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try{
         const id_artista = req.body.id_artista;
         const id_evento = req.body.id_evento;
@@ -56,6 +77,11 @@ export function eliminarArtistaEvento(req, res){
 }
 
 export function viewContratar(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const id_evento = req.params.id_evento;
 
     const artistas = Artista.getAll();
