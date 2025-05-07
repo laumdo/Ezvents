@@ -4,17 +4,12 @@ import { Artista } from "../artista/Artista.js";
 import { flashMessages } from '../middleware/flash.js';
 
 export function viewCartelera(req, res){
-    const id_evento = req.query.id_evento;
+    const id_evento = req.query.id_evento;//esto tiene que cambiar
     const artistas = EventoArtista.getArtistsByEvent(id_evento);
+    
+    const idsArtistas = artistas.map(artista => artista.idArtista);
 
-    const cartelera = [];
-
-    for (const uno of artistas) {
-        const artista = Artista.getArtistaById(uno.idArtista);
-        if (artista) {
-            cartelera.push(artista);
-        }
-    }
+    const cartelera = Artista.getArtistasById(idsArtistas);
 
     res.render('pagina', {contenido: 'paginas/artistas', session: req.session, artistas: cartelera});
 }
@@ -23,30 +18,22 @@ export function viewEventosDelArtista(req, res){
     const id_artista = req.query.id_artista;
     const eventos = EventoArtista.getEventsByArtist(id_artista);
 
-    const asistencias = [];
+    const idsEventos = eventos.map(evento => evento.idEvento);
 
-    for (const evento of eventos) {
-        const asiste = Evento.getEventoById(evento.idEvento);
-        if (asiste) {
-            asistencias.push(asiste);
-        }
-    }
-
+    const asistenciasMap = Evento.getEventosById(idsEventos);
+    const asistencias = Object.values(asistenciasMap);
+    
     res.render('pagina', {contenido: 'paginas/eventos', session: req.session, eventos: asistencias});
 }
-
-
 
 export function agregarArtistaAEvento(req, res){
     try{
         const id_artista = req.body.id_artista;
         const id_evento = req.body.id_evento;
 
-        console.log("Se mete en agregar artista evento, id_artista: ", id_artista);
-        console.log("id_evento: ", id_evento);
-
-        
-        EventoArtista.agregarArtista(id_artista, id_evento);
+        const datos = { idArtista: id_artista, idEvento: id_evento };
+        const artistaEvento = new EventoArtista(datos);
+        artistaEvento.persist();
         req.session.id_evento = id_evento;
         res.redirect('/eventosArtistas/viewContratar');
     }catch(e){

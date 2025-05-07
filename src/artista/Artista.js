@@ -6,6 +6,7 @@ export class Artista{
     static #deleteStmt = null
     static #getByIdStmt = null
     static #getAllStmt = null
+    static #getAllByIdStmt = null
 
     static initStatements(){
         const db = getConnection();
@@ -15,6 +16,35 @@ export class Artista{
         this.#deleteStmt = db.prepare('DELETE FROM artista WHERE id = @id');
         this.#getByIdStmt = db.prepare('SELECT * FROM artista WHERE id = @id');
         this.#getAllStmt = db.prepare('SELECT * FROM artista');
+        this.#getAllByIdStmt = db.prepare('SELECT * FROM artista WHERE id = @id_artistas');
+    }
+
+    static getArtistasById(id_artistas){
+        if(id_artistas.length === 0) return [];
+
+        const db = getConnection();
+
+        const placeholders = id_artistas.map(() => '?').join(', ');
+        const stmt = db.prepare(`SELECT * FROM artista WHERE id IN (${placeholders})`);
+        const rows = stmt.all(...id_artistas);
+
+        return rows.map(row => new Artista(row));
+    }
+
+    static getArtistaById(idArtista){
+        try{
+            const artista = this.#getByIdStmt.get({id: idArtista});
+            if(artista === undefined) throw new ErrorDatos('No se ha encontrado el artista', {id: idArtista});
+            
+            return new Artista(artista);
+        }catch(e){
+            throw new ErrorDatos('Error al buscar el artista', { cause: e});
+        }
+    }
+
+    static getAll(){
+        const rows = this.#getAllStmt.all();
+        return rows.map(row => new Artista(row));
     }
 
     static #insert(artista){
@@ -43,22 +73,6 @@ export class Artista{
 
         if(result.changes === 0) throw new ErrorDatos('Error al eliminar el artista');
         return result;
-    }
-
-    static getArtistaById(idArtista){
-        try{
-            const artista = this.#getByIdStmt.get({id: idArtista});
-            if(artista === undefined) throw new ErrorDatos('No se ha encontrado el artista', {id: idArtista});
-            
-            return new Artista(artista);
-        }catch(e){
-            throw new ErrorDatos('Error al buscar el artista', { cause: e});
-        }
-    }
-
-    static getAll(){
-        const rows = this.#getAllStmt.all();
-        return rows.map(row => new Artista(row));
     }
 
     #id;

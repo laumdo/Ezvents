@@ -18,18 +18,24 @@ export class EventoArtista {
         this.#getAllEventsStmt = db.prepare('SELECT * FROM acudeA WHERE idArtista = @id_artista');
     }
 
-    static getArtistsByEvent(id_evento){//cambiar?
-        return this.#getAllArtistsStmt.all({id_evento});
+    static getArtistsByEvent(id_evento){
+        const rows = this.#getAllArtistsStmt.all({id_evento});
+        return rows.map(row => new EventoArtista(row));
     }
 
     static getEventsByArtist(id_artista){
-        return this.#getAllEventsStmt.all({id_artista});
+        const rows = this.#getAllEventsStmt.all({id_artista});
+        return rows.map(row => new EventoArtista(row));
     }
 
-    static #insert(id_artista, id_evento){
+    static #insert(eventoArtista){
+        console.log("se mete en insert de evento artista con id_artista: ", eventoArtista.idArtista);
         let result = null;
         try{
-            result = this.#insertStmt.run({id_artista, id_evento});
+            result = this.#insertStmt.run({
+                id_artista: eventoArtista.idArtista,
+                id_evento: eventoArtista.idEvento
+            });
         }catch(e){
             throw new ErrorDatos('No se ha podido añadir el artista al evento', { cause: e});
         }
@@ -56,16 +62,6 @@ export class EventoArtista {
         }
     }
 
-    static agregarArtista(id_artista, id_evento) {//QUITAR ESTO Y USAR EL PERSIST
-        const existe = this.#checkStmt.get({ id_artista, id_evento });
-    
-        if (existe.count === 0) {
-            this.#insert(id_artista, id_evento);
-        }else{
-            throw new ErrorDatos('El artista ya está en el cartel del evento', { cause: e});
-        }
-    }
-
     static eliminarArtista(id_artista, id_evento){
         const existe = this.#checkStmt.get({ id_artista, id_evento });
 
@@ -81,13 +77,14 @@ export class EventoArtista {
     idArtista;
     idEvento;
 
-    constructor(idArtista, idEvento){
+    constructor({idArtista, idEvento}){
         this.#id = null;
         this.idArtista = idArtista;
         this.idEvento = idEvento;
     }
 
-    persist() {//PREGUNTAR SI AQUI PUEDO PONER LO DE CHECK
-        if (this.#id === null) return EventoArtista.#insert(this);
+    persist() {
+        const existe = EventoArtista.#checkStmt.get({ id_artista: this.idArtista, id_evento: this.idEvento });
+        if (this.#id === null && existe.count === 0) return EventoArtista.#insert(this);
     }
 }
