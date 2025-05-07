@@ -4,22 +4,19 @@ import { Artista } from "../artista/Artista.js";
 import { flashMessages } from '../middleware/flash.js';
 
 export function viewCartelera(req, res){
-    const id_evento = req.query.id_evento;
-    console.log("id_evento: ", id_evento);
+    const id_evento = req.params.id_evento;
+    
     const artistas = EventoArtista.getArtistsByEvent(id_evento);
-
-    console.log("artistas: ", artistas);
     
     const idsArtistas = artistas.map(artista => artista.idArtista);
 
     const cartelera = Artista.getArtistasById(idsArtistas);
-    console.log("cartelera: ", cartelera);
 
     res.render('pagina', {contenido: 'paginas/artistas', session: req.session, artistas: cartelera});
 }
 
 export function viewEventosDelArtista(req, res){
-    const id_artista = req.query.id_artista;
+    const id_artista = req.params.id_artista;
     const eventos = EventoArtista.getEventsByArtist(id_artista);
 
     const idsEventos = eventos.map(evento => evento.idEvento);
