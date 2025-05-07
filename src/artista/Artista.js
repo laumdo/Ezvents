@@ -51,7 +51,7 @@ export class Artista{
         let result = null;
         try{
             const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };
-            result = this.#insertStmt.run(datos);
+            result = this.#insertStmt.run(datos);//se puede poner artista?
             artista.#id = result.lastInsertRowid;
         }catch(e){
             throw new ErrorDatos('No se ha podido insertar el artista', { cause: e});

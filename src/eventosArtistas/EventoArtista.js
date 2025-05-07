@@ -32,10 +32,7 @@ export class EventoArtista {
         console.log("se mete en insert de evento artista con id_artista: ", eventoArtista.idArtista);
         let result = null;
         try{
-            result = this.#insertStmt.run({
-                id_artista: eventoArtista.idArtista,
-                id_evento: eventoArtista.idEvento
-            });
+            result = this.#insertStmt.run({ id_artista: eventoArtista.idArtista, id_evento: eventoArtista.idEvento });
         }catch(e){
             throw new ErrorDatos('No se ha podido añadir el artista al evento', { cause: e});
         }

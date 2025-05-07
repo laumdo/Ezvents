@@ -35,30 +35,8 @@ export function agregarEvento(req, res) {
         const datos = { id: null, idEmpresa: id_empresa, nombre: nombre, descripcion: descripcion, fecha: fecha, lugar: lugar, precio: precio, aforo_maximo: aforo_maximo, entradas_vendidas: 0, imagen: imagen };
         const nuevoEvento = new Evento(datos);
         nuevoEvento.persist();
-
-        const artistas = Artista.getAll();
-        const artistasNoContratados = [];
-        const artistasContratados = [];
     
-        for (const artista of artistas) {
-            const contratado = EventoArtista.contratado(artista.id, nuevoEvento.id);
-            if (contratado) {
-                artistasContratados.push(artista);
-            }else{
-                artistasNoContratados.push(artista)
-            }
-        }
-
-        //Igual quito la fecha
-
-        res.render('pagina', {
-            contenido: 'paginas/contratar',
-            session: req.session,
-            idEvento: nuevoEvento.id,
-            fecha: nuevoEvento.fecha,
-            artistas: artistasNoContratados,
-            artistasContratados: artistasContratados
-        });
+        res.redirect(`/eventosArtistas/viewContratar/${nuevoEvento.id}`);
     } catch (error) {
         res.status(400).send("Error al agregar el evento.");
     }

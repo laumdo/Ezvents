@@ -5,7 +5,7 @@ const eventosArtistasRouter = express.Router();
 
 eventosArtistasRouter.get('/cartelera', viewCartelera);
 eventosArtistasRouter.get('/asistencias', viewEventosDelArtista);
-eventosArtistasRouter.get('/viewContratar', viewContratar);
+eventosArtistasRouter.get('/viewContratar/:id_evento', viewContratar);
 eventosArtistasRouter.post('/agregar', agregarArtistaAEvento);
 eventosArtistasRouter.post('/eliminar', eliminarArtistaEvento);
 
