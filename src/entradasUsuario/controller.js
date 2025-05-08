@@ -35,7 +35,8 @@ export function viewComprar(req, res){
 export async function comprar(req, res){
     const errores = validationResult(req);
     if (!errores.isEmpty()) {
-        return res.status(400).json({ errors: errores.array() });
+        res.setFlash('Error al intentar comprar');
+        res.redirect('/');
     }
 
     try{
