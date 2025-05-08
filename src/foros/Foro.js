@@ -4,6 +4,8 @@ import { getConnection } from '../db.js';
 export class Foro {
     static #getByEventoStmt = null;
     static #insertStmt = null;
+    static #getMessagesStmt = null;
+    static #deleteStmt = null;
 
     static initStatements() {
         const db = getConnection();
@@ -14,12 +16,13 @@ export class Foro {
             INSERT INTO mensajes (usuario, contenido, fecha, evento_id, parent_id) 
             VALUES (@usuario, @contenido, @fecha, @evento_id, @parent_id)
         `);
+        this.#deleteStmt = db.prepare('DELETE FROM mensajes WHERE id = ?');
+        this.#getMessagesStmt = db.prepare('SELECT * FROM mensajes WHERE evento_id = ? ORDER BY fecha DESC')
     }
 
     // Obtener los mensajes de un evento
     static getMensajesByEvento(eventoId) {
-        const db = getConnection();
-        return db.prepare('SELECT * FROM mensajes WHERE evento_id = ? ORDER BY fecha DESC').all(eventoId);
+        return this.#getMessagesStmt.all(eventoId)
     }
 
     // Insertar un mensaje en el foro
@@ -42,7 +45,6 @@ export class Foro {
     }
 
     static borrarMensaje(mensajeId) {
-        const db = getConnection();
-        db.prepare('DELETE FROM mensajes WHERE id = ?').run(mensajeId);
+        this.#deleteStmt.run(mensajeId);
     }
 }
