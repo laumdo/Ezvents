@@ -1,4 +1,5 @@
 import { getConnection } from "../db.js";
+import { ErrorDatos } from "../db.js";
 
 export class Descuento {
     static #getByIdStmt = null;

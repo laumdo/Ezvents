@@ -35,11 +35,22 @@ descuentosRouter.post(
 
 descuentosRouter.post('/eliminarDescuento', 
     autenticado(), 
+    tieneRol(RolesEnum.ADMIN),
+    body('id', 'ID inválido').trim().notEmpty().isInt({ min: 1 }),
+    asyncHandler(eliminarDescuento),
     asyncHandler(eliminarDescuento)
 );
 
 descuentosRouter.post('/modificarDescuento', 
     autenticado(), 
+    autenticado(),
+    tieneRol(RolesEnum.ADMIN),
+    // Validamos únicamente que id sea un entero >=1
+    body('id', 'ID inválido').isInt({ min: 1 }),
+    // El resto de campos son opcionales; si vienen, validamos su formato
+    body('titulo').optional({ checkFalsy: true }).trim(),
+    body('condiciones').optional({ checkFalsy: true }).trim(),
+    body('puntos').optional({ checkFalsy: true }).isInt({ min: 0 }).withMessage('Puntos debe ser >= 0'),
     asyncHandler(modificarDescuento)
 );
 

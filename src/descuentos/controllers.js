@@ -85,39 +85,69 @@ export function agregarDescuento(req,res){
             activeForm:    'addDescuento'
         });
     }
-
-    /*try {
-        const { titulo, condiciones, puntos} = req.body;
-            const interno = req.body.interno === '1' ? 1 : 0;
-
-        // Valor vendrá como cadena si se rellena, o undefined si queda en blanco
-        const valor = req.body.valor
-        ? parseFloat(req.body.valor)
-        : null;
-
-        const imagen = req.file ? req.file.filename : 'descuento.png';
-
-        const nuevoDescuento = new Descuento(null, titulo, condiciones, parseInt(puntos, 10), imagen,interno,valor);
-        nuevoDescuento.persist();
-
-        const usuario = Usuario.getUsuarioByUsername(req.session.username); 
-        const descuentos = Descuento.getAll();
-
-        res.render('pagina', {
-            contenido: 'paginas/puntos',
-            session: req.session,
-            mensaje: 'Descuento agregado con éxito',
-            puntosUsuario: usuario.puntos,
-            descuentos
-        });
-    } catch (error) {
-        res.status(400).send("Error al agregar descuento");
-    }*/
 }
 
 
 export function modificarDescuento(req,res){
-    try{
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errores = result.mapped();
+        const datos = matchedData(req);
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/admin', {
+            session: req.session,
+            errores,
+            datos,
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            activeSection: 'descuentos',
+            activeForm:    'editDescuento'
+        });
+    }
+
+    try {
+        const datos = matchedData(req);
+        const { id, titulo, condiciones, puntos } = datos;
+        const imagen = req.file?.filename ?? null;
+
+        const descuento = Descuento.getDescuento(id);
+
+        if (titulo !== undefined)      descuento.titulo      = titulo;
+        if (condiciones !== undefined) descuento.condiciones = condiciones;
+        if (puntos !== undefined)      descuento.puntos      = puntos;
+        if (imagen)                    descuento.imagen      = imagen;
+
+        descuento.persist();
+
+        req.log.info("Descuento %d modificado por %s", id, req.session.username);
+        return render('pagina',{
+            contenido: 'paginas/admin',
+            session:req.session,
+            mensaje:'Descuento modificado con exito',
+            activeSection: 'descuentos',
+            activeForm:    'editDescuento',
+            //datos: {},
+            //errores: {}
+        });
+    } catch (e) {
+        const datos = matchedData(req);
+        req.log.warn("Error al modificar descuento %s: %s", datos.id, e.message);
+        req.log.debug(e);
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/admin', {
+            session: req.session,
+            error: 'No se pudo modificar el descuento: ' + e.message,
+            datos,
+            errores: {},
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            activeSection: 'descuentos',
+            activeForm:    'editDescuento'
+        });
+    }
+    /*try{
         const{ id,titulo, condiciones, puntos,interno,valor}=req.body;
         const imagen = req.file ? req.file.filename : null;
         let descuento = Descuento.getDescuento(id);
@@ -142,12 +172,62 @@ export function modificarDescuento(req,res){
             session:req.session,
             error:'Error al modificar descuento'
         });
-    }
+    }*/
 }
 
 export function eliminarDescuento(req,res){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errores = result.mapped();
+        const datos   = matchedData(req);
+        const usuario    = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/admin', {
+            session: req.session,
+            errores,
+            datos,
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            activeSection: 'descuentos',
+            activeForm:    'deleteDescuento',
+        });
+    }
 
-    try{
+    try {
+        const { id } = matchedData(req);
+
+        Descuento.getDescuento(id);
+
+        Descuento.delete(id);
+
+        req.log.info("Descuento %d eliminado por %s", id, req.session.username);
+        return render('pagina',{
+            contenido: 'paginas/admin',
+            session:req.session,
+            mensaje:'Descuento modificado con exito',
+            activeSection: 'descuentos',
+            activeForm:    'deleteDescuento',
+            //datos: {},
+            //errores: {}
+        });
+    } catch (e) {
+        req.log.warn("Error al eliminar descuento %s: %s", req.body.id, e.message);
+        req.log.debug(e);
+        const datos   = matchedData(req);
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = Descuento.getAll();
+        return render(req, res, 'paginas/admin', {
+            session: req.session,
+            error: 'No se pudo eliminar el descuento: ' + e.message,
+            datos,
+            errores: {},
+            descuentos,
+            puntosUsuario: usuario.puntos,
+            activeSection: 'descuentos',
+            activeForm:    'deleteDescuento',
+        });
+    }
+   /* try{
         const{id}=req.body;
         Descuento.getDescuento(id);
 
@@ -160,7 +240,7 @@ export function eliminarDescuento(req,res){
         });
     }catch(error){
         res.render('pagina',{ contenido:'paginas/admin', error: 'Error al eliminar el descuento. Verifique el ID.'});
-    }
+    }*/
 }
 
 export function canjearDescuento(req, res) {
