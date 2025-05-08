@@ -61,16 +61,6 @@ CREATE TABLE mensajes (
     fecha TEXT NOT NULL, 
     parent_id INTEGER REFERENCES mensajes (id) ON DELETE CASCADE);
 
-/*DROP TABLE IF EXISTS "PuntosUsuario";
-CREATE TABLE PuntosUsuario (
-    id               INTEGER PRIMARY KEY AUTOINCREMENT,
-    idUsuario        INTEGER NOT NULL
-                          REFERENCES Usuarios(id)
-                          ON DELETE CASCADE,
-    puntos           INTEGER NOT NULL,
-    fecha_obtencion  TEXT    NOT NULL
-                          DEFAULT (datetime('now'))
-);*/
 ALTER TABLE Usuarios ADD COLUMN fecha_nacimiento TEXT NOT NULL ;
 ALTER TABLE eventos ADD COLUMN edad_minima INTEGER NOT NULL DEFAULT 18;
 ALTER TABLE entradasUsuario

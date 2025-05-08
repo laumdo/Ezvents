@@ -25,12 +25,12 @@ router.get('/:id',
 );
 
 router.post('/agregarEvento',
-  body('nombre').trim().notEmpty(),
-  body('descripcion').trim().notEmpty(),
-  body('fecha').isISO8601(),
-  body('lugar').trim().notEmpty(),
-  body('precio').isFloat({ min: 0 }),
-  body('aforo_maximo').isInt({ min: 1 }),
+  body('nombre','El nombre no puede ser vacio').trim().notEmpty(),
+  body('descripcion','La descripcion no puede ser vacia').trim().notEmpty(),
+  body('fecha','fecha necesaria').isISO8601(),
+  body('lugar','Lugar necesario').trim().notEmpty(),
+  body('precio','Precio no puede ser nulo').isFloat({ min: 0 }),
+  body('aforo_maximo','Aforo mayor que 0').isInt({ min: 1 }),
   agregarEvento
 );
 
@@ -40,8 +40,8 @@ router.post('/modificarEvento',
   body('descripcion').optional().trim(),
   body('fecha').optional().isISO8601(),
   body('lugar').optional().trim(),
-  body('precio').optional().isFloat({ min: 0 }),
-  body('aforo_maximo').optional().isInt({ min: 1 }),
+  body('precio','Precio tiene que ser mayor que 0').optional().isFloat({ min: 0 }),
+  body('aforo_maximo','Aforo tiene que ser mayor que 0').optional().isInt({ min: 1 }),
   modificarEvento
 );
 

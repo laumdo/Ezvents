@@ -5,7 +5,7 @@ import { Usuario } from '../usuarios/Usuario.js';
 import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
 import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
-import { Evento, EventoNoEncontrado } from './Evento.js';
+//import { Evento, EventoNoEncontrado } from './Evento.js';
 
 function calcularEdad(fechaNacimiento) {
   const [y, m, d] = fechaNacimiento.split('-').map(Number);
@@ -41,94 +41,15 @@ export function viewEventos(req, res) {
     }
   }
   
-  /*export async function agregarEvento(req, res, next) {
-    if (!req.session.esEmpresa && !req.session.esAdmin) return res.status(403).render('pagina', { contenido: 'paginas/error', mensaje: 'Sin permiso' });
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const datos = matchedData(req);
-      return res.status(400).render('pagina', { contenido: 'paginas/admin', session: req.session, errores: errors.mapped(), datos });
-    }
-    const { nombre, descripcion, fecha, lugar, precio, aforo_maximo,edad_minima } = matchedData(req);
-    const imagen = req.file?.filename ?? 'default.png';
-    try {
-      await new Evento(null, nombre, descripcion, fecha, lugar, precio, aforo_maximo, 0, imagen,edad_minima).persist();
-      res.redirect('/eventos');
-      const artistas = Artista.getAll();
-        const contratados = artistas.filter(a => EventoArtista.contratado(a.id, nuevo.id));
-        const noContratados = artistas.filter(a => !EventoArtista.contratado(a.id, nuevo.id));
-    
-        res.render('pagina', {
-          contenido: 'paginas/contratar',
-          session: req.session,
-          idEvento: nuevo.id,
-          fecha: nuevo.fecha,
-          artistas: noContratados,
-          artistasContratados: contratados
-        });
-    }catch (err) {
-      next(err);
-    }
-  }
-  
-  export async function modificarEvento(req, res, next) {
-    if (!req.session.esEmpresa &&!req.session.esAdmin) return res.status(403).render('pagina', { contenido: 'paginas/error', mensaje: 'Sin permiso' });
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const datos = matchedData(req);
-      return res.status(400).render('pagina', { contenido: 'paginas/admin', session: req.session, errores: errors.mapped(), datos });
-    }
-    const { id, nombre, descripcion, fecha, lugar, precio, aforo_maximo,edad_minima } = matchedData(req);
-    const imagen = req.file?.filename;
-    try {
-      const evento = Evento.getEventoById(id);
-      evento.nombre = nombre ?? evento.nombre;
-      evento.descripcion = descripcion ?? evento.descripcion;
-      evento.fecha = fecha ?? evento.fecha;
-      evento.lugar = lugar ?? evento.lugar;
-      evento.precio = precio ?? evento.precio;
-      evento.edad_minima=edad_minima ?? evento.edad_minima;
-      evento.aforo_maximo = aforo_maximo ?? evento.aforo_maximo;
-      if (imagen) evento.imagen = imagen;
-      await evento.persist();
-      const artistas = Artista.getAll();
-      const contratados = artistas.filter(a => EventoArtista.contratado(a.id, evento.id));
-      const noContratados = artistas.filter(a => !EventoArtista.contratado(a.id, evento.id));
-      res.render('pagina', {
-        contenido: 'paginas/contratar',
-        session: req.session,
-        idEvento: evento.id,
-        fecha: evento.fecha,
-        artistas: noContratados,
-        artistasContratados: contratados
-    });
-  } catch (err) {
-      next(err);
-    }
-  }
-  
-  export async function eliminarEvento(req, res, next) {
-    if (!req.session.esAdmin) return res.status(403).render('pagina', { contenido: 'paginas/error', mensaje: 'Sin permiso' });
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).render('pagina', { contenido: 'paginas/admin', session: req.session, errores: errors.mapped() });
-    }
-    //const { id } = matchedData(req);
-    const { id } = matchedData(req, { locations: ['body'] });
-    try {
-      Evento.delete(id);
-      res.redirect('/eventos');
-    } catch (err) {
-      if (err instanceof EventoNoEncontrado) {
-        return res.status(404).render('pagina', { contenido: 'paginas/admin', session: req.session, mensaje: err.message });
-      }
-      next(err);
-    }
-  }*/
     export async function agregarEvento(req, res, next) {
       // permisos…
       if (!req.session.esEmpresa && !req.session.esAdmin) return res.status(403).render('pagina', { contenido: 'paginas/error', mensaje: 'Sin permiso' });
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        req.log.warn(
+          { campos: errors.array().map(e => e.param) },
+          'Intento de añadir evento con datos inválidos'
+        );
         const datos = matchedData(req);
         return res.status(400).render('pagina', {
           contenido: 'paginas/admin',
@@ -192,6 +113,11 @@ export function viewEventos(req, res) {
       // permisos…
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+
+        req.log.warn(
+          { campos: errors.array().map(e => e.param) },
+          'Intento de modificar evento con datos inválidos'
+        );
         const datos = matchedData(req);
         return res.status(400).render('pagina', {
           contenido: 'paginas/admin',

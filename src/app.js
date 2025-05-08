@@ -46,6 +46,7 @@ app.set('view engine', 'ejs');
 app.set('views', config.vistas);
 
 app.use(pinoMiddleware);
+app.use(pinoHttp(config.logger.http(logger)));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
