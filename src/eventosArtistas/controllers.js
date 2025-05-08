@@ -7,7 +7,8 @@ import { flashMessages } from '../middleware/flash.js';
 export function viewCartelera(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.setFlash('Error al ver los artistas del evento');
+        res.redirect('/');
     }
 
     const id_evento = req.params.id_evento;
@@ -24,7 +25,8 @@ export function viewCartelera(req, res){
 export function viewEventosDelArtista(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.setFlash('Error al ver los eventos del artista');
+        res.redirect('/');
     }
 
     const id_artista = req.params.id_artista;
@@ -41,7 +43,8 @@ export function viewEventosDelArtista(req, res){
 export function agregarArtistaAEvento(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.setFlash('Error al agregar el artista al evento');
+        res.redirect('/');
     }
 
     try{
@@ -54,14 +57,16 @@ export function agregarArtistaAEvento(req, res){
         
         res.redirect(`/eventosArtistas/viewContratar/${id_evento}`);
     }catch(e){
-        res.render('pagina', { contenido: 'paginas/error', mensaje: e });
+        res.setFlash('Error al agregar el artista al evento');
+        res.redirect('/');
     }
 }
 
 export function eliminarArtistaEvento(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.setFlash('Error al eliminar el artista del evento');
+        res.redirect('/');
     }
 
     try{
@@ -72,14 +77,16 @@ export function eliminarArtistaEvento(req, res){
 
         res.redirect(`/eventosArtistas/viewContratar/${id_evento}`);
     }catch(e){
-        res.render('pagina', { contenido: 'paginas/error', mensaje: e });
+        res.setFlash('Error al eliminar el artista del evento');
+        res.redirect('/');
     }
 }
 
 export function viewContratar(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        res.setFlash('Error al ver contratar artistas');
+        res.redirect('/');
     }
 
     const id_evento = req.params.id_evento;
