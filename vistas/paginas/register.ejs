@@ -28,8 +28,10 @@
             <label>Email:</label>
             <input type="text" name="email" value="<%= datos?.email || '' %>" required pattern=".+@(gmail\.com|ucm\.es)" title="El email debe ser válido" />
             <% if (errores?.email) { %>
-                <span style="color: red;"><%= errores.email.msg %></span>
+                <!--<span style="color: red;"><%= errores.email.msg %></span>-->
+                <span class="error"><%= errores.email.msg %></span>
             <% } %>
+            <span class="feedback"></span>
         </div>
 
         <!-- Username -->
@@ -37,8 +39,10 @@
             <label>Usuario:</label>
             <input type="text" name="username" value="<%= datos?.username || '' %>" required />
             <% if (errores?.username) { %>
-                <span style="color: red;"><%= errores.username.msg %></span>
+                <!--<span style="color: red;"><%= errores.username.msg %></span>-->
+                <span class="error"><%= errores.username.msg %></span>
             <% } %>
+            <span class="feedback"></span>  <!-- aquí el ✔/⚠ -->
         </div>
 
         <!-- Contraseña -->
@@ -92,3 +96,5 @@
         </p>
     </fieldset>
 </form>
+<script src="/js/fetch.js"></script>
+<script src="/js/04-registro.js"></script>
