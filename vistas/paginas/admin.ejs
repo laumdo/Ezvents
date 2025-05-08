@@ -25,7 +25,7 @@
     <!-- Formularios de eventos -->
     <div id="form-addEvento" class="admin-form oculto">
         <h2>Añadir Evento</h2>
-        <form action="/eventos/agregarEvento" method="POST">
+        <form action="/eventos/agregarEvento" method="POST" enctype="multipart/form-data">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
             <label>Descripción:</label>
@@ -58,7 +58,7 @@
     <!-- Formulario para modificar evento -->
     <div id="form-editEvento" class="admin-form oculto">
         <h2>Modificar Evento</h2>
-        <form action="/eventos/modificarEvento" method="POST">
+        <form action="/eventos/modificarEvento" method="POST" enctype="multipart/form-data">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
 
@@ -107,7 +107,7 @@
         <!-- Formularios de descuentos -->
         <div id="form-addDescuento" class="admin-form oculto">
             <h2>Añadir Descuento</h2>
-            <form action="/descuentos/agregarDescuento" method="POST">
+            <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
                 <label>Título:</label>
                 <input type="text" name="titulo" required>
                 <label>Condiciones:</label>
@@ -131,7 +131,7 @@
         </div>
 
         <!-- Formulario para modificar descuento -->
-        <div id="form-editDescuento" class="admin-form oculto">
+        <div id="form-editDescuento" class="admin-form oculto" enctype="multipart/form-data">
             <h2>Modificar Descuento</h2>
             <form action="/descuentos/modificarDescuento" method="POST">
                 <label>ID del descuento:</label>
@@ -163,7 +163,7 @@
         <!--Añadir artista-->
         <div id="form-addArtista" class="admin-form oculto">
             <h2>Añadir Artista</h2>
-            <form action="/artista/agregarArtista" method="POST">
+            <form action="/artista/agregarArtista" method="POST" enctype="multipart/form-data">
                 <label>Nombre Artístico:</label>
                 <input type="text" name="nombreArtistico" required>
                 <label>Nombre:</label>
@@ -193,7 +193,7 @@
         </div>
 
         <!--Modificar artista-->
-        <div id="form-editArtista" class="admin-form oculto">
+        <div id="form-editArtista" class="admin-form oculto" enctype="multipart/form-data">
             <h2>Modificar Artista</h2>
             <form action="/artista/modificarArtista" method="POST">
                 <label>ID del artista:</label>
