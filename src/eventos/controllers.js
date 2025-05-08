@@ -1,8 +1,6 @@
 import { param, validationResult } from 'express-validator';
 import { Evento } from './Evento.js';
-import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
-import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
 
 export function viewEventos(req, res) {
     const eventos = Evento.getAll();

@@ -17,7 +17,8 @@ export function viewArtista(req, res){
         const artista = Artista.getArtistaById(req.params.id);
         res.render('pagina', { contenido: 'paginas/artista', session: req.session, artista });
     }catch(e){
-        res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Artista no encontrado' });
+        res.setFlash('Artista no encontrado');
+        res.redirect('/artista/');
     }
 
 }
@@ -30,7 +31,6 @@ export function agregarArtista(req, res){
     }
 
     try{
-        console.log("agregar artista");
         const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
         const imagen = req.file ? req.file.filename : 'defaultUser.png'; // Si no hay imagen, usa la predeterminada
 

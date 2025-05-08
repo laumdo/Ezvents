@@ -1,3 +1,9 @@
+export const RolesEnum = Object.freeze({
+    USUARIO: 'U',
+    ADMIN: 'A',
+    EMPRESA: 'E'
+});
+
 export function autenticado(urlNoAutenticado = '/usuarios/login', urlAutenticado) {
     return (req, res, next) => {
         if (req.session != null && req.session.login) {

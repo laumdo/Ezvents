@@ -1,6 +1,7 @@
 import express from "express";
 import { param, body } from 'express-validator';
 import { viewArtistas, viewArtista, agregarArtista, modificarArtista, eliminarArtista } from "./controllers.js";
+import { autenticado, tieneRol } from "../middleware/auth.js";
 
 const artistasRouter = express.Router();
 
@@ -11,6 +12,8 @@ artistasRouter.get("/:id"
 );
 
 artistasRouter.post("/agregarArtista"
+    , autenticado()
+    , tieneRol()
     , body('nombreArtistico', 'El nombre artistico no puede ser vacío').trim().notEmpty()
     , body('nombre', 'El nombre no puede ser vacío').trim().notEmpty()
     , body('nombre', 'El nombre no puede contener números').isAlpha()
@@ -22,6 +25,8 @@ artistasRouter.post("/agregarArtista"
 );
 
 artistasRouter.post("/modificarArtista"
+    , autenticado()
+    , tieneRol()
     , body('id', 'El id no puede ser vacío').trim().notEmpty()
     , body('id', 'El id debe ser un número entero').isInt()
     , body("nombreArtistico").optional().trim()
@@ -34,6 +39,8 @@ artistasRouter.post("/modificarArtista"
 );
 
 artistasRouter.post("/eliminarArtista"
+    , autenticado()
+    , tieneRol()
     , body('id', 'El id no puede ser vacío').trim().notEmpty()
     , body('id', 'El id debe ser un número entero').isInt()
     , eliminarArtista
