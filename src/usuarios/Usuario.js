@@ -41,6 +41,11 @@ export class Usuario {
 
         return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos, fecha_nacimiento);
     }
+    
+    static existeUsername(username) {
+        const row = this.#getByUsernameStmt.get({ username });
+        return Boolean(row);
+    }
 
     static #insert(usuario) {
         let result = null;

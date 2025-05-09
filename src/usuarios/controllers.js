@@ -2,7 +2,7 @@ import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum, UsuarioYaExiste, EmailYaExiste } from './Usuario.js';
 import { matchedData } from 'express-validator';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
-
+import { DateTime } from 'luxon'; 
 import { render } from '../utils/render.js';
 
 
@@ -31,6 +31,22 @@ export async function doLogin(req, res) {
 
     try {
         const usuario = await Usuario.login(username, password);
+       
+        //verficar cumpleaños
+        if (usuario.fecha_nacimiento) {
+        // Con Date:
+            const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
+            const hoy = new Date();
+            if (m === hoy.getMonth() + 1 && d === hoy.getDate()) {
+                usuario.puntos = (usuario.puntos || 0) + 200;
+                usuario.persist();
+                req.session.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
+            }
+        }
+        // mensaje genérico si no era cumpleaños
+        if (!req.session.flash) {
+            req.session.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
+        }
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.username = usuario.username;
@@ -41,8 +57,6 @@ export async function doLogin(req, res) {
         req.session.esUsuario = usuario.rol === RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
         req.session.esEmpresa = usuario.rol === RolesEnum.EMPRESA;
-
-        res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         return res.redirect('/');
     } catch (e) {
         const datos = matchedData(req);

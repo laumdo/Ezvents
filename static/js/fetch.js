@@ -43,7 +43,8 @@ async function postData(url = '', data = {}, options = {}) {
             'Content-Type': 'application/x-www-form-urlencoded',
         }, options.headers || {});
 
-        const response = safeFetch(url, actualOptions);
+        //const response = safeFetch(url, actualOptions);
+        const response = await safeFetch(url, actualOptions);
         return response;
     } catch (err) {
         if (err instanceof ResponseError) {

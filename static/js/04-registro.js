@@ -32,8 +32,9 @@ async function registroSubmit(e){
     const formRegistro = e.target;
     try {
         const formData = new FormData(formRegistro);
-        const response = await postData('/usuarios/registro', formData);
-        window.location.assign('/usuarios/home');
+        const response = await postData('/usuarios/register', formData);
+
+        window.location.assign('/');
     } catch (err) {
         if (err instanceof ResponseError) {
             switch(err.response.status) {
