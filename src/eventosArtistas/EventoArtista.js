@@ -5,7 +5,6 @@ export class EventoArtista {
     static #insertStmt = null;
     static #deleteStmt = null;
     static #checkStmt = null;
-    static #getAllArtistsStmt = null;
     static #getAllEventsStmt = null;
     static #getArtistIdsByEventStmt = null;
 
@@ -15,8 +14,7 @@ export class EventoArtista {
         this.#insertStmt = db.prepare('INSERT INTO acudeA(idArtista, idEvento) VALUES (@id_artista, @id_evento)'); 
         this.#deleteStmt = db.prepare('DELETE FROM acudeA WHERE idArtista = @id_artista AND idEvento = @id_evento');
         this.#checkStmt = db.prepare('SELECT COUNT(*) as count FROM acudeA WHERE idArtista = @id_artista AND idEvento = @id_evento');
-        this.#getAllArtistsStmt = db.prepare('SELECT * FROM acudeA WHERE idEvento = @id_evento');
-        this.#getAllEventsStmt = db.prepare('SELECT * FROM acudeA WHERE idArtista = @id_artista');
+        this.#getAllEventsStmt = db.prepare('SELECT idEvento FROM acudeA WHERE idArtista = @id_artista');
         this.#getArtistIdsByEventStmt = db.prepare('SELECT idArtista FROM acudeA WHERE idEvento = @id_evento');
     }
 
@@ -25,18 +23,12 @@ export class EventoArtista {
         return rows.map(row => row.idArtista);
     }
 
-    static getArtistsByEvent(id_evento){
-        const rows = this.#getAllArtistsStmt.all({id_evento});
-        return rows.map(row => new EventoArtista(row));
-    }
-
-    static getEventsByArtist(id_artista){
+    static getEventsIdsByArtist(id_artista){
         const rows = this.#getAllEventsStmt.all({id_artista});
-        return rows.map(row => new EventoArtista(row));
+        return rows.map(row => row.idEvento);
     }
 
     static #insert(eventoArtista){
-        console.log("se mete en insert de evento artista con id_artista: ", eventoArtista.idArtista);
         let result = null;
         try{
             result = this.#insertStmt.run({ id_artista: eventoArtista.idArtista, id_evento: eventoArtista.idEvento });
@@ -88,6 +80,7 @@ export class EventoArtista {
     }
 
     persist() {
+        //Hago el existe por si acaso pero como al dejar de contratar un artista se borra de la base de datos siempre se insertaría nuevamente
         const existe = EventoArtista.#checkStmt.get({ id_artista: this.idArtista, id_evento: this.idEvento });
         if (this.#id === null && existe.count === 0) return EventoArtista.#insert(this);
     }

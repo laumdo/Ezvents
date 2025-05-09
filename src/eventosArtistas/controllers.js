@@ -7,15 +7,14 @@ import { flashMessages } from '../middleware/flash.js';
 export function viewCartelera(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.setFlash('Error al ver los artistas del evento');
-        res.redirect('/');
+        const mensajes = errors.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al ver los artistas del evento: ${mensajes}`);
+        return res.redirect('/');
     }
 
     const id_evento = req.params.id_evento;
     
-    const artistas = EventoArtista.getArtistsByEvent(id_evento);
-    
-    const idsArtistas = artistas.map(artista => artista.idArtista);
+    const idsArtistas = EventoArtista.getArtistIdsByEvent(id_evento);
 
     const cartelera = Artista.getArtistasById(idsArtistas);
 
@@ -25,17 +24,17 @@ export function viewCartelera(req, res){
 export function viewEventosDelArtista(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.setFlash('Error al ver los eventos del artista');
-        res.redirect('/');
+        const mensajes = errors.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al ver los eventos del artista: ${mensajes}`);
+        return res.redirect('/');
     }
 
     const id_artista = req.params.id_artista;
-    const eventos = EventoArtista.getEventsByArtist(id_artista);
 
-    const idsEventos = eventos.map(evento => evento.idEvento);
+    const idsEventos = EventoArtista.getEventsIdsByArtist(id_artista);
 
     const asistenciasMap = Evento.getEventosById(idsEventos);
-    const asistencias = Object.values(asistenciasMap);
+    const asistencias = Object.values(asistenciasMap);//Paso el mapa a array
     
     res.render('pagina', {contenido: 'paginas/eventos', session: req.session, eventos: asistencias});
 }
@@ -43,8 +42,9 @@ export function viewEventosDelArtista(req, res){
 export function agregarArtistaAEvento(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.setFlash('Error al agregar el artista al evento');
-        res.redirect('/');
+        const mensajes = errors.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al agregar el artista al evento: ${mensajes}`);
+        return res.redirect('/');
     }
 
     try{
@@ -65,8 +65,9 @@ export function agregarArtistaAEvento(req, res){
 export function eliminarArtistaEvento(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.setFlash('Error al eliminar el artista del evento');
-        res.redirect('/');
+        const mensajes = errors.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al eliminar al artista del evento: ${mensajes}`);
+        return res.redirect('/');
     }
 
     try{

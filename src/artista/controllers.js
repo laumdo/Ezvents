@@ -10,7 +10,7 @@ export function viewArtista(req, res){
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.setFlash('Id del evento inválido');
-        res.redirect('/');
+        return res.redirect('/');
     }
 
     try{
@@ -26,8 +26,9 @@ export function viewArtista(req, res){
 export function agregarArtista(req, res){
     const errores = validationResult(req);
     if (!errores.isEmpty()) {
-        res.setFlash('Error al agregar artista');
-        res.redirect('/');
+        const mensajes = errores.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al agregar artista: ${mensajes}`);
+        return res.redirect('/');
     }
 
     try{
@@ -50,8 +51,9 @@ export function agregarArtista(req, res){
 export function modificarArtista(req, res){
     const errores = validationResult(req);
     if (!errores.isEmpty()) {
-        res.setFlash('Error al modificar artista');
-        res.redirect('/');
+        const mensajes = errores.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al modificar artista: ${mensajes}`);
+        return res.redirect('/');
     }
 
     try{
@@ -83,7 +85,7 @@ export function eliminarArtista(req, res){
     const errores = validationResult(req);
     if (!errores.isEmpty()) {
         res.setFlash('Error al eliminar artista');
-        res.redirect('/');
+        return res.redirect('/');
     }
 
     try{
