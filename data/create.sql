@@ -54,5 +54,15 @@ CREATE TABLE eventos (
             imagen TEXT DEFAULT 'default.png'
         );
 DROP TABLE IF EXISTS "mensajes";
-CREATE TABLE mensajes (id INTEGER PRIMARY KEY UNIQUE, evento_id INTEGER REFERENCES eventos (id), usuario TEXT, contenido TEXT NOT NULL, fecha TEXT NOT NULL, parent_id INTEGER REFERENCES mensajes (id) ON DELETE CASCADE);
+CREATE TABLE mensajes (
+    id INTEGER PRIMARY KEY UNIQUE, 
+    evento_id INTEGER REFERENCES eventos (id), 
+    usuario TEXT, contenido TEXT NOT NULL, 
+    fecha TEXT NOT NULL, 
+    parent_id INTEGER REFERENCES mensajes (id) ON DELETE CASCADE);
+
+ALTER TABLE Usuarios ADD COLUMN fecha_nacimiento TEXT NOT NULL ;
+ALTER TABLE eventos ADD COLUMN edad_minima INTEGER NOT NULL DEFAULT 18;
+ALTER TABLE entradasUsuario
+  ADD COLUMN fecha_compra TEXT NOT NULL DEFAULT 10-10-2000;
 COMMIT;
