@@ -30,8 +30,17 @@ export class DescuentosUsuario {
         `);
 
         this.#getByUsuarioDescuentoStmt = db.prepare(`
-            SELECT * FROM DescuentosUsuario 
-            WHERE idUsuario = ? AND idDescuento = ?
+            SELECT
+            d.id         AS idDescuento,
+            d.titulo,
+            d.condiciones,
+            d.imagen,
+            d.interno,
+            d.valor,
+            du.codigo
+            FROM DescuentosUsuario du
+            JOIN Descuento d ON du.idDescuento = d.id
+            WHERE du.idUsuario = ?
         `);
 
         this.#existsStmt = db.prepare(`
@@ -66,14 +75,16 @@ export class DescuentosUsuario {
     
 
     static obtenerPorUsuario(idUsuario) {
-        const db = getConnection(); 
-        const stmt = db.prepare(`
-            SELECT d.id AS idDescuento, d.titulo, d.condiciones, d.imagen, d.interno, d.valor, du.codigo
-            FROM DescuentosUsuario du
-            JOIN Descuento d ON du.idDescuento = d.id
-            WHERE du.idUsuario = ?
-        `);
-        return stmt.all(idUsuario);
+        const rows = this.#getByUsuarioDescuentoStmt.all(idUsuario);
+        return rows.map(r => ({
+            idDescuento: r.idDescuento,
+            titulo:      r.titulo,
+            condiciones: r.condiciones,
+            imagen:      r.imagen,
+            interno:     r.interno,
+            valor:       r.valor,
+            codigo:      r.codigo
+        }));
     }
 
     /**
@@ -97,15 +108,21 @@ export class DescuentosUsuario {
     }
 
     persist() {
-        if (DescuentosUsuario.existe(this.idUsuario, this.idDescuento)) {
-            this.updateStmt.run({
+        const result = DescuentosUsuario.#updateStmt.run({
+            idUsuario: this.idUsuario,
+            idDescuento: this.idDescuento,
+            codigo: this.codigo
+         });
+          
+        if (result.changes === 0) {// Si no hubo filas afectadas, lo insertamos
+            DescuentosUsuario.#insertStmt.run({
                 idUsuario: this.idUsuario,
                 idDescuento: this.idDescuento,
                 codigo: this.codigo
-            });
-        } else {
-            DescuentosUsuario.insert(this);
-        }
+              });
+            }
+          
+            return this;
     }
 
     static #generarCodigoUnico() {

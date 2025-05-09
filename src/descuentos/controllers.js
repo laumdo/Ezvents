@@ -89,6 +89,7 @@ export function agregarDescuento(req,res){
 
 
 export function modificarDescuento(req,res){
+    
     const result = validationResult(req);
     if (!result.isEmpty()) {
         const errores = result.mapped();
@@ -173,7 +174,7 @@ export function eliminarDescuento(req,res){
         Descuento.delete(id);
 
         req.log.info("Descuento %d eliminado por %s", id, req.session.username);
-        return render('pagina',{
+        return render(req, res,'pagina',{
             contenido: 'paginas/admin',
             session:req.session,
             mensaje:'Descuento modificado con exito',
