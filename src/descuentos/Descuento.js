@@ -43,8 +43,10 @@ export class Descuento {
                 condiciones: descuento.condiciones,
                 puntos: descuento.puntos,
                 imagen: descuento.imagen,
-                interno: descuento.interno,
-                valor: descuento.valor
+                interno: descuento.interno ? 1 : 0,
+                valor: typeof descuento.valor === 'number'
+                         ? descuento.valor
+                         : null
             };
             result = this.#insertStmt.run(datos);
             descuento.id = result.lastInsertRowid;

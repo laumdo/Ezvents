@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { viewDescuentos, agregarDescuento, eliminarDescuento, modificarDescuento,canjearDescuento } from './controllers.js';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import asyncHandler from 'express-async-handler';
 import { autenticado, tieneRol } from '../middleware/auth.js';
 import { RolesEnum } from '../usuarios/Usuario.js';
@@ -29,7 +29,7 @@ descuentosRouter.post(
     body('condiciones', 'Las condiciones no pueden estar vacías').trim().notEmpty(),
     body('puntos', 'Los puntos tienen que ser un entero mayor o igual a 0').isInt({ min: 0 }),
     body('interno').optional().isIn(['on']),       // checkbox
-    body('valor', 'El valor del descuento debe ser un número').optional({ checkFalsy: true }).isFloat({ min: 0 }),
+    body('valor', 'El valor del descuento debe ser un número mayor o igual a 0').optional({ checkFalsy: true }).isFloat({ min: 0 }),
     asyncHandler(agregarDescuento)
 );
 
@@ -54,7 +54,13 @@ descuentosRouter.post('/modificarDescuento',
     asyncHandler(modificarDescuento)
 );
 
-descuentosRouter.post("/canjear/:id", canjearDescuento);
+descuentosRouter.post("/canjear/:id", 
+    autenticado(),                             
+    param('id', 'ID de descuento inválido')
+        .isInt({ min: 1 })
+        .toInt(),
+    asyncHandler(canjearDescuento)
+);
 
 
 export default descuentosRouter;
