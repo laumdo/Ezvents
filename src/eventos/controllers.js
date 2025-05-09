@@ -29,7 +29,7 @@ export function agregarEvento(req, res) {
         const imagen = req.file ? req.file.filename : 'default.png'; // Si no hay imagen, usa la predeterminada
         const id_empresa = req.session.usuario_id;
 
-        console.log("idEmpresa1: ", id_empresa);
+        console.log("idEmpresa agregar evento: ", id_empresa);
         const datos = { id: null, idEmpresa: id_empresa, nombre: nombre, descripcion: descripcion, fecha: fecha, lugar: lugar, precio: precio, aforo_maximo: aforo_maximo, entradas_vendidas: 0, imagen: imagen };
         const nuevoEvento = new Evento(datos);
         nuevoEvento.persist();
@@ -47,6 +47,11 @@ export function modificarEvento(req, res) {
         let evento = Evento.getEventoById(id);
         if (!evento) throw new EventoNoEncontrado(id);
 
+        if (!req.session.esEmpresa || evento.idEmpresa !== req.session.usuario_id) {
+            res.setFlash('No tienes permisos para modificar este evento');
+            return res.redirect('/contenido/empresa');
+        }
+
         evento.nombre = nombre || evento.nombre;
         evento.descripcion = descripcion || evento.descripcion;
         evento.fecha = fecha || evento.fecha;
@@ -61,9 +66,9 @@ export function modificarEvento(req, res) {
         res.redirect(`/eventosArtistas/viewContratar/${evento.id}`);
     } catch (error) {
         res.render('pagina', { 
-            contenido: 'paginas/admin', 
-            session: req.session,
-            error: 'Error al modificar el evento' });
+        contenido: 'paginas/admin', 
+        session: req.session,
+        error: 'Error al modificar el evento' });
     }
 }
 
@@ -71,7 +76,12 @@ export function eliminarEvento(req, res) {
     try {
 
         const { id } = req.body;
-        Evento.getEventoById(id);
+        const evento = Evento.getEventoById(id);
+
+        if (!req.session.esEmpresa || evento.idEmpresa !== req.session.usuario_id) {
+            res.setFlash('No tienes permisos para eliminar este evento');
+            return res.redirect('/contenido/empresa');
+        }
         
         Evento.delete(id);
 

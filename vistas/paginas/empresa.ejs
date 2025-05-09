@@ -87,14 +87,16 @@
     <h2>Tus Eventos</h2>
     <div class="eventos-lista">
         <% if (locals.eventos && locals.eventos.length > 0) { %>
-            <% locals.evento.forEach(evento => { %>
+            <% locals.eventos.forEach(evento => { %>
                 <div class="evento">
-                    <h3><%= evento.nombre %></h3>
-                    <p><%= evento.descripcion %></p>
-                    <p>Fecha: <%= evento.fecha %></p>
-                    <p>Lugar: <%= evento.lugar %></p>
-                    <p>Precio: <%= evento.precio %>€</p>
-                    <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+                    <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="300" height="auto">
+                    <div class="evento-info">
+                        <h3 class="evento-titulo"><%= evento.nombre %></h3>
+                        <p class="evento-descripcion"><%= evento.descripcion %></p>
+                        <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
+                        <p>Precio: <%= evento.precio %>€</p>
+                        <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
+                    </div>
                 </div>
             <% }) %>
         <% } else { %>
@@ -105,7 +107,8 @@
 <!-- Script para manejar el formulario -->
 <script>
     function mostrarFormulario(id) {
-        document.getElementById('form-' + id).classList.toggle('oculto');
+        document.querySelectorAll('.admin-form').forEach(form => form.classList.add('oculto'));
+        document.getElementById('form-' + id).classList.remove('oculto');
     }
 </script>
 
