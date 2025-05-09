@@ -6,7 +6,6 @@ export class Artista{
     static #deleteStmt = null
     static #getByIdStmt = null
     static #getAllStmt = null
-    static #getAllByIdStmt = null
 
     static initStatements(){
         const db = getConnection();
@@ -16,7 +15,6 @@ export class Artista{
         this.#deleteStmt = db.prepare('DELETE FROM artista WHERE id = @id');
         this.#getByIdStmt = db.prepare('SELECT * FROM artista WHERE id = @id');
         this.#getAllStmt = db.prepare('SELECT * FROM artista');
-        this.#getAllByIdStmt = db.prepare('SELECT * FROM artista WHERE id = @id_artistas');
     }
 
     static getArtistasById(id_artistas){
@@ -51,7 +49,7 @@ export class Artista{
         let result = null;
         try{
             const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };
-            result = this.#insertStmt.run(datos);//se puede poner artista?
+            result = this.#insertStmt.run(datos);
             artista.#id = result.lastInsertRowid;
         }catch(e){
             throw new ErrorDatos('No se ha podido insertar el artista', { cause: e});

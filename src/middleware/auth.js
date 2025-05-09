@@ -26,3 +26,13 @@ export function tieneRol(rol = RolesEnum.ADMIN){
         });
     }
 }
+
+export function tieneAdminEmpresa(){
+    return (req, res, next) => {
+        if (req.session != null && (req.session.rol === RolesEnum.ADMIN || req.session.rol === RolesEnum.EMPRESA)) return next();
+        res.render('pagina', {
+            contenido: 'paginas/noPermisos',
+            session: req.session
+        });
+    }
+}
