@@ -20,7 +20,19 @@ function init() {
 
     // username.addEventListener('change', usernameDisponible);
     username.addEventListener('input', usernameDisponible);
+
+    formRegistro.elements.password.addEventListener('input', compruebaPassword);
+    formRegistro.elements.passwordConfirmacion.addEventListener('input', compruebaPasswordConfirm);
 }
+
+function setError(input, msg) {
+    const span = input.parentElement.querySelector('span.error');
+    if (span) span.textContent = msg;
+  }
+  
+  function clearError(input) {
+    setError(input, '');
+  }
 
 /**
  * 
@@ -123,5 +135,23 @@ async function usernameDisponible(e) {
       username.reportValidity();
     } catch (err) {
       console.error('Error comprobando disponibilidad:', err);
+    }
+  }
+
+  function compruebaPassword(e) {
+    const pwd = e.target;
+    if (pwd.value.length < 6 || pwd.value.length > 10) {
+      setError(pwd, 'Debe tener entre 6 y 10 caracteres');
+    } else {
+      clearError(pwd);
+    }
+  }
+  
+  function compruebaPasswordConfirm(e) {
+    const form = e.target.form;
+    if (form.password.value !== form.passwordConfirmacion.value) {
+      setError(form.passwordConfirmacion, 'No coincide');
+    } else {
+      clearError(form.passwordConfirmacion);
     }
   }

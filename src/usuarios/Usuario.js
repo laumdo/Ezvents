@@ -8,7 +8,7 @@ export const RolesEnum = Object.freeze({
     EMPRESA: 'E'
 });
 
-export class Usuario {
+export class Usuario {  
     static #getByUsernameStmt = null;
     static #getByIdStmt = null;
     static #insertStmt = null;
@@ -47,6 +47,32 @@ export class Usuario {
         return Boolean(row);
     }
 
+    /**
+   * Comprueba si ya existe un bonus de cumpleaños para hoy.
+   */
+  static hasBirthdayBonusToday(idUsuario) {
+    const db = getConnection();
+    const row = db.prepare(`
+      SELECT COUNT(*) as cnt
+      FROM PuntosUsuario 
+      WHERE idUsuario = ?
+        AND puntos = 200
+        AND DATE(fecha_obtencion) = DATE('now')
+    `).get(idUsuario);
+    return row.cnt > 0;
+  }
+
+  /**
+   * Inserta un record de puntos para el usuario (por cumpleaños).
+   */
+  static addBirthdayBonus(idUsuario) {
+    const db = getConnection();
+    const stmt = db.prepare(`
+      INSERT INTO PuntosUsuario(idUsuario, puntos, fecha_obtencion)
+      VALUES (?, ?, datetime('now'))
+    `);
+    stmt.run(idUsuario, 200);
+  }
     static #insert(usuario) {
         let result = null;
         try {

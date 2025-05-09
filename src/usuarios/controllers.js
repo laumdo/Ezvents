@@ -33,19 +33,19 @@ export async function doLogin(req, res) {
         const usuario = await Usuario.login(username, password);
        
         //verficar cumpleaños
-        if (usuario.fecha_nacimiento) {
-        // Con Date:
-            const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
-            const hoy = new Date();
-            if (m === hoy.getMonth() + 1 && d === hoy.getDate()) {
-                usuario.puntos = (usuario.puntos || 0) + 200;
-                usuario.persist();
-                req.session.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
-            }
-        }
+        // --- Nuevo bonus de cumpleaños registrado en PuntosUsuario ---
+    if (usuario.fecha_nacimiento) {
+          const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
+          const hoy = new Date();
+          const esCumple = m === hoy.getMonth() + 1 && d === hoy.getDate();
+          if (esCumple && !Usuario.hasBirthdayBonusToday(usuario.id)) {
+            Usuario.addBirthdayBonus(usuario.id);
+            res.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
+          }
+    }
         // mensaje genérico si no era cumpleaños
-        if (!req.session.flash) {
-            req.session.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
+        if (!req.session.flashMsg) {
+            res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         }
         req.session.login = true;
         req.session.nombre = usuario.nombre;
@@ -175,10 +175,13 @@ export function viewDatos(req, res) {
         descuentosUsuario=null;
     }
 
+    //const puntosUsuario = usuario.puntos;
+    const puntosUsuario=Usuario.getAvailablePoints(usuario.id);
     res.render('pagina', { contenido: 'paginas/datos', 
         session: req.session, 
         usuario,
-        descuentosUsuario
+        descuentosUsuario,
+        puntosUsuario
      });
 }
 
