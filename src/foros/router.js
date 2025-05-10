@@ -8,6 +8,7 @@ const router = express.Router();
 
 // Ver foro de un evento
 router.get('/:id',
+    autenticado('/usuarios/login'),
     param('id').isInt().withMessage('El ID del evento debe ser un número entero'),
     asyncHandler(mostrarForo)
 );

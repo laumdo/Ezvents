@@ -133,3 +133,11 @@ body {
   vertical-align: middle;
   margin-left: 6px;
 }
+
+.mensaje.empresa {
+  border-left: 5px solid #3498db;    
+  background-color: #e8f6fb;        
+}
+.mensaje.empresa p strong {
+  color: #217dbb;                   
+}

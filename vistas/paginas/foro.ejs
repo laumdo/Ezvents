@@ -12,39 +12,41 @@
 <hr>
 
 <div class="mensajes">
-  <% function renderMensajes(mensajes, parentId = null, nivel = 0) { %>
+  <% function renderMensajes(mensajes, parentId = null) { %>
     <% mensajes
          .filter(m => m.parent_id === parentId)
          .forEach(m => { %>
-      <div class="mensaje <%= m.rol === 'A' ? 'admin' : '' %> <%= parentId !== null ? 'respuesta' : '' %>">
+      <div class="mensaje 
+                  <%= m.rol==='A' ? 'admin' : (m.rol==='E' ? 'empresa' : '') %> 
+                  <%= parentId!==null ? 'respuesta' : '' %>">
         <p>
-          <% if (m.rol === 'A') { %>🛡️<% } else { %>👤<% } %>
+          <% if (m.rol==='A') { %>🛡️<% }
+             else if (m.rol==='E') { %>🏢<% }
+             else { %>👤<% } %>
           <strong><%= m.usuario %></strong>
           <em><%= m.fecha %></em>
         </p>
 
-        <div class="contenido">
-          <%= m.contenido %>
-        </div>
+        <div class="contenido"><%= m.contenido %></div>
 
-        <% if (session && session.esAdmin) { %>
+        <% if (session.esAdmin) { %>
           <form action="/foro/eliminar" method="POST" style="display:inline;">
             <input type="hidden" name="idEvento" value="<%= evento_id %>">
             <input type="hidden" name="idMensaje" value="<%= m.id %>">
-            <button type="submit">Eliminar</button>
+            <button>Eliminar</button>
           </form>
         <% } %>
 
-        <% if (parentId === null) { %>
+        <% if (parentId===null) { %>
           <form class="respuesta-form" action="/foro/agregar" method="POST">
             <input type="hidden" name="idEvento" value="<%= evento_id %>">
             <input type="hidden" name="parent_id" value="<%= m.id %>">
-            <textarea name="contenido" required placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
-            <button type="submit">Responder</button>
+            <textarea name="contenido" required rows="2" placeholder="Responder…"></textarea>
+            <button>Responder</button>
           </form>
         <% } %>
 
-        <% renderMensajes(mensajes, m.id, nivel + 1); %>
+        <% renderMensajes(mensajes, m.id); %>
       </div>
     <% }); %>
   <% } %>

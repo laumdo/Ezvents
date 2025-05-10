@@ -34,11 +34,6 @@ export const agregarMensaje = (req, res) => {
 
     const { contenido, parent_id, idEvento } = matchedData(req, { includeOptionals: true });
     const usuario = req.session.usuario;
-
-    if (!usuario) {
-        return res.redirect('/usuarios/login');
-    }
-
     const contenidoLimpio = contenido.trim();
     if (!contenidoLimpio) {
         return render(req, res, 'paginas/error', {
