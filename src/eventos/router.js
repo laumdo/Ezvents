@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { body, param, query } from 'express-validator';
-import { viewEventos, viewEvento, agregarEvento, modificarEvento, eliminarEvento, buscarEvento } from './controllers.js';
+import { viewEventos, viewEvento, agregarEvento, modificarEvento, eliminarEvento, buscarEvento, viewCalendario } from './controllers.js';
 
 const upload = multer({
   storage: multer.diskStorage({
@@ -13,6 +13,8 @@ const upload = multer({
 const router = express.Router();
 
 router.get('/', viewEventos);
+
+router.get('/calendario', viewCalendario);
 
 router.get('/buscarEvento',
   query('nombre').trim().notEmpty().withMessage('El nombre no puede estar vacío'),
