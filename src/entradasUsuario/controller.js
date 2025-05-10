@@ -2,25 +2,26 @@ import { Carrito } from '../carrito/Carrito.js';
 import { Usuario } from '../usuarios/Usuario.js';
 import { Evento } from "../eventos/Evento.js";
 import { EntradasUsuario } from './EntradasUsuario.js';
+import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 import { render } from '../utils/render.js';
-import { flashMessages } from '../middleware/flash.js';
+import { validationResult } from 'express-validator';
 
 export function viewEntradas(req, res){
     const usuario_id = req.session.usuario_id;
     
     const entradas = EntradasUsuario.getEntradasByUsuario(usuario_id);
 
-    const eventos = [];
+    const ids_eventos = entradas.map(entrada => entrada.idEvento);
 
-    for (const entrada of entradas) {
-        const evento = Evento.getEventoById(entrada.idEvento);
-        if (evento) {
-            eventos.push({
-                ...evento,
-                cantidad: entrada.cantidad
-            });
-        }
-    }
+    const eventosMap = Evento.getEventosById(ids_eventos);
+
+    const eventos = entradas.map(entrada => {
+        const evento = eventosMap[entrada.idEvento];
+        return {
+            ...evento,
+            cantidad: entrada.cantidad
+        };
+    });
 
     res.render('pagina', {contenido: 'paginas/entradas', session: req.session, eventos});
 }
@@ -33,11 +34,23 @@ export function viewComprar(req, res){
 }
 
 export async function comprar(req, res){
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        const mensajes = errores.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al finalizar la compra: ${mensajes}`);
+        return res.redirect('/');
+    }
+
     try{
         const id_usuario = req.session.usuario_id;
         const usuario = Usuario.getUsuarioByUsername(req.session.username);
 
         const carrito = await Carrito.getCarrito(id_usuario);
+
+        const cupon = req.session.appliedCoupon;
+        if (cupon) { //si hemos aplicado un cupon hay que eliminarlo del usuario
+            DescuentosUsuario.delete(id_usuario, cupon.id);
+        }
 
         for (const item of carrito) {
             const id_evento = item.id_evento;
@@ -49,10 +62,28 @@ export async function comprar(req, res){
             evento.entradas_vendidas += cantidad;
             evento.persist();
 
-            usuario.puntos += item.precio * 5 * cantidad;
+            usuario.puntos += Math.round(item.precio * 5 * cantidad);
             await Carrito.deleteById(item.id);
         }
         usuario.persist();
+        for (const item of carrito) {
+                // registrar la venta
+                 EntradasUsuario.compraEntrada(id_usuario, item.id_evento, item.cantidad);
+                 // actualizar existencias
+                 const evento = Evento.getEventoById(item.id_evento);
+                 evento.entradas_vendidas += item.cantidad;
+                 const usuario = await Usuario.getUsuarioByUsername(req.session.username);
+                if (usuario.age < evento.edad_minima) {
+                    req.setFlash(`No tienes la edad mínima (${evento.edad_minima} años) para el evento "${evento.nombre}".`);
+                    return res.redirect('/carrito');
+                }
+                 evento.persist();
+                 // **añadir** lote de puntos en PuntosUsuario
+                 Usuario.addPoints(id_usuario, item.precio * 5 * item.cantidad);
+                 await Carrito.deleteById(item.id);
+        }
+
+        delete req.session.appliedCoupon;
 
         res.setFlash('Compra realizada con éxito');
         res.redirect('/');
@@ -60,4 +91,5 @@ export async function comprar(req, res){
         res.setFlash('Hubo un error al realizar la compra');
         res.redirect('/');
     }
+    
 }

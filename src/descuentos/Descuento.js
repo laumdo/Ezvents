@@ -5,6 +5,7 @@ export class Descuento {
     static #insertStmt = null;
     static #deleteStmt = null;
     static #updateStmt = null;
+    static #getAllStmt=null;
 
     static initStatements() {
         const db = getConnection();
@@ -12,20 +13,26 @@ export class Descuento {
         if (this.#getByIdStmt !== null) return;
         
         this.#getByIdStmt = db.prepare('SELECT * FROM Descuento WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO Descuento(id, titulo, condiciones, puntos, imagen) VALUES (@id, @titulo, @condiciones, @puntos, @imagen)');
-        this.#updateStmt = db.prepare(`UPDATE Descuento SET titulo=@titulo, condiciones=@condiciones, puntos=@puntos, imagen=@imagen WHERE id=@id`);
+        this.#insertStmt = db.prepare('INSERT INTO Descuento(id, titulo, condiciones, puntos, imagen, interno, valor) VALUES (@id, @titulo, @condiciones, @puntos, @imagen, @interno, @valor)');
+        this.#updateStmt = db.prepare(`UPDATE Descuento SET titulo=@titulo, condiciones=@condiciones, puntos=@puntos, imagen=@imagen, interno=@interno, valor=@valor WHERE id=@id`);
         this.#deleteStmt = db.prepare('DELETE FROM Descuento WHERE id = @id'); 
+        this.#getAllStmt=db.prepare('SELECT * FROM Descuento');
     }
 
     static getAll() {
-        const db = getConnection(); 
-        return db.prepare('SELECT * FROM Descuento').all();
+ 
+        return this.#getAllStmt.all().map(row => new Descuento(row));
     }
 
     static getDescuento(id) {
         const descuento = this.#getByIdStmt.get({ id });
         if (!descuento) throw new DescuentoNoEncontrado(id);
-        return new Descuento(descuento.id, descuento.titulo, descuento.condiciones, descuento.puntos, descuento.imagen);
+        return new Descuento(descuento.id, descuento.titulo, descuento.condiciones, descuento.puntos, descuento.imagen, descuento.interno, descuento.valor);
+    }
+    
+    static getInternos() {
+
+        return this.getAll().filter(d => d.interno);
     }
 
     static #insert(descuento) {
@@ -36,7 +43,9 @@ export class Descuento {
                 titulo: descuento.titulo,
                 condiciones: descuento.condiciones,
                 puntos: descuento.puntos,
-                imagen: descuento.imagen
+                imagen: descuento.imagen,
+                interno: descuento.interno,
+                valor: descuento.valor
             };
             result = this.#insertStmt.run(datos);
             descuento.id = result.lastInsertRowid;
@@ -55,7 +64,9 @@ export class Descuento {
             titulo: descuento.titulo,
             condiciones: descuento.condiciones,
             puntos: descuento.puntos,
-            imagen: descuento.imagen
+            imagen: descuento.imagen,
+            interno: descuento.interno,
+            valor: descuento.valor
         };
     
         const result = this.#updateStmt.run(datos);
@@ -77,12 +88,14 @@ export class Descuento {
         return Descuento.#update(this);
     }
 
-    constructor(id, titulo, condiciones, puntos, imagen='descuento.png') {
+    constructor(id, titulo, condiciones, puntos, imagen='descuento.png',interno=false,valor=null) {
         this.id = id;
         this.titulo = titulo;
         this.condiciones = condiciones;
         this.puntos = puntos;
         this.imagen = imagen;
+        this.interno =interno;
+        this.valor=valor;
     }
 }
 

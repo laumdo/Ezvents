@@ -1,4 +1,4 @@
-<form action="/usuarios/register" method="POST">
+<form id="registro" name="registro" action="/usuarios/register" method="POST">
     <% if (error) { %>
         <div style="color: red; font-weight: bold;"><%= error %></div>
       <% } %>
@@ -28,8 +28,10 @@
             <label>Email:</label>
             <input type="text" name="email" value="<%= datos?.email || '' %>" required pattern=".+@(gmail\.com|ucm\.es)" title="El email debe ser válido" />
             <% if (errores?.email) { %>
-                <span style="color: red;"><%= errores.email.msg %></span>
+                <!--<span style="color: red;"><%= errores.email.msg %></span>-->
+                <span class="error"><%= errores.email.msg %></span>
             <% } %>
+            <span class="feedback"></span>
         </div>
 
         <!-- Username -->
@@ -37,15 +39,18 @@
             <label>Usuario:</label>
             <input type="text" name="username" value="<%= datos?.username || '' %>" required />
             <% if (errores?.username) { %>
-                <span style="color: red;"><%= errores.username.msg %></span>
+                <!--<span style="color: red;"><%= errores.username.msg %></span>-->
+                <span class="error"><%= errores.username.msg %></span>
             <% } %>
+            <span class="feedback"></span>  <!-- aquí el ✔/⚠ -->
         </div>
 
         <!-- Contraseña -->
         <div>
             <label>Contraseña:</label>
             <input type="password" name="password" required />
-            <% if (errores?.password) { %>
+            <span class="error"></span>
+                <% if (errores?.password) { %>
                 <span style="color: red;"><%= errores.password.msg %></span>
             <% } %>
         </div>
@@ -54,9 +59,16 @@
         <div>
             <label>Confirmar contraseña:</label>
             <input type="password" name="passwordConfirmacion" required />
+            <span class="error"></span>
             <% if (errores?.passwordConfirmacion) { %>
-                <span style="color: red;"><%= errores.passwordConfirmacion.msg %></span>
+                 <span style="color: red;"><%= errores.passwordConfirmacion.msg %></span>
             <% } %>
+        </div>
+
+        <div>
+            <label>Fecha de Nacimiento:</label>
+            <input type="date" name="fecha_nacimiento" required 
+                   max="<%= new Date().toISOString().split('T')[0] %>" />
         </div>
 
         <!-- Tipo de cuenta -->
@@ -86,3 +98,5 @@
         </p>
     </fieldset>
 </form>
+<script src="/js/fetch.js"></script>
+<script src="/js/04-registro.js"></script>
