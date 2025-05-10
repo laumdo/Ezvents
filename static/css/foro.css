@@ -121,4 +121,15 @@ body {
     background: #c0392b;
 }
 
+.mensaje.admin {
+  background-color: #fff3cd;      
+  border-left: 5px solid #ffc107;  
+  box-shadow: 0 0 8px rgba(255,193,7,0.4);
+}
 
+.icono-admin {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
