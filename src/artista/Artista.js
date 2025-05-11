@@ -18,7 +18,6 @@ export class Artista{
     }
 
     static #insert(artista){
-        console.log("Se mete en el insert de artista");
         let result = null;
         try{
             const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };

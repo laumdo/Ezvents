@@ -1,47 +1,64 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    .valoracion-estrellas {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+    }
+    .estrella {
+        position: relative;
+        width: 1.3em;
+        height: 1.3em;
+        font-size: 1.5em;
+    }
+    .estrella .fondo,
+    .estrella .relleno {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        line-height: 1.3em;
+    }
+    .estrella .fondo {
+        color: #ccc;
+        z-index: 0;
+    }
+    .estrella .relleno {
+        color: gold;
+        overflow: hidden;
+        z-index: 1;
+    }
+    </style>
+    
+    
+
 <h2>Eventos Pasados</h2>
 <div class="eventos">
-    <% if (locals.eventos && locals.eventos.length > 0) { %>
+    <% if (eventos && eventos.length > 0) { %>
         <% eventos.forEach(evento => { %>
             <div class="evento">
-                <h3><%= evento.nombre %></h3>
-                
-                <% 
-                const haAsistido = eventosConAsistencia.includes(evento);
-                const valoracionesEvento = valoraciones.filter(v => v.id_evento === evento.id);
-                %>
-        
-                <% if (haAsistido) { %>
-                    <form action="/valoraciones/añadir" method="POST">
-                        <input type="hidden" name="id_evento" value="<%= evento.id %>">
-                        <label>Puntuación:</label>
-                        <select name="puntuacion" required>
-                            <option value="1">★☆☆☆☆</option>
-                            <option value="2">★★☆☆☆</option>
-                            <option value="3">★★★☆☆</option>
-                            <option value="4">★★★★☆</option>
-                            <option value="5">★★★★★</option>
-                        </select>
-                        <br>
-                        <textarea name="comentario" placeholder="Escribe tu opinión..." required></textarea>
-                        <br>
-                        <button type="submit">Enviar valoración</button>
-                    </form>
-                <% } %>
-        
-                <h4>Opiniones:</h4>
-                <% if (valoracionesEvento.length > 0) { %>
-                    <% valoracionesEvento.forEach(v => { %>
-                        <div class="valoracion">
-                            <p><strong><%= v.puntuacion %> estrellas</strong></p>
-                            <p><%= v.comentario %></p>
-                        </div>
-                    <% }) %>
-                <% } else { %>
-                    <p>Aún no hay valoraciones.</p>
-                <% } %>
-        
+                <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="300" height="auto">
+                <div class="evento-info">
+                    <h3 class="evento-titulo"><%= evento.nombre %></h3>
+                    <p class="valoracion-estrellas" aria-label="Valoración: <%= evento.media %> de 5">
+                        <% for (let i = 1; i <= 5; i++) { 
+                            const porcentaje = Math.min(Math.max(evento.media - (i - 1), 0), 1) * 100;
+                        %>
+                            <span class="estrella">
+                                <i class="fa-regular fa-star fondo"></i>
+                                <i class="fa-solid fa-star relleno" style="width: <%= porcentaje %>%"></i>
+                            </span>
+                        <% } %>
+                        (<%= evento.media %> ★) (<%= evento.totalValoraciones %> 📝)
+                    </p>
+                    <button onclick="window.location.href='/valoraciones/valoraciones/<%= evento.id %>'">Ver opiniones</button>
+                    <% if (evento.haAsistido && !evento.haValorado) { %>
+                        <button onclick="window.location.href='/valoraciones/valorar/<%= evento.id %>'">Poner opinión</button>
+                    <% } %>
+                </div>
             </div>
-        <% }) %>
+        <% }) %>        
     <% } else { %>
         <p>No hay eventos pasados disponibles.</p>
     <% } %>

@@ -8,16 +8,14 @@
         static initStatements() {
             const db = getConnection();
 
-            if (this.#getValoracionByEventStmt !== null) return;
-
             this.#getValoracionByEventStmt = db.prepare('SELECT * FROM valoraciones WHERE id_evento = @id_evento');
             this.#insertStmt = db.prepare(`
-                INSERT INTO valoraciones (id_evento, id_usuario, puntuacion, comentario, fecha) 
-                VALUES (@id_evento, @id_usuario, @puntuacion, @comentario, @fecha)
+                INSERT INTO valoraciones (id_evento, id_usuario, puntuacion, comentario) 
+                VALUES (@id_evento, @id_usuario, @puntuacion, @comentario)
             `);
         }
         
-        static getValoracionByEvent(id_Evento) { 
+        static getValoracionByEvent(id_evento) { 
             return this.#getValoracionByEventStmt.all({id_evento});
         }    
 
@@ -25,7 +23,7 @@
         
         static getAll() {
             const db = getConnection(); 
-            return db.prepare('SELECT * FROM eventos').all();
+            return db.prepare('SELECT * FROM valoraciones').all();
         }
         
 
@@ -35,8 +33,7 @@
                     id_evento: valoracion.id_evento,
                     id_usuario: valoracion.id_usuario,
                     puntuacion: valoracion.puntuacion,
-                    comentario: valoracion.comentario,
-                    fecha: valoracion.fecha
+                    comentario: valoracion.comentario
                 };
 
                 result = this.#insertStmt.run(datos);
@@ -49,15 +46,13 @@
         id_usuario;
         puntuacion;
         comentario;
-        fecha;
 
-        constructor(id = null, id_evento, id_usuario, puntuacion, comentario, fecha) {
+        constructor(id = null, id_evento, id_usuario, puntuacion, comentario) {
             this.#id = id;
             this.id_evento = id_evento;
             this.id_usuario = id_usuario;
             this.puntuacion = puntuacion;
             this.comentario = comentario;
-            this.fecha = fecha;
         }
 
         get id() {
@@ -65,7 +60,7 @@
         }
 
         persist() {
-            return Valoracion.#insert(this);
+            return Valoraciones.#insert(this);
         }
     }
 

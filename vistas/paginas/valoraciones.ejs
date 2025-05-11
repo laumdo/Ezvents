@@ -1,0 +1,19 @@
+<h2>Opiniones sobre "<%= evento.nombre %>"</h2>
+
+<p>Valoración media: <%= media %> ★</p>
+
+<% if (valoraciones.length > 0) { %>
+    <% valoraciones.forEach(v => { %>
+        <div class="valoracion">
+            <p><%= v.usuario %></p>
+            <p><%= v.fecha %></p>
+            <p>Puntuación: <%= v.puntuacion %> ★</p>
+            <p><%= v.comentario %></p>
+            <hr>
+        </div>
+    <% }) %>
+<% } else { %>
+    <p>Aún no hay valoraciones para este evento.</p>
+<% } %>
+
+<a href="/eventos/pasados"><button>Volver</button></a>

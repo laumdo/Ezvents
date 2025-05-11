@@ -34,7 +34,7 @@ export function agregarAlCarrito(req, res) {
 
         const id_usuario = req.session.usuario_id ? req.session.usuario_id : null;
         if (!id_usuario) {
-            return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para agregar al carrito' });
+            res.redirect("/usuarios/login");
         }
 
     Carrito.agregarEvento(id_usuario, id_evento, precio);

@@ -8,13 +8,17 @@ export function viewEventos(req, res) {
     const ahora = new Date();
 
     eventos = eventos.filter(evento => {
+        if (!evento.fecha || !evento.hora) {
+            console.warn(`Evento con ID ${evento.id} tiene fecha u hora nula.`);
+            return false;
+        }
+    
         const [year, month, day] = evento.fecha.split('-').map(Number);
         const [hour, minute] = evento.hora.split(':').map(Number);
-
         const fechaEvento = new Date(year, month - 1, day, hour, minute);
-
         return fechaEvento >= ahora;
     });
+    
 
     res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos, esInicio: true });
 }
@@ -167,8 +171,10 @@ export function viewEventosPasados(req, res) {
     let eventos = Evento.getAll();
     const ahora = new Date();
     const idUsuario = req.session && req.session.usuario_id;
-    console.log(idUsuario, "hola hola");
+
     eventos = eventos.filter(evento => {
+        if (!evento.fecha || !evento.hora) return false;
+
         const [year, month, day] = evento.fecha.split('-').map(Number);
         const [hour, minute] = evento.hora.split(':').map(Number);
         const fechaEvento = new Date(year, month - 1, day, hour, minute);
@@ -176,30 +182,48 @@ export function viewEventosPasados(req, res) {
         return fechaEvento < ahora;
     });
 
-    let eventosConAsistencia = [];
-
+    let idsEventosAsistidos = [];
     if (idUsuario) {
-        let eventos = EntradasUsuario.getEntradasByUsuario(idUsuario);
-        for (const evento of eventos) {
-            const event = Evento.getEventoById(evento.idEvento);
-            if (event) {
-                eventosConAsistencia.push(event);
-            }
-        }
+        const entradas = EntradasUsuario.getEntradasByUsuario(idUsuario);
+        idsEventosAsistidos = entradas.map(e => e.idEvento);
     }
-console.log(eventosConAsistencia);
 
-// También traer todas las valoraciones
-const valoraciones = Valoraciones.getAll();
+    const valoraciones = Valoraciones.getAll();
 
-res.render('pagina', {
-    contenido: 'paginas/eventosPasados',
-    session: req.session,
-    eventos,
-    eventosConAsistencia,
-    valoraciones
-});
+    const eventosConInfo = eventos.map(evento => {
+        const valoracionesEvento = valoraciones.filter(v => v.id_evento === evento.id);
+
+        let media = 0;
+        const totalValoraciones = valoracionesEvento.length;
+        if(totalValoraciones > 0){
+            let suma = 0;
+            for (let v of valoracionesEvento) {
+                suma += v.puntuacion;
+            }
+            media = (suma / valoracionesEvento.length).toFixed(1);
+        }
+        
+
+        const haValorado = idUsuario ? valoracionesEvento.some(v => v.id_usuario === idUsuario) : false;
+
+        const haAsistido = idsEventosAsistidos.includes(evento.id);
+
+        return {
+            ...evento,
+            media,
+            haValorado,
+            haAsistido,
+            totalValoraciones
+        };
+    });
+
+    res.render('pagina', {
+        contenido: 'paginas/eventosPasados',
+        session: req.session,
+        eventos: eventosConInfo
+    });
 }
+
 
 
 
