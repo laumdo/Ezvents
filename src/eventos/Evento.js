@@ -20,10 +20,10 @@ export class Evento {
     this.#searchStmt   = db.prepare('SELECT * FROM eventos WHERE LOWER(nombre) LIKE LOWER(?)');
     this.#insertStmt = db.prepare(
       `INSERT INTO eventos (
-        idEmpresa, nombre, descripcion, fecha, lugar,
+        nombre, descripcion, fecha, lugar,
         precio, aforo_maximo, entradas_vendidas, imagen, edad_minima
       ) VALUES (
-        @idEmpresa, @nombre, @descripcion, @fecha, @lugar,
+        @nombre, @descripcion, @fecha, @lugar,
         @precio, @aforo_maximo, @entradas_vendidas, @imagen, @edad_minima
       )`
     );
@@ -44,7 +44,6 @@ export class Evento {
   }
 
   #id;
-  idEmpresa;
   nombre;
   descripcion;
   fecha;
@@ -60,7 +59,6 @@ export class Evento {
    */
   constructor({
     id,
-    idEmpresa,
     nombre,
     descripcion,
     fecha,
@@ -72,7 +70,6 @@ export class Evento {
     edad_minima = 0
   }) {
     this.#id               = id;
-    this.idEmpresa         = idEmpresa;
     this.nombre            = nombre;
     this.descripcion       = descripcion;
     this.fecha             = fecha;
@@ -93,7 +90,6 @@ export class Evento {
   persist() {
     if (this.#id === null) {
       const result = Evento.#insertStmt.run({
-        idEmpresa:         this.idEmpresa,
         nombre:            this.nombre,
         descripcion:       this.descripcion,
         fecha:             this.fecha,

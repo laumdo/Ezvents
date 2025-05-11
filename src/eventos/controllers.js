@@ -69,11 +69,9 @@ export function viewEventos(req, res) {
         edad_minima
       } = matchedData(req);
     
-      // OJO: usa tu sesión para idEmpresa
-      const idEmpresa = req.session.usuario_id;
+      //const idEmpresa = req.session.usuario_id;
       const evt = new Evento({
         id: null,
-        idEmpresa,
         nombre,
         descripcion,
         fecha,
