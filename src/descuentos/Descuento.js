@@ -1,11 +1,11 @@
 import { getConnection } from "../db.js";
-import { ErrorDatos } from "../db.js";
 
 export class Descuento {
     static #getByIdStmt = null;
     static #insertStmt = null;
     static #deleteStmt = null;
     static #updateStmt = null;
+    static #getAllStmt=null;
 
     static initStatements() {
         const db = getConnection();
@@ -16,11 +16,12 @@ export class Descuento {
         this.#insertStmt = db.prepare('INSERT INTO Descuento(id, titulo, condiciones, puntos, imagen, interno, valor) VALUES (@id, @titulo, @condiciones, @puntos, @imagen, @interno, @valor)');
         this.#updateStmt = db.prepare(`UPDATE Descuento SET titulo=@titulo, condiciones=@condiciones, puntos=@puntos, imagen=@imagen, interno=@interno, valor=@valor WHERE id=@id`);
         this.#deleteStmt = db.prepare('DELETE FROM Descuento WHERE id = @id'); 
+        this.#getAllStmt=db.prepare('SELECT * FROM Descuento');
     }
 
     static getAll() {
-        const db = getConnection(); 
-        return db.prepare('SELECT * FROM Descuento').all();
+ 
+        return this.#getAllStmt.all().map(row => new Descuento(row));
     }
 
     static getDescuento(id) {
@@ -30,8 +31,8 @@ export class Descuento {
     }
     
     static getInternos() {
-        const db = getConnection();
-        return db.prepare('SELECT * FROM Descuento WHERE interno = 1').all();
+
+        return this.getAll().filter(d => d.interno);
     }
 
     static #insert(descuento) {
@@ -43,10 +44,8 @@ export class Descuento {
                 condiciones: descuento.condiciones,
                 puntos: descuento.puntos,
                 imagen: descuento.imagen,
-                interno: descuento.interno ? 1 : 0,
-                valor: typeof descuento.valor === 'number'
-                         ? descuento.valor
-                         : null
+                interno: descuento.interno,
+                valor: descuento.valor
             };
             result = this.#insertStmt.run(datos);
             descuento.id = result.lastInsertRowid;

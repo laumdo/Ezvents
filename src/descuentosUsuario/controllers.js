@@ -3,31 +3,20 @@ import { Usuario } from "../usuarios/Usuario.js";
 
 export function verPerfil(req, res) {
     try {
-        const usuarioId = req.session.usuario_id;
-        if (!usuarioId) {
-            const err = new Error("Usuario no autenticado");
-            err.statusCode = 401;
-            throw err;
-        }
+        const usuario = Usuario.getUsuarioByUsername(req.session.username);
+        const descuentos = DescuentosUsuario.obtenerPorUsuario(usuario.id);
 
-        const usuario = Usuario.getById(usuarioId);
-        const descuentos = DescuentosUsuario.obtenerPorUsuario(usuarioId);
-
-        return render(req, res, 'paginas/datos', {
+        res.render('pagina', {
+            contenido: 'paginas/datos',
             session: req.session,
-            usuario,
-            descuentosUsuario: descuentos
+            usuario: usuario,
+            descuentosUsuario: descuentos 
         });
-
     } catch (error) {
-        const status = error.statusCode || 500;
-        return res
-          .status(status)
-          .render('pagina', {
+        res.status(500).render('pagina', {
             contenido: 'paginas/error',
-            session: req.session,
-            mensaje: error.message || "Error al cargar perfil"
-          });
+            mensaje: "Error al cargar perfil"
+        });
     }
 }
 
