@@ -26,14 +26,17 @@ import { EventoArtista } from './eventosArtistas/EventoArtista.js';
 import eventosArtistasRouter from "./eventosArtistas/router.js";
 import { Artista } from './artista/Artista.js';
 import artistaRouter from './artista/router.js';
+import apiRouter from './apiRouter.js';
 
 export const app = express();
 
 
-getConnection(); 
-Evento.initStatements(); 
-Carrito.initStatements();
-EntradasUsuario.initStatements();
+//getConnection(); 
+const db = getConnection();
+Usuario.initStatements(db);
+Evento.initStatements(db); 
+Carrito.initStatements(db);
+EntradasUsuario.initStatements(db);
 Foro.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();
@@ -42,8 +45,9 @@ Artista.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
-
+app.use('/api', apiRouter);
 app.use(pinoMiddleware);
+app.use(pinoHttp(config.logger.http(logger)));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
@@ -52,7 +56,8 @@ app.use((req, res, next) => {
     next();
 });
 app.use(flashMessages);
-app.use(express.static('public'));
+// Sirve todo lo que haya en /static como archivos estáticos
+app.use(express.static('static'));
 app.use(express.json());
 
 app.use('/', express.static(config.recursos));
