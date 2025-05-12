@@ -121,6 +121,11 @@
         <!-- Formularios de descuentos -->
         <div id="form-addDescuento" class="admin-form <%= form === 'addDescuento' ? '' : 'oculto' %>">
             <h2>Añadir Descuento</h2>
+<<<<<<< HEAD
+            <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
+                <label>Título:</label>
+                <input type="text" name="titulo" required>
+=======
             <form action="/descuentos/agregarDescuento" method="POST">
                 <% if (locals.error) { %>
                     <p><strong><%= locals.error %></strong></p>
@@ -130,6 +135,7 @@
                 <input type="text" name="titulo" value="<%=formDatos.titulo %>"/>
                 <%- helpers.error(formErrores, 'titulo') %>
 
+>>>>>>> main
                 <label>Condiciones:</label>
                 <textarea name="condiciones"><%= formDatos.condiciones %></textarea>
                 <%- helpers.error(formErrores, 'condiciones') %>
@@ -178,7 +184,11 @@
         </div>
 
         <!-- Formulario para modificar descuento -->
+<<<<<<< HEAD
+        <div id="form-editDescuento" class="admin-form oculto" enctype="multipart/form-data">
+=======
         <div id="form-editDescuento" class="admin-form <%= form === 'editDescuento' ? '' : 'oculto' %>">
+>>>>>>> main
             <h2>Modificar Descuento</h2>
             <form action="/descuentos/modificarDescuento" method="POST">
                 <% if (locals.error) { %>
