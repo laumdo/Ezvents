@@ -1,11 +1,10 @@
 //import { param, validationResult } from 'express-validator';
 import { validationResult, matchedData } from 'express-validator';
-import { Evento } from './Evento.js';
 import { Usuario } from '../usuarios/Usuario.js';
 import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
 import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
-//import { Evento, EventoNoEncontrado } from './Evento.js';
+import { Evento, EventoNoEncontrado } from './Evento.js';
 
 function calcularEdad(fechaNacimiento) {
   const [y, m, d] = fechaNacimiento.split('-').map(Number);
@@ -59,19 +58,12 @@ export function viewEventos(req, res) {
         });
       }
     
-      const {
-        nombre,
-        descripcion,
-        fecha,
-        lugar,
-        precio,
-        aforo_maximo,
-        edad_minima
-      } = matchedData(req);
-    
-      //const idEmpresa = req.session.usuario_id;
+      const { nombre, descripcion, fecha, lugar, precio, aforo_maximo, edad_minima } = matchedData(req);
+      const idEmpresa = req.session.usuario_id;
+
       const evt = new Evento({
         id: null,
+        idEmpresa: idEmpresa,
         nombre,
         descripcion,
         fecha,
@@ -85,23 +77,8 @@ export function viewEventos(req, res) {
     
       try {
         await evt.persist();
-        // ahora evt.id existe
-        const artistas = Artista.getAll();
-        const contratados = artistas.filter(a =>
-          EventoArtista.contratado(a.id, evt.id)
-        );
-        const noContratados = artistas.filter(a =>
-          !EventoArtista.contratado(a.id, evt.id)
-        );
-    
-        return res.render('pagina', {
-          contenido: 'paginas/contratar',
-          session: req.session,
-          idEvento: evt.id,
-          fecha: evt.fecha,
-          artistas: noContratados,
-          artistasContratados: contratados
-        });
+        
+        res.redirect(`/eventosArtistas/viewContratar/${evt.id}`);
       } catch (err) {
         next(err);
       }
@@ -138,6 +115,12 @@ export function viewEventos(req, res) {
     
       try {
         const evt = Evento.getEventoById(id);
+
+        if (req.session.esEmpresa && evt.idEmpresa !== req.session.usuario_id) {
+          res.setFlash('No tienes permisos para modificar este evento');
+          return res.redirect('/contenido/empresa');
+      }
+
         evt.nombre          = nombre          ?? evt.nombre;
         evt.descripcion     = descripcion     ?? evt.descripcion;
         evt.fecha           = fecha           ?? evt.fecha;
@@ -151,22 +134,7 @@ export function viewEventos(req, res) {
     
         await evt.persist();
     
-        const artistas = Artista.getAll();
-        const contratados = artistas.filter(a =>
-          EventoArtista.contratado(a.id, evt.id)
-        );
-        const noContratados = artistas.filter(a =>
-          !EventoArtista.contratado(a.id, evt.id)
-        );
-    
-        return res.render('pagina', {
-          contenido: 'paginas/contratar',
-          session: req.session,
-          idEvento: evt.id,
-          fecha: evt.fecha,
-          artistas: noContratados,
-          artistasContratados: contratados
-        });
+        res.redirect(`/eventosArtistas/viewContratar/${evt.id}`);
       } catch (err) {
         if (err instanceof EventoNoEncontrado) {
           return res.status(404).render('pagina', {
@@ -190,7 +158,12 @@ export function viewEventos(req, res) {
         });
       }
       const { id } = matchedData(req, { locations: ['body'] });
+      const evento = Evento.getEventoById(id);
       try {
+        if (req.session.esEmpresa && evento.idEmpresa !== req.session.usuario_id) {
+          res.setFlash('No tienes permisos para eliminar este evento');
+          return res.redirect('/contenido/empresa');
+      }
         Evento.delete(id);
         return res.redirect('/eventos');
       } catch (err) {
