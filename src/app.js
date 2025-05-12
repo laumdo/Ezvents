@@ -27,6 +27,7 @@ import eventosArtistasRouter from "./eventosArtistas/router.js";
 import { Artista } from './artista/Artista.js';
 import artistaRouter from './artista/router.js';
 import apiRouter from './apiRouter.js';
+import { apiEventos } from './eventos/controllers.js';
 
 export const app = express();
 
@@ -42,6 +43,8 @@ Descuento.initStatements();
 DescuentosUsuario.initStatements();
 EventoArtista.initStatements();
 Artista.initStatements();
+
+app.use('/eventos/api/eventos', apiEventos);
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
@@ -61,6 +64,7 @@ app.use(express.static('static'));
 app.use(express.json());
 
 app.use('/', express.static(config.recursos));
+
 
 app.get('/', (req, res) => {
     const eventos=Evento.getAll();

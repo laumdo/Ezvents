@@ -1,4 +1,4 @@
-import { param, validationResult } from 'express-validator';
+import { validationResult, matchedData } from 'express-validator';
 import { Artista } from "./Artista.js";
 
 export function viewArtistas(req, res) {
@@ -14,7 +14,8 @@ export function viewArtista(req, res){
     }
 
     try{
-        const artista = Artista.getArtistaById(req.params.id);
+        const {id} = matchedData(req);
+        const artista = Artista.getArtistaById(id);
         res.render('pagina', { contenido: 'paginas/artista', session: req.session, artista });
     }catch(e){
         res.setFlash('Artista no encontrado');
@@ -32,10 +33,10 @@ export function agregarArtista(req, res){
     }
 
     try{
-        const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
+        const datosValidados = matchedData(req);
         const imagen = req.file ? req.file.filename : 'defaultUser.png'; // Si no hay imagen, usa la predeterminada
 
-        const datos = {id: null, nombreArtistico: nombreArtistico, nombre: nombre, biografia: biografia, nacimiento: nacimiento, genero: genero, canciones: canciones, imagen: imagen};
+        const datos = {id: null, ...datosValidados, imagen: imagen};
         const artista = new Artista(datos);
         artista.persist();
 
@@ -57,17 +58,17 @@ export function modificarArtista(req, res){
     }
 
     try{
-        const { id, nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
+        const datosValidados = matchedData(req);
         const imagen = req.file ? req.file.filename : null;
-        let artista = Artista.getArtistaById(id);
-        if (!artista) throw new ArtistaNoEncontrado(id);
+        let artista = Artista.getArtistaById(datosValidados.id);
+        if (!artista) throw new ArtistaNoEncontrado(datosValidados.id);
 
-        artista.nombreArtistico = nombreArtistico || artista.nombreArtistico;
-        artista.nombre = nombre || artista.nombre;
-        artista.biografia = biografia || artista.biografia;
-        artista.nacimiento = nacimiento || artista.nacimiento;
-        artista.genero = genero || artista.genero;
-        artista.canciones = canciones || artista.canciones;
+        artista.nombreArtistico = datosValidados.nombreArtistico || artista.nombreArtistico;
+        artista.nombre = datosValidados.nombre || artista.nombre;
+        artista.biografia = datosValidados.biografia || artista.biografia;
+        artista.nacimiento = datosValidados.nacimiento || artista.nacimiento;
+        artista.genero = datosValidados.genero || artista.genero;
+        artista.canciones = datosValidados.canciones || artista.canciones;
         artista.imagen = imagen ? imagen : artista.imagen;
 
         artista.persist();
