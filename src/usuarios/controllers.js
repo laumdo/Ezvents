@@ -2,7 +2,7 @@ import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum, UsuarioYaExiste, EmailYaExiste } from './Usuario.js';
 import { matchedData } from 'express-validator';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
-import { DateTime } from 'luxon'; 
+
 import { render } from '../utils/render.js';
 
 
@@ -13,6 +13,7 @@ export function viewLogin(req, res) {
         errores: {}
     });
 }
+
 
 export async function doLogin(req, res) {
     const result = validationResult(req);
@@ -31,22 +32,6 @@ export async function doLogin(req, res) {
 
     try {
         const usuario = await Usuario.login(username, password);
-       
-        //verficar cumpleaños
-        // --- Nuevo bonus de cumpleaños registrado en PuntosUsuario ---
-    if (usuario.fecha_nacimiento) {
-          const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
-          const hoy = new Date();
-          const esCumple = m === hoy.getMonth() + 1 && d === hoy.getDate();
-          if (esCumple && !Usuario.hasBirthdayBonusToday(usuario.id)) {
-            Usuario.addBirthdayBonus(usuario.id);
-            res.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
-          }
-    }
-        // mensaje genérico si no era cumpleaños
-        if (!req.session.flashMsg) {
-            res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
-        }
         req.session.login = true;
         req.session.nombre = usuario.nombre;
         req.session.username = usuario.username;
@@ -57,6 +42,8 @@ export async function doLogin(req, res) {
         req.session.esUsuario = usuario.rol === RolesEnum.USUARIO;
         req.session.esAdmin = usuario.rol === RolesEnum.ADMIN;
         req.session.esEmpresa = usuario.rol === RolesEnum.EMPRESA;
+
+        res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         return res.redirect('/');
     } catch (e) {
         const datos = matchedData(req);
@@ -175,13 +162,10 @@ export function viewDatos(req, res) {
         descuentosUsuario=null;
     }
 
-    //const puntosUsuario = usuario.puntos;
-    const puntosUsuario=Usuario.getAvailablePoints(usuario.id);
     res.render('pagina', { contenido: 'paginas/datos', 
         session: req.session, 
         usuario,
-        descuentosUsuario,
-        puntosUsuario
+        descuentosUsuario
      });
 }
 
@@ -249,6 +233,36 @@ export function modificarUsuario(req, res){
             errores
         });
     }
+
+    // Capturo las variables username y password
+    const username = req.body.username;
+    const password = req.body.password;
+    const nombre = req.body.nombre;
+
+    try {
+        const usuario = await Usuario.creaUsuario(username, password, nombre);
+        req.session.login = true;
+        req.session.nombre = usuario.nombre;
+        req.session.rol = usuario.rol;
+        req.session.usuario = usuario.username;
+
+        return res.redirect('/usuarios/index');
+    } catch (e) {
+        let error = 'No se ha podido crear el usuario';
+        if (e instanceof UsuarioYaExiste) {
+            error = 'El nombre de usuario ya está utilizado';
+        }
+        const datos = matchedData(req);
+        delete datos.password;
+        delete datos.passwordConfirmacion;
+        req.log.error("Problemas al registrar un nuevo usuario '%s'", username);
+        req.log.debug('El usuario no ha podido registrarse: %s', e);
+        render(req, res, 'paginas/register', {
+            error,
+            datos: {},
+            errores: {}
+        });
+    }
 }*/
 export async function doRegister(req, res) {
     const result = validationResult(req);
@@ -266,7 +280,6 @@ export async function doRegister(req, res) {
     const nombre = req.body.nombre;
     const apellidos = req.body.apellidos;
     const email = req.body.email;
-    const fecha_nacimiento = req.body.fecha_nacimiento;
     const rolStr = req.body.rol.toLowerCase();
   
     // Determinar el rol según el valor seleccionado
@@ -284,8 +297,7 @@ export async function doRegister(req, res) {
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
       
-        const nuevoUsuario = new Usuario(username,null, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
-        nuevoUsuario.password=password;
+        const nuevoUsuario = new Usuario(username, password, nombre, apellidos, email, rol);
         nuevoUsuario.persist();
   
       // Configurar la sesión con los datos del usuario
@@ -318,5 +330,4 @@ export async function doRegister(req, res) {
         });
     }
 }
-
   

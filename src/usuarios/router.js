@@ -30,7 +30,7 @@ usuariosRouter.post('/register',
     body('passwordConfirmacion', 'La contraseña no coincide').custom((value, { req }) => {
         return value === req.body.password;
     }),
-    asyncHandler(doRegister)    
+    asyncHandler(doRegister)
 );
 
 usuariosRouter.use((req, res, next) => {

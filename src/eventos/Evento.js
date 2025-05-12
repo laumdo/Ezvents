@@ -1,157 +1,180 @@
-import { getConnection } from '../db.js';
+    import bcrypt from "bcryptjs";
+    import { getConnection } from '../db.js';
 
-export class Evento {
-  static #getAllStmt = null;
-  static #getByIdStmt = null;
-  static #insertStmt = null;
-  static #searchStmt = null;
-  static #updateStmt = null;
-  static #deleteStmt = null;
+    export class Evento {
+        static #getByIdStmt = null;
+        static #insertStmt = null;
+        static #updateStmt = null;
+        static #deleteStmt = null; 
 
-  /**
-   * Prepara las sentencias SQL una sola vez.
-   */
-  static initStatements() {
-    const db = getConnection();
-    if (this.#getByIdStmt) return;
+        static initStatements() {
+            const db = getConnection();
 
-    this.#getAllStmt = db.prepare('SELECT * FROM eventos');
-    this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
-    this.#searchStmt   = db.prepare('SELECT * FROM eventos WHERE LOWER(nombre) LIKE LOWER(?)');
-    this.#insertStmt = db.prepare(
-      `INSERT INTO eventos (
-        nombre, descripcion, fecha, lugar,
-        precio, aforo_maximo, entradas_vendidas, imagen, edad_minima
-      ) VALUES (
-        @nombre, @descripcion, @fecha, @lugar,
-        @precio, @aforo_maximo, @entradas_vendidas, @imagen, @edad_minima
-      )`
-    );
-    this.#updateStmt = db.prepare(
-      `UPDATE eventos SET
-        nombre           = @nombre,
-        descripcion      = @descripcion,
-        fecha            = @fecha,
-        lugar            = @lugar,
-        precio           = @precio,
-        aforo_maximo     = @aforo_maximo,
-        entradas_vendidas= @entradas_vendidas,
-        imagen           = @imagen,
-        edad_minima      = @edad_minima
-      WHERE id = @id`
-    );
-    this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
-  }
+            if (this.#getByIdStmt !== null) return;
 
-  #id;
-  nombre;
-  descripcion;
-  fecha;
-  lugar;
-  precio;
-  aforo_maximo;
-  entradas_vendidas;
-  imagen;
-  edad_minima;
+            this.#getByIdStmt = db.prepare('SELECT * FROM eventos WHERE id = @id');
+            this.#insertStmt = db.prepare(`
+                INSERT INTO eventos (idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas, imagen) 
+                VALUES (@idEmpresa, @nombre, @descripcion, @fecha, @lugar, @precio, @aforo_maximo, @entradas_vendidas, @imagen)
+            `);
+            this.#updateStmt = db.prepare(`
+                UPDATE eventos SET nombre = @nombre, descripcion = @descripcion, fecha = @fecha, 
+                lugar = @lugar, precio = @precio, aforo_maximo = @aforo_maximo, entradas_vendidas = @entradas_vendidas, imagen = @imagen 
+                WHERE id = @id
+            `);
+            this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = @id');
+        }
 
-  /**
-   * Recibe un objeto con campos de la tabla.
-   */
-  constructor({
-    id,
-    nombre,
-    descripcion,
-    fecha,
-    lugar,
-    precio,
-    aforo_maximo,
-    entradas_vendidas = 0,
-    imagen = 'default.png',
-    edad_minima = 0
-  }) {
-    this.#id               = id;
-    this.nombre            = nombre;
-    this.descripcion       = descripcion;
-    this.fecha             = fecha;
-    this.lugar             = lugar;
-    this.precio            = precio;
-    this.aforo_maximo      = aforo_maximo;
-    this.entradas_vendidas = entradas_vendidas;
-    this.imagen            = imagen;
-    this.edad_minima       = edad_minima;
-  }
+        static getEventosById(entradas){
+            if(entradas.length === 0) return {};
 
-  /** Sólo lectura pública del ID */
-  get id() {
-    return this.#id;
-  }
+            const db = getConnection();
 
-  /** Inserta o actualiza según corresponda */
-  persist() {
-    if (this.#id === null) {
-      const result = Evento.#insertStmt.run({
-        nombre:            this.nombre,
-        descripcion:       this.descripcion,
-        fecha:             this.fecha,
-        lugar:             this.lugar,
-        precio:            this.precio,
-        aforo_maximo:      this.aforo_maximo,
-        entradas_vendidas: this.entradas_vendidas,
-        imagen:            this.imagen,
-        edad_minima:       this.edad_minima
-      });
-      this.#id = result.lastInsertRowid;
-    } else {
-      Evento.#updateStmt.run({
-        id:                this.#id,
-        nombre:            this.nombre,
-        descripcion:       this.descripcion,
-        fecha:             this.fecha,
-        lugar:             this.lugar,
-        precio:            this.precio,
-        aforo_maximo:      this.aforo_maximo,
-        entradas_vendidas: this.entradas_vendidas,
-        imagen:            this.imagen,
-        edad_minima:       this.edad_minima
-      });
+            const placeholders = entradas.map(() => '?').join(', ');
+            const stmt = db.prepare(`SELECT * FROM eventos WHERE id IN (${placeholders})`);
+            const rows = stmt.all(...entradas);
+
+            const map ={};
+            for(const row of rows){
+                map[row.id] = new Evento(row);
+            }
+
+            return map;
+        }
+        
+        static getEventoById(idEvento) { 
+            try {
+                const evento = this.#getByIdStmt.get({ id: idEvento });
+                if (evento === undefined) throw new EventoNoEncontrado(idEvento);
+                
+                return new Evento(evento);
+            } catch (error) {
+                console.error("Error al buscar evento:", error);
+                throw error;
+            }
+        }    
+
+        
+        
+        static getAll() {
+            const db = getConnection(); 
+            return db.prepare('SELECT * FROM eventos').all();
+        }
+        
+
+        static #insert(evento) {
+            let result = null;
+            try {
+                const datos = {
+                    idEmpresa: evento.idEmpresa,
+                    nombre: evento.nombre,
+                    descripcion: evento.descripcion,
+                    fecha: evento.fecha,
+                    lugar: evento.lugar,
+                    precio: evento.precio,
+                    aforo_maximo: evento.aforo_maximo,
+                    entradas_vendidas: evento.entradas_vendidas,
+                    imagen: evento.imagen
+                };
+
+                result = this.#insertStmt.run(datos);
+                evento.#id = result.lastInsertRowid;
+            } catch (e) {
+                if (e.code === 'SQLITE_CONSTRAINT') {
+                    throw new EventoYaExiste(evento.nombre);
+                }
+                throw new ErrorDatos('No se ha insertado el evento', { cause: e });
+            }
+            return evento;
+        }
+
+    static #update(evento) {
+        const datos = {
+            id: evento.#id,
+            nombre: evento.nombre,
+            descripcion: evento.descripcion,
+            fecha: evento.fecha,
+            lugar: evento.lugar,
+            precio: evento.precio,
+            aforo_maximo: evento.aforo_maximo,
+            entradas_vendidas: evento.entradas_vendidas,
+            imagen: evento.imagen
+        };
+
+        const result = this.#updateStmt.run(datos);
+        if (result.changes === 0) throw new EventoNoEncontrado(evento.#id);
+
+        return evento;
     }
-    return this;
-  }
 
-  /** Elimina un evento por ID */
-  static delete(id) {
-    const result = this.#deleteStmt.run(id);
-    if (result.changes === 0) {
-      throw new EventoNoEncontrado(id);
+    static delete(id) {
+        console.log("se mete el evento en delete con id: ", id);
+        const db = getConnection();
+        const deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
+        const result = deleteStmt.run(id);
+        
+        if (result.changes === 0) throw new EventoNoEncontrado(id);
     }
-  }
 
-  /** Devuelve todas las filas como instancias de Evento */
-  static getAll() {
-    return this.#getAllStmt.all().map(row => new Evento(row));
-  }
+        #id;
+        idEmpresa;
+        nombre;
+        descripcion;
+        fecha;
+        lugar;
+        precio;
+        aforo_maximo;
+        entradas_vendidas;
+        imagen;
 
-  /** Recupera un evento o lanza si no existe */
-  static getEventoById(id) {
-    const row = this.#getByIdStmt.get({ id });
-    if (!row) {
-      throw new EventoNoEncontrado(id);
+        constructor({ id = null, idEmpresa, nombre, descripcion, fecha, lugar, precio, aforo_maximo, entradas_vendidas = 0, imagen = 'default.png' }) {
+            this.#id = id;
+            this.idEmpresa = idEmpresa;
+            this.nombre = nombre;
+            this.descripcion = descripcion;
+            this.fecha = fecha;
+            this.lugar = lugar;
+            this.precio = precio;
+            this.aforo_maximo = aforo_maximo;
+            this.entradas_vendidas = entradas_vendidas;
+            this.imagen = imagen;
+        }
+
+        get id() {
+            return this.#id;
+        }
+
+        persist() {
+            if (this.#id === null) return Evento.#insert(this);
+            return Evento.#update(this);
+        }
     }
-    return new Evento(row);
-  }
 
-  /** Busca eventos cuyo nombre contenga el texto (insensible a mayúsculas) */
-  static searchByName(texto) {
-    const like = `%${texto}%`;
-    return this.#searchStmt
-      .all(like)
-      .map(row => new Evento(row));
-  }
-}
+    
 
-export class EventoNoEncontrado extends Error {
-  constructor(id) {
-    super(`Evento no encontrado: ${id}`);
-    this.name = 'EventoNoEncontrado';
-  }
-}
+    
+    export class EventoNoEncontrado extends Error {
+        constructor(id, options) {
+            super(`Evento no encontrado: ${id}`, options);
+            this.name = 'EventoNoEncontrado';
+        }
+    }
+
+    export class ErrorDatos extends Error {
+        constructor(mensaje, options) {
+            super(mensaje, options);
+            this.name = 'ErrorDatos';
+        }
+    }
+
+    export class EventoYaExiste extends Error {
+        /**
+         * 
+         * @param {string} username 
+         * @param {ErrorOptions} [options]
+         */
+        constructor(username, options) {
+            super(`Evento ya existe: ${username}`, options);
+            this.name = 'EventoYaExiste';
+        }
+    }

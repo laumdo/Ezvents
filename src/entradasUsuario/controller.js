@@ -4,7 +4,7 @@ import { Evento } from "../eventos/Evento.js";
 import { EntradasUsuario } from './EntradasUsuario.js';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 import { render } from '../utils/render.js';
-import { validationResult } from 'express-validator';
+import { flashMessages } from '../middleware/flash.js';
 
 export function viewEntradas(req, res){
     const usuario_id = req.session.usuario_id;
@@ -34,13 +34,6 @@ export function viewComprar(req, res){
 }
 
 export async function comprar(req, res){
-    const errores = validationResult(req);
-    if (!errores.isEmpty()) {
-        const mensajes = errores.array().map(e => e.msg).join(', ');
-        res.setFlash(`Error al finalizar la compra: ${mensajes}`);
-        return res.redirect('/');
-    }
-
     try{
         const id_usuario = req.session.usuario_id;
         const usuario = Usuario.getUsuarioByUsername(req.session.username);
@@ -66,22 +59,6 @@ export async function comprar(req, res){
             await Carrito.deleteById(item.id);
         }
         usuario.persist();
-        for (const item of carrito) {
-                // registrar la venta
-                 EntradasUsuario.compraEntrada(id_usuario, item.id_evento, item.cantidad);
-                 // actualizar existencias
-                 const evento = Evento.getEventoById(item.id_evento);
-                 evento.entradas_vendidas += item.cantidad;
-                 const usuario = await Usuario.getUsuarioByUsername(req.session.username);
-                if (usuario.age < evento.edad_minima) {
-                    req.setFlash(`No tienes la edad mínima (${evento.edad_minima} años) para el evento "${evento.nombre}".`);
-                    return res.redirect('/carrito');
-                }
-                 evento.persist();
-                 // **añadir** lote de puntos en PuntosUsuario
-                 Usuario.addPoints(id_usuario, item.precio * 5 * item.cantidad);
-                 await Carrito.deleteById(item.id);
-        }
 
         delete req.session.appliedCoupon;
 
