@@ -117,3 +117,22 @@
     .empresa-menu { margin-bottom: 20px; }
     .evento { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
 </style>
+
+<%
+const flashMsg = getAndClearFlash();
+if(flashMsg){
+%>
+<dialog id="flashModal">
+    <form method="dialog">
+        <p><%= flashMsg %></p>
+        <button>Cerrar</button>
+    </form>
+</dialog>
+<% } %>
+<script>
+    const flashModal = document.getElementById('flashModal');
+    if (flashModal) {
+        flashModal.showModal();
+    }
+
+</script>

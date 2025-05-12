@@ -47,7 +47,7 @@ export function modificarEvento(req, res) {
         let evento = Evento.getEventoById(id);
         if (!evento) throw new EventoNoEncontrado(id);
 
-        if (!req.session.esEmpresa || evento.idEmpresa !== req.session.usuario_id) {
+        if (req.session.esEmpresa && evento.idEmpresa !== req.session.usuario_id) {
             res.setFlash('No tienes permisos para modificar este evento');
             return res.redirect('/contenido/empresa');
         }
@@ -78,17 +78,26 @@ export function eliminarEvento(req, res) {
         const { id } = req.body;
         const evento = Evento.getEventoById(id);
 
-        if (!req.session.esEmpresa || evento.idEmpresa !== req.session.usuario_id) {
+        if (req.session.esEmpresa && evento.idEmpresa !== req.session.usuario_id) {
             res.setFlash('No tienes permisos para eliminar este evento');
             return res.redirect('/contenido/empresa');
         }
         
         Evento.delete(id);
 
-        res.render('pagina', { 
+        if(req.session.esEmpresa) {
+          res.render('pagina', { 
+            contenido: 'paginas/empresa',
+            session: req.session, 
+            mensaje: 'Evento eliminado con éxito' });
+        }else{
+          res.render('pagina', { 
             contenido: 'paginas/admin',
             session: req.session, 
             mensaje: 'Evento eliminado con éxito' });
+        }
+
+        
     } catch (error) {
         res.render('pagina', { contenido: 'paginas/admin', error: 'Error al eliminar el evento. Verifique el ID.' });
     }
