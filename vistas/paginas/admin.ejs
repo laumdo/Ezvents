@@ -6,6 +6,15 @@
     <h1>Acceso Denegado</h1>
     <p>No tienes permisos para administrar la web.</p>
 <% } %>
+<% 
+  const section = typeof activeSection === 'string' ? activeSection : null;
+  const form    = typeof activeForm    === 'string' ? activeForm    : null;
+%>
+
+<% 
+  const formDatos   = typeof datos   !== 'undefined' ? datos   : {};
+  const formErrores = typeof errores !== 'undefined' ? errores : {};
+%>
 
 <!-- Menú de administración -->
 <div class="admin-menu">
@@ -50,7 +59,7 @@
     <!-- Formulario para eliminar evento -->
     <div id="form-deleteEvento" class="admin-form oculto">
         <h2>Eliminar Evento</h2>
-        <form action="/eventos/eliminarEvento" method="POST">
+        <form action="/eventos/eliminarEvento" method="POST" >
             <label>ID del evento:</label>
             <input type="number" name="id" required>
             <button type="submit">Eliminar Evento</button>
@@ -103,22 +112,16 @@
     </div>
 
     <!-- Sección de gestión de descuentos -->
-    <div id="seccion-descuentos" class="admin-seccion oculto">
+    <div id="seccion-descuentos" class="admin-seccion <%= section === 'descuentos' ? '' : 'oculto' %>">
         <h2>Gestionar Descuentos</h2>
         <button onclick="mostrarFormulario('addDescuento')">Añadir Descuento</button>
         <button onclick="mostrarFormulario('deleteDescuento')">Eliminar Descuento</button>
         <button onclick="mostrarFormulario('editDescuento')">Modificar Descuento</button>
 
         <!-- Formularios de descuentos -->
-        <div id="form-addDescuento" class="admin-form oculto">
+        <div id="form-addDescuento" class="admin-form <%= form === 'addDescuento' ? '' : 'oculto' %>">
             <h2>Añadir Descuento</h2>
-<<<<<<< HEAD
-<<<<<<< HEAD
             <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
-                <label>Título:</label>
-                <input type="text" name="titulo" required>
-=======
-            <form action="/descuentos/agregarDescuento" method="POST">
                 <% if (locals.error) { %>
                     <p><strong><%= locals.error %></strong></p>
                 <% } %>
@@ -127,55 +130,75 @@
                 <input type="text" name="titulo" value="<%=formDatos.titulo %>"/>
                 <%- helpers.error(formErrores, 'titulo') %>
 
->>>>>>> main
-=======
-            <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
-                <label>Título:</label>
-                <input type="text" name="titulo" required>
->>>>>>> parent of 272309d (Merge branch 'main' into Antonio)
                 <label>Condiciones:</label>
-                <textarea name="condiciones" required></textarea>
+                <textarea name="condiciones"><%= formDatos.condiciones %></textarea>
+                <%- helpers.error(formErrores, 'condiciones') %>
+
                 <label>Puntos:</label>
-                <input type="number" name="puntos" required>
+                <input type="number" name="puntos" min="0" value="<%=formDatos.puntos %>"/>
+                <%- helpers.error(formErrores, 'puntos') %>
+
+                <label for="interno">
+                    <input id="interno" type="checkbox" name="interno" <%= formDatos.interno === 'on' ? 'checked' : '' %> />
+                    Descuento interno?
+                </label>
+
+                <div>
+                <label for="valor">Valor descuento (opcional, ej. 0.05 para 5%):</label>
+                  <input
+                    id="valor"
+                    type="number"
+                    name="valor"
+                    step="0.01"
+                    placeholder="Deja en blanco si no es interno"
+                    value="<%=formDatos.valor %>"
+                    />
+                <%- helpers.error(formErrores, 'valor') %>
+                </div>
+
+                <div>
                 <label>Imagen:</label>
                 <input type="file" name="imagen" accept="image/*">
+                </div>
+                
                 <button type="submit">Añadir Descuento</button>
             </form>
         </div>
 
         <!-- Formulario para eliminar descuento -->
-        <div id="form-deleteDescuento" class="admin-form oculto">
+        <div id="form-deleteDescuento" class="admin-form <%= form === 'deleteDescuento' ? '' : 'oculto' %>">
             <h2>Eliminar Descuento</h2>
             <form action="/descuentos/eliminarDescuento" method="POST">
                 <label>ID del descuento:</label>
                 <input type="number" name="id" required>
+                <%- helpers.error(formErrores, 'id') %>
+
                 <button type="submit">Eliminar Descuento</button>
             </form>
         </div>
 
         <!-- Formulario para modificar descuento -->
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <div id="form-editDescuento" class="admin-form oculto" enctype="multipart/form-data">
-=======
         <div id="form-editDescuento" class="admin-form <%= form === 'editDescuento' ? '' : 'oculto' %>">
->>>>>>> main
-=======
-        <div id="form-editDescuento" class="admin-form oculto" enctype="multipart/form-data">
->>>>>>> parent of 272309d (Merge branch 'main' into Antonio)
             <h2>Modificar Descuento</h2>
-            <form action="/descuentos/modificarDescuento" method="POST">
+            <form action="/descuentos/modificarDescuento" method="POST" enctype="multipart/form-data">
+                <% if (locals.error) { %>
+                    <p><strong><%= locals.error %></strong></p>
+                <% } %>
+                
                 <label>ID del descuento:</label>
                 <input type="number" name="id" required>
+                <%- helpers.error(formErrores, 'id') %>
 
                 <label>Nuevo Titulo:</label>
                 <input type="text" name="titulo">
-                
+                <%- helpers.error(formErrores, 'titulo') %>
+
                 <label>Nuevas Condiciones:</label>
                 <textarea name="condiciones"></textarea>
                 
                 <label>Puntos:</label>
                 <input type="number" name="puntos">
+                <%- helpers.error(formErrores, 'puntos') %>
 
                 <label>Nueva Imagen:</label>
                 <input type="file" name="imagen" accept="image/*">
@@ -224,9 +247,9 @@
         </div>
 
         <!--Modificar artista-->
-        <div id="form-editArtista" class="admin-form oculto" enctype="multipart/form-data">
+        <div id="form-editArtista" class="admin-form oculto">
             <h2>Modificar Artista</h2>
-            <form action="/artista/modificarArtista" method="POST">
+            <form action="/artista/modificarArtista" method="POST" enctype="multipart/form-data">
                 <label>ID del artista:</label>
                 <input type="number" name="id" required>
 
