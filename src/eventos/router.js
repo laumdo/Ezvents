@@ -8,7 +8,9 @@ import {
   modificarEvento,
   eliminarEvento,
   buscarEvento,
-  viewCalendario
+  apiEventos,
+  viewCalendario,
+  viewEventosPasados
 } from './controllers.js';
 
 const upload = multer({
@@ -30,6 +32,7 @@ router.get('/buscarEvento',
   buscarEvento
 );
 
+router.get('/pasados', viewEventosPasados);
 // Ver detalle de evento
 router.get('/:id',
   param('id').isInt().withMessage('ID inválido'),

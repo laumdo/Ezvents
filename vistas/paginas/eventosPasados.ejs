@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/valoraciones.css">
+    
+    
+
+<h2>Eventos Pasados</h2>
+<div class="eventos">
+    <% if (eventos && eventos.length > 0) { %>
+        <form action="/eventos/pasados" method="GET" class="ordenar-eventos">
+
+            <label for="ordenar">Ordenar por:</label>
+            <select name="ordenar" id="ordenar" onchange="this.form.submit()">
+                <option value="fecha_asc" <%= query.ordenar === 'fecha_asc' ? 'selected' : '' %>>Fecha ↑</option>
+                <option value="fecha_desc" <%= query.ordenar === 'fecha_desc' ? 'selected' : '' %>>Fecha ↓</option>
+                <option value="nombre_asc" <%= query.ordenar === 'nombre_asc' ? 'selected' : '' %>>Nombre A-Z</option>
+                <option value="nombre_desc" <%= query.ordenar === 'nombre_desc' ? 'selected' : '' %>>Nombre Z-A</option>
+                <option value="precio_asc" <%= query.ordenar === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
+                <option value="precio_desc" <%= query.ordenar === 'precio_desc' ? 'selected' : '' %>>Precio ↓</option>
+                <option value="valoracion_asc" <%= query.ordenar === 'valoracion_asc' ? 'selected' : '' %>>Valoración ↑</option>
+                <option value="valoracion_desc" <%= query.ordenar === 'valoracion_desc' ? 'selected' : '' %>>Valoración ↓</option>
+
+            </select>
+        
+            
+        </form>
+        <% eventos.forEach(evento => { %>
+            <div class="evento">
+                <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="300" height="auto">
+                <div class="evento-info">
+                    <h3 class="evento-titulo"><%= evento.nombre %></h3>
+                    <p class="valoracion-estrellas" aria-label="Valoración: <%= evento.media %> de 5">
+                        <% for (let i = 1; i <= 5; i++) { 
+                            const porcentaje = Math.min(Math.max(evento.media - (i - 1), 0), 1) * 100;
+                        %>
+                            <span class="estrellas">
+                                <i class="fa-regular fa-star fondo"></i>
+                                <i class="fa-solid fa-star relleno" style="width: <%= porcentaje %>%"></i>
+                            </span>
+                        <% } %>
+                        (<%= evento.media %> ★) (<%= evento.totalValoraciones %> 📝)
+                    </p>
+                    <button onclick="window.location.href='/valoraciones/valoraciones/<%= evento.id %>'">Ver opiniones</button>
+                    <% if (evento.haAsistido && !evento.haValorado) { %>
+                        <button onclick="window.location.href='/valoraciones/valorar/<%= evento.id %>'">Poner opinión</button>
+                    <% } %>
+                </div>
+            </div>
+        <% }) %>        
+    <% } else { %>
+        <p>No hay eventos pasados disponibles.</p>
+    <% } %>
+</div>

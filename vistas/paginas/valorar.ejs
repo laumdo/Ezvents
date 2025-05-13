@@ -1,0 +1,57 @@
+<link rel="stylesheet" href="/css/valoraciones.css">
+<h2> "<%= evento.nombre %>"</h2>
+
+<form action="/valoraciones/anadir" method="POST">
+    <input type="hidden" name="id_evento" value="<%= evento.id %>">
+    <input type="hidden" name="puntuacion" id="puntuacion" value="0">
+
+    <label for="puntuacion">Puntuación:</label>
+    <div class="valoracion-interactiva">
+        <% for (let i = 1; i <= 5; i++) { %>
+            <span class="estrella" data-valor="<%= i %>">★</span>
+        <% } %>
+    </div>
+
+    <br>
+
+    <label for="comentario">Comentario:</label>
+    <textarea name="comentario" placeholder="Escribe tu opinión..." required></textarea>
+    <br>
+
+    <button type="submit">Enviar valoración</button>
+</form>
+
+<a href="/eventos/pasados"><button>Cancelar</button></a>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const estrellas = document.querySelectorAll('.valoracion-interactiva .estrella');
+    const input = document.getElementById('puntuacion');
+    let valorSeleccionado = 0;
+
+    estrellas.forEach(estrella => {
+        estrella.addEventListener('mouseover', () => {
+            const valor = parseInt(estrella.getAttribute('data-valor'));
+            resaltarEstrellas(valor);
+        });
+
+        estrella.addEventListener('mouseout', () => {
+            resaltarEstrellas(valorSeleccionado);
+        });
+
+        estrella.addEventListener('click', () => {
+            valorSeleccionado = parseInt(estrella.getAttribute('data-valor'));
+            input.value = valorSeleccionado;
+            resaltarEstrellas(valorSeleccionado);
+        });
+    });
+
+    function resaltarEstrellas(valor) {
+        estrellas.forEach(e => {
+            const val = parseInt(e.getAttribute('data-valor'));
+            e.classList.toggle('seleccionada', val <= valor);
+        });
+    }
+});
+</script>

@@ -4,8 +4,108 @@ import { Evento } from './Evento.js';
 import { Usuario } from '../usuarios/Usuario.js';
 import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
+import { Valoraciones } from '../valoraciones/Valoracion.js';
 import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
-//import { Evento, EventoNoEncontrado } from './Evento.js';
+
+export function viewEventos(req, res) {
+    let eventos = Evento.getAll();
+    const ahora = new Date();
+    
+    eventos = eventos.filter(evento => {
+        if (!evento.fecha || !evento.hora) return false;
+        const [year, month, day] = evento.fecha.split('-').map(Number);
+        const [hour, minute] = evento.hora.split(':').map(Number);
+        const fechaEvento = new Date(year, month - 1, day, hour, minute);
+        return fechaEvento >= ahora;
+    });
+
+
+    const ordenar = req.query.ordenar;
+    if (ordenar) {
+        const [campo, direccion] = ordenar.split('_');
+
+        eventos.sort((a, b) => {
+            let valA = a[campo];
+            let valB = b[campo];
+
+            if (campo === 'nombre') {
+                valA = valA.toLowerCase();
+                valB = valB.toLowerCase();
+            } else if (campo === 'fecha') {
+                valA = new Date(`${a.fecha}T${a.hora}`);
+                valB = new Date(`${b.fecha}T${b.hora}`);
+            } else {
+                valA = parseFloat(valA);
+                valB = parseFloat(valB);
+            }
+
+            return direccion === 'asc' ? valA > valB ? 1 : -1 : valA < valB ? 1 : -1;
+        });
+    }
+    const fechaFiltro = req.query.fecha;
+    const fechaInicio = req.query.fecha_inicio ? new Date(req.query.fecha_inicio) : null;
+    const fechaFin = req.query.fecha_fin ? new Date(req.query.fecha_fin) : null;
+
+    if (fechaFiltro === 'antes' && fechaInicio) {
+        eventos = eventos.filter(evento => new Date(evento.fecha) <= fechaInicio);
+    } else if (fechaFiltro === 'despues' && fechaInicio) {
+        eventos = eventos.filter(evento => new Date(evento.fecha) >= fechaInicio);
+    } else if (fechaFiltro === 'entre' && fechaInicio && fechaFin) {
+        eventos = eventos.filter(evento => {
+            const fechaEvento = new Date(evento.fecha);
+            return fechaEvento >= fechaInicio && fechaEvento <= fechaFin;
+        });
+    }
+
+    const precioMin = parseFloat(req.query.precioMin);
+    const precioMax = parseFloat(req.query.precioMax);
+    
+    if (!isNaN(precioMin)) {
+        eventos = eventos.filter(evento => evento.precio >= precioMin);
+    }
+    
+    if (!isNaN(precioMax)) {
+        eventos = eventos.filter(evento => evento.precio <= precioMax);
+    }
+
+    // Filtrar por artista
+    const artistaFiltro = req.query.artista;
+    if (artistaFiltro) {
+        const eventosDelArtista = EventoArtista.getEventsByArtist(artistaFiltro);
+        const idsEventosDelArtista = eventosDelArtista.map(e => e.id_evento);
+        eventos = eventos.filter(evento => idsEventosDelArtista.includes(evento.id));
+    }
+
+    // Filtrar por empresa
+    const empresaFiltro = req.query.empresa;
+    if (empresaFiltro) {
+        eventos = eventos.filter(evento => evento.empresa === empresaFiltro);//cambiar
+    }
+
+    const artistas = Artista.getAll();
+    const empresas = Usuario.getEmpresas();
+
+    res.render('pagina', {
+        contenido: 'paginas/index',
+        session: req.session,
+        eventos,
+        esInicio: true,
+        artistas,
+        empresas,
+        filtros: {
+            fechaTipo: req.query.fechaTipo,
+            fecha: req.query.fecha,
+            fechaInicio: req.query.fechaInicio,
+            fechaFin: req.query.fechaFin,
+            precioMin: req.query.precioMin,
+            precioMax: req.query.precioMax,
+            artista: req.query.artista,
+            empresa: req.query.empresa
+        },
+        req // para que EJS tenga acceso a los parámetros
+    });
+}
+
 
 function calcularEdad(fechaNacimiento) {
   const [y, m, d] = fechaNacimiento.split('-').map(Number);
@@ -13,11 +113,6 @@ function calcularEdad(fechaNacimiento) {
   const diff = Date.now() - dob.getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 }
-
-export function viewEventos(req, res) {
-    const eventos = Evento.getAll();
-    res.render('pagina', { contenido: 'paginas/index', session: req.session, eventos });
-  }
   
   export function viewEvento(req, res, next) {
     const errors = validationResult(req);
@@ -241,8 +336,8 @@ export function apiEventos(req, res) {
             return {
                 id: e.id,
                 title: e.nombre,
-                start: e.fecha,
-                allDay: true,
+                start: `${e.fecha}T${e.hora}`,
+                allDay: false,
                 imagen: e.imagen,
                 aforo: e.aforo_maximo,
                 entradasDisponibles,
@@ -266,6 +361,92 @@ export function viewCalendario(req, res) {
         eventos
     });
 }
+
+export function viewEventosPasados(req, res) {
+    let eventos = Evento.getAll();
+    const ahora = new Date();
+    const idUsuario = req.session && req.session.usuario_id;
+
+    eventos = eventos.filter(evento => {
+        if (!evento.fecha || !evento.hora) return false;
+
+        const [year, month, day] = evento.fecha.split('-').map(Number);
+        const [hour, minute] = evento.hora.split(':').map(Number);
+        const fechaEvento = new Date(year, month - 1, day, hour, minute);
+
+        return fechaEvento < ahora;
+    });
+
+    let idsEventosAsistidos = [];
+    if (idUsuario) {
+        const entradas = EntradasUsuario.getEntradasByUsuario(idUsuario);
+        idsEventosAsistidos = entradas.map(e => e.idEvento);
+    }
+
+    const valoraciones = Valoraciones.getAll();
+
+    const eventosConInfo = eventos.map(evento => {
+        const valoracionesEvento = valoraciones.filter(v => v.id_evento === evento.id);
+
+        let media = 0;
+        const totalValoraciones = valoracionesEvento.length;
+        if(totalValoraciones > 0){
+            let suma = 0;
+            for (let v of valoracionesEvento) {
+                suma += v.puntuacion;
+            }
+            media = (suma / valoracionesEvento.length).toFixed(1);
+        }
+        
+
+        const haValorado = idUsuario ? valoracionesEvento.some(v => v.id_usuario === idUsuario) : false;
+
+        const haAsistido = idsEventosAsistidos.includes(evento.id);
+
+       
+        return {
+            ...evento,
+            media,
+            haValorado,
+            haAsistido,
+            totalValoraciones
+        };
+    });
+
+       // Ordenar según query
+       const ordenar = req.query.ordenar;
+       if (ordenar) {
+           const [campo, direccion] = ordenar.split('_');
+   
+           eventosConInfo.sort((a, b) => {
+               let valA, valB;
+   
+               if (campo === 'nombre') {
+                   valA = a.nombre.toLowerCase();
+                   valB = b.nombre.toLowerCase();
+               } else if (campo === 'fecha') {
+                   valA = new Date(`${a.fecha}T${a.hora}`);
+                   valB = new Date(`${b.fecha}T${b.hora}`);
+               } else if (campo === 'precio') {
+                   valA = parseFloat(a.precio);
+                   valB = parseFloat(b.precio);
+               } else if (campo === 'valoracion') {
+                   valA = parseFloat(a.media);
+                   valB = parseFloat(b.media);
+               }
+   
+               return direccion === 'asc' ? valA - valB : valB - valA;
+           });
+       }
+
+    res.render('pagina', {
+        contenido: 'paginas/eventosPasados',
+        session: req.session,
+        eventos: eventosConInfo,
+        query: req.query
+    });
+}
+
 
 
 

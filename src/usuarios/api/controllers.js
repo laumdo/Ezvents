@@ -1,6 +1,5 @@
 import { validationResult, matchedData } from 'express-validator';
 import { Usuario } from '../Usuario.js';
-import { pick } from 'lodash-es';
 
 export async function listUsuarios(req, res) {
     const result = validationResult(req);

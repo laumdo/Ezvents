@@ -42,7 +42,7 @@ export class Evento {
     );
     this.#deleteStmt = db.prepare('DELETE FROM eventos WHERE id = ?');
   }
-
+           
   #id;
   idEmpresa;
   nombre;
@@ -84,7 +84,52 @@ export class Evento {
     this.edad_minima       = edad_minima;
   }
 
-  /** Sólo lectura pública del ID */
+        static #insert(evento) {
+            let result = null;
+            try {
+                const datos = {
+                    nombre: evento.nombre,
+                    descripcion: evento.descripcion,
+                    fecha: evento.fecha,
+                    hora: evento.hora,
+                    lugar: evento.lugar,
+                    precio: evento.precio,
+                    aforo_maximo: evento.aforo_maximo,
+                    entradas_vendidas: evento.entradas_vendidas,
+                    imagen: evento.imagen
+                };
+
+                result = this.#insertStmt.run(datos);
+                evento.#id = result.lastInsertRowid;
+            } catch (e) {
+                if (e.code === 'SQLITE_CONSTRAINT') {
+                    throw new EventoYaExiste(evento.nombre);
+                }
+                throw new ErrorDatos('No se ha insertado el evento', { cause: e });
+            }
+            return evento;
+        }
+
+    static #update(evento) {
+        const datos = {
+            id: evento.#id,
+            nombre: evento.nombre,
+            descripcion: evento.descripcion,
+            fecha: evento.fecha,
+            hora: evento.hora,
+            lugar: evento.lugar,
+            precio: evento.precio,
+            aforo_maximo: evento.aforo_maximo,
+            entradas_vendidas: evento.entradas_vendidas,
+            imagen: evento.imagen
+        };
+
+        const result = this.#updateStmt.run(datos);
+        if (result.changes === 0) throw new EventoNoEncontrado(evento.#id);
+
+        return evento;
+    }
+    /** Sólo lectura pública del ID */
   get id() {
     return this.#id;
   }
@@ -132,7 +177,7 @@ export class Evento {
 
   /** Devuelve todas las filas como instancias de Evento */
   static getAll() {
-    return this.#getAllStmt.all().map(row => new Evento(row));
+    return this.#getAllStmt.all();//.map(row => new Evento(row));
   }
 
   /** Recupera un evento o lanza si no existe */

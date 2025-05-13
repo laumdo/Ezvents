@@ -287,6 +287,11 @@ hr.separador {
     color: #d9534f;
     font-weight: bold;
     margin-top: 1em;
+  }
+  
+#filtros {
+    display: none;
+    transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {
