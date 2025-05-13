@@ -214,11 +214,11 @@ export class Usuario {
     }
     
     get age() {
-        const [y,m,d] = this.fechaNacimiento.split('-').map(Number);
+        const [y,m,d] = this.fecha_nacimiento.split('-').map(Number);
         const dob = new Date(y,m-1,d);
         const diff = Date.now() - dob.getTime();
         return Math.floor(diff / (1000*60*60*24*365.25));
-      }
+    }
     
       get isAdult() {
         return this.age >= 18;

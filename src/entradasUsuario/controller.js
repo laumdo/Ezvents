@@ -57,21 +57,21 @@ export async function comprar(req, res){
             const id_evento = item.id_evento;
             const cantidad = item.cantidad;
             const evento = Evento.getEventoById(id_evento);
+            console.log("evento:", evento);
 
             const usuario = await Usuario.getUsuarioByUsername(req.session.username);
-            console.log("user: ", usuario);
-            console.log("usuario edad: ", usuario.age);
+            console.log("usuario:", usuario);
             if (usuario.age < evento.edad_minima) {
                 req.setFlash(`No tienes la edad mínima (${evento.edad_minima} años) para el evento "${evento.nombre}".`);
                 return res.redirect('/carrito');
             }
-            console.log("hola");
+            console.log("fuera del if");
+            
             EntradasUsuario.compraEntrada(id_usuario, id_evento, cantidad);
-            console.log("ha comprado la entrada");
+            console.log("compraEntrada");
 
             evento.entradas_vendidas += cantidad;
             evento.persist();
-            console.log("ha persistido el evento");
 
             usuario.puntos += Math.round(item.precio * 5 * cantidad);
             await Carrito.deleteById(item.id);

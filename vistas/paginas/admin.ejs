@@ -37,22 +37,38 @@
         <form action="/eventos/agregarEvento" method="POST" enctype="multipart/form-data">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
+            <%- helpers.error(formErrores, 'nombre') %>
+
             <label>Descripción:</label>
             <textarea name="descripcion" required></textarea>
+            <%- helpers.error(formErrores, 'descripcion') %>
+
             <label>Fecha:</label>
             <input type="date" name="fecha" required>
+            <%- helpers.error(formErrores, 'date') %>
+
+            <label>Hora:</label>
+            <input type="time" name="hora" required>
+            <%- helpers.error(formErrores, 'hora') %>
+
             <label>Lugar:</label>
             <input type="text" name="lugar" required>
+            <%- helpers.error(formErrores, 'lugar') %>
+
             <label>Precio:</label>
             <input type="number" step="0.01" name="precio" required>
+            <%- helpers.error(formErrores, 'precio') %>
+
             <label>Aforo Máximo:</label>
             <input type="number" name="aforo_maximo" required>
+            <%- helpers.error(formErrores, 'aforo_maximo') %>
+
             <label>Edad minima:</label>
             <input type="number" name="edad_minima" required>
+            <%- helpers.error(formErrores, 'edad_minima') %>
+
             <label>Imagen:</label>
             <input type="file" name="imagen" accept="image/*">
-            <label>Hora:</label>
-            <input type="time" name="hora">
 
             <button type="submit">Añadir Evento</button>
         </form>
@@ -65,6 +81,7 @@
         <form action="/eventos/eliminarEvento" method="POST" >
             <label>ID del evento:</label>
             <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
             <button type="submit">Eliminar Evento</button>
         </form>
     </div>
@@ -75,33 +92,42 @@
         <form action="/eventos/modificarEvento" method="POST" enctype="multipart/form-data">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
 
             <label>Nuevo Nombre:</label>
             <input type="text" name="nombre">
+            <%- helpers.error(formErrores, 'nombre') %>
             
             <label>Nueva Descripción:</label>
             <textarea name="descripcion"></textarea>
+            <%- helpers.error(formErrores, 'descripcion') %>
             
             <label>Nueva Fecha:</label>
             <input type="date" name="fecha">
-            
-            <label>Nuevo Lugar:</label>
-            <input type="text" name="lugar">
-            
-            <label>Nuevo Precio:</label>
-            <input type="number" step="0.01" name="precio">
-            
-            <label>Nuevo Aforo Máximo:</label>
-            <input type="number" name="aforo_maximo">
-
-            <label>Nueva edad minima:</label>
-            <input type="number" name="edad_minima">
-            
-            <label>Nueva Imagen:</label>
-            <input type="file" name="imagen" accept="image/*">
+            <%- helpers.error(formErrores, 'fecha') %>
 
             <label>Nueva Hora:</label>
             <input type="time" name="hora">
+            <%- helpers.error(formErrores, 'hora') %>
+            
+            <label>Nuevo Lugar:</label>
+            <input type="text" name="lugar">
+            <%- helpers.error(formErrores, 'lugar') %>
+            
+            <label>Nuevo Precio:</label>
+            <input type="number" step="0.01" name="precio">
+            <%- helpers.error(formErrores, 'precio') %>
+            
+            <label>Nuevo Aforo Máximo:</label>
+            <input type="number" name="aforo_maximo">
+            <%- helpers.error(formErrores, 'aforo_maximo') %>
+
+            <label>Nueva edad minima:</label>
+            <input type="number" name="edad_minima">
+            <%- helpers.error(formErrores, 'edad_minima') %>
+            
+            <label>Nueva Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
 
             <button type="submit">Modificar Evento</button>
         </form>
@@ -113,6 +139,7 @@
         <form action="/usuarios/eliminarUsuario" method="POST">
             <label>Nombre del usuario:</label>
             <input type="text" name="nombre" required>
+            <%- helpers.error(formErrores, 'nombre') %>
             <button type="submit">Eliminar Usuario</button>
         </form>
     </div>
@@ -230,16 +257,22 @@
             <form action="/artista/agregarArtista" method="POST" enctype="multipart/form-data">
                 <label>Nombre Artístico:</label>
                 <input type="text" name="nombreArtistico" required>
+                <%- helpers.error(formErrores, 'nombreArtistico') %>
                 <label>Nombre:</label>
                 <input type="text" name="nombre" required>
+                <%- helpers.error(formErrores, 'nombre') %>
                 <label>Biografía:</label>
-                <input type="text" name="biografia" required>
+                <textarea name="biografia"></textarea>
+                <%- helpers.error(formErrores, 'biografia') %>
                 <label>Nacimiento:</label>
                 <input type="date" name="nacimiento" required>
+                <%- helpers.error(formErrores, 'nacimiento') %>
                 <label>Género musical:</label>
                 <input type="text" name="genero" required>
+                <%- helpers.error(formErrores, 'genero') %>
                 <label>Canciones:</label>
                 <input type="text" name="canciones" required>
+                <%- helpers.error(formErrores, 'canciones') %>
                 <label>Imagen:</label>
                 <input type="file" name="imagen" accept="image/*">
                 <button type="submit">Añadir Artista</button>
@@ -252,6 +285,7 @@
             <form action="/artista/eliminarArtista" method="POST">
                 <label>ID del artista:</label>
                 <input type="number" name="id" required>
+                <%- helpers.error(formErrores, 'id') %>
                 <button type="submit">Eliminar Artista</button>
             </form>
         </div>
@@ -262,24 +296,31 @@
             <form action="/artista/modificarArtista" method="POST" enctype="multipart/form-data">
                 <label>ID del artista:</label>
                 <input type="number" name="id" required>
+                <%- helpers.error(formErrores, 'id') %>
 
                 <label>Nuevo nombre artístico:</label>
                 <input type="text" name="nombreArtistico">
+                <%- helpers.error(formErrores, 'nombreArtistico') %>
                 
                 <label>Nuevo nombre:</label>
                 <input type="text" name="nombre">
+                <%- helpers.error(formErrores, 'nombre') %>
                 
                 <label>Nueva biografía:</label>
-                <input type="text" name="biografia">
+                <textarea name="biografia"></textarea>
+                <%- helpers.error(formErrores, 'biografia') %>
 
                 <label>Nueva fecha de nacimiento:</label>
                 <input type="date" name="nacimiento">
+                <%- helpers.error(formErrores, 'nacimiento') %>
 
                 <label>Nuevo género musical:</label>
                 <input type="text" name="genero">
+                <%- helpers.error(formErrores, 'genero') %>
 
                 <label>Nueva/s canciones populares:</label>
                 <input type="text" name="canciones">
+                <%- helpers.error(formErrores, 'canciones') %>
 
                 <label>Nueva Imagen:</label>
                 <input type="file" name="imagen" accept="image/*">
