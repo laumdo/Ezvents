@@ -67,6 +67,8 @@ nav {
     padding: 15px;
     border-radius: 10px;
     margin: 10px;
+    width: 200px;
+    flex-shrink: 0;
 }
 
 nav a {
@@ -84,6 +86,9 @@ nav a:hover {
 /* CUERPO PRINCIPAL */
 main {
     padding: 20px;
+    width: calc(100% - 200px - 30px);
+    margin-left: 30px;
+    min-height: 600px;
 }
 
 /* EVENTOS */
@@ -179,7 +184,22 @@ footer {
     margin-top: 20px;
 }
 
-/* RESPONSIVE */
+/* Agrupador principal para nav + main + aside */
+#cuerpo {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+aside {
+    width: 200px;
+    margin-left: 20px;
+    flex-shrink: 0;
+}
+
+/* MEDIA QUERIES */
+
+/* Pantallas medianas (tablets y móviles grandes) */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
@@ -191,27 +211,54 @@ footer {
         margin-top: 10px;
     }
 
-    nav {
+    .logo1 {
         margin: 10px 0;
     }
 
-    .evento {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+    nav {
+        width: 100% !important;
+        margin: 10px 0;
     }
 
-    .evento img {
-        margin: 0 0 15px 0;
-        width: 100%;
-        max-width: 300px;
+    main {
+        width: 100% !important;
+        margin: 0 0 20px 0;
+        min-height: auto;
+    }
+
+    aside {
+        width: 100% !important;
+        margin: 0 0 20px 0;
+    }
+
+    #cuerpo {
+        flex-direction: column;
     }
 
     .eventos {
         justify-content: center;
     }
+
+    .evento,
+    .artista {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .evento-img,
+    .evento-img img {
+        width: 100%;
+        height: auto;
+        margin: 0;
+    }
+
+    .evento-info {
+        padding-left: 0;
+        text-align: center;
+    }
 }
 
+/* Pantallas pequeñas (móviles) */
 @media (max-width: 480px) {
     h1 {
         font-size: 22px;
@@ -231,74 +278,3 @@ footer {
         font-size: 14px;
     }
 }
-
-/* Agrupador principal para nav + main + aside */
-#cuerpo {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-}
-
-/* Aseguramos que nav, main y aside mantengan su estilo original en escritorio */
-nav {
-    width: 200px;
-    flex-shrink: 0;
-}
-
-main {
-    width: calc(100% - 200px - 30px); /* nav + margen + posibles paddings */
-    margin-left: 30px;
-    min-height: 600px;
-}
-
-aside {
-    width: 200px;
-    margin-left: 20px;
-    flex-shrink: 0;
-}
-
-/* RESPONSIVE: comportamiento en móviles */
-@media (max-width: 768px) {
-    #cuerpo {
-        flex-direction: column;
-    }
-
-    nav, main, aside {
-        width: 100% !important;
-        margin: 0 0 20px 0;
-    }
-
-    main {
-        min-height: auto;
-    }
-
-    .evento, .artista {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .evento-img, .evento-img img {
-        width: 100%;
-        height: auto;
-        margin: 0;
-    }
-
-    .evento-info {
-        padding-left: 0;
-        text-align: center;
-    }
-
-    header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    h1 {
-        font-size: 28px;
-    }
-
-    .logo1 {
-        margin: 10px 0;
-    }
-}
-
