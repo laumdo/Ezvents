@@ -179,6 +179,7 @@ export async function agregarEvento(req, res, next) {
     nombre,
     descripcion,
     fecha,
+    hora,
     lugar,
     precio,
     aforo_maximo,
@@ -192,6 +193,7 @@ export async function agregarEvento(req, res, next) {
     nombre,
     descripcion,
     fecha,
+    hora,
     lugar,
     precio,
     aforo_maximo,
@@ -233,6 +235,7 @@ export async function modificarEvento(req, res, next) {
     nombre,
     descripcion,
     fecha,
+    hora,
     lugar,
     precio,
     aforo_maximo,
@@ -251,6 +254,7 @@ export async function modificarEvento(req, res, next) {
     evt.nombre = nombre ?? evt.nombre;
     evt.descripcion = descripcion ?? evt.descripcion;
     evt.fecha = fecha ?? evt.fecha;
+    evt.hora = hora ?? evt.hora;
     evt.lugar = lugar ?? evt.lugar;
     evt.precio = precio ?? evt.precio;
     evt.aforo_maximo = aforo_maximo ?? evt.aforo_maximo;
