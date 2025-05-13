@@ -298,3 +298,7 @@ hr.separador {
     margin-top: 1em;
   }
   
+#filtros {
+    display: none;
+    transition: all 0.3s ease;
+}

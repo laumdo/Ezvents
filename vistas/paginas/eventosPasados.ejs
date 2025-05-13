@@ -1,41 +1,28 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-    .valoracion-estrellas {
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
-    }
-    .estrella {
-        position: relative;
-        width: 1.3em;
-        height: 1.3em;
-        font-size: 1.5em;
-    }
-    .estrella .fondo,
-    .estrella .relleno {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        line-height: 1.3em;
-    }
-    .estrella .fondo {
-        color: #ccc;
-        z-index: 0;
-    }
-    .estrella .relleno {
-        color: gold;
-        overflow: hidden;
-        z-index: 1;
-    }
-    </style>
+<link rel="stylesheet" href="/css/valoraciones.css">
     
     
 
 <h2>Eventos Pasados</h2>
 <div class="eventos">
     <% if (eventos && eventos.length > 0) { %>
+        <form action="/eventos/pasados" method="GET" class="ordenar-eventos">
+
+            <label for="ordenar">Ordenar por:</label>
+            <select name="ordenar" id="ordenar" onchange="this.form.submit()">
+                <option value="fecha_asc" <%= query.ordenar === 'fecha_asc' ? 'selected' : '' %>>Fecha ↑</option>
+                <option value="fecha_desc" <%= query.ordenar === 'fecha_desc' ? 'selected' : '' %>>Fecha ↓</option>
+                <option value="nombre_asc" <%= query.ordenar === 'nombre_asc' ? 'selected' : '' %>>Nombre A-Z</option>
+                <option value="nombre_desc" <%= query.ordenar === 'nombre_desc' ? 'selected' : '' %>>Nombre Z-A</option>
+                <option value="precio_asc" <%= query.ordenar === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
+                <option value="precio_desc" <%= query.ordenar === 'precio_desc' ? 'selected' : '' %>>Precio ↓</option>
+                <option value="valoracion_asc" <%= query.ordenar === 'valoracion_asc' ? 'selected' : '' %>>Valoración ↑</option>
+                <option value="valoracion_desc" <%= query.ordenar === 'valoracion_desc' ? 'selected' : '' %>>Valoración ↓</option>
+
+            </select>
+        
+            
+        </form>
         <% eventos.forEach(evento => { %>
             <div class="evento">
                 <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="300" height="auto">
@@ -45,7 +32,7 @@
                         <% for (let i = 1; i <= 5; i++) { 
                             const porcentaje = Math.min(Math.max(evento.media - (i - 1), 0), 1) * 100;
                         %>
-                            <span class="estrella">
+                            <span class="estrellas">
                                 <i class="fa-regular fa-star fondo"></i>
                                 <i class="fa-solid fa-star relleno" style="width: <%= porcentaje %>%"></i>
                             </span>

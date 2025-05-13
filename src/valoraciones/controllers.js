@@ -1,15 +1,23 @@
 import { Valoraciones } from './Valoracion.js';
 import { Evento } from '../eventos/Evento.js';
+import { Usuario } from '../usuarios/Usuario.js'
 
 export function viewValoraciones(req, res){
     const { id_evento } = req.params;
     const evento = Evento.getEventoById(id_evento);
-    const valoraciones = Valoraciones.getValoracionByEvent(id_evento);
+    const valoracion = Valoraciones.getValoracionByEvent(id_evento);
     let media = 0;
-    if (valoraciones.length > 0) {
-        const suma = valoraciones.reduce((acc, v) => acc + v.puntuacion, 0);
-         media = (suma / valoraciones.length).toFixed(1);
+    if (valoracion.length > 0) {
+        const suma = valoracion.reduce((acc, v) => acc + v.puntuacion, 0);
+         media = (suma / valoracion.length).toFixed(1);
     }
+    const valoraciones = valoracion.map(v => {
+        const usuario = Usuario.getUsuarioById(v.id_usuario);
+        return {
+            ...v,
+            nombre: usuario.nombre
+        };
+    });
     res.render('pagina', { 
         contenido: 'paginas/valoraciones', 
         session: req.session, valoraciones, evento, media });

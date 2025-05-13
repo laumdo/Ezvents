@@ -125,6 +125,7 @@ app.get('/carrito', (req, res) => {
     res.render('pagina', params);
 });
 
+
 // Middleware para manejar rutas no encontradas (404)
 app.use((req, res, next) => {
     res.status(404).render('pagina', {

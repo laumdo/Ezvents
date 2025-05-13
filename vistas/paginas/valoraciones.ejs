@@ -1,19 +1,35 @@
-<h2>Opiniones sobre "<%= evento.nombre %>"</h2>
+<link rel="stylesheet" href="/css/valoraciones.css">
 
-<p>Valoración media: <%= media %> ★</p>
+<h2 class="titulo-opiniones">Opiniones sobre "<%= evento.nombre %>"</h2>
+
+<h4 class="media-valoracion">Valoración media: <span class="media-numero"><%= media %> ★</span></h4>
 
 <% if (valoraciones.length > 0) { %>
     <% valoraciones.forEach(v => { %>
+        <% function colorClase(p) {
+            if (p == 5) return 'p5';
+            if (p == 4) return 'p4';
+            if (p == 3) return 'p3';
+            if (p == 2) return 'p2';
+            return 'p0';
+        } %>
+        
         <div class="valoracion">
-            <p><%= v.usuario %></p>
-            <p><%= v.fecha %></p>
-            <p>Puntuación: <%= v.puntuacion %> ★</p>
-            <p><%= v.comentario %></p>
-            <hr>
+            <div class="valoracion-cabecera">
+                <p class="valorador"><i class="fa-solid fa-user"></i> <%= v.nombre %></p>
+                <p class="fecha"><i class="fa-regular fa-calendar"></i> <%= v.fecha %></p>
+            </div>
+            <div class="valoracion-vistas <%= colorClase(v.puntuacion) %>">
+                <% for(let i = 0; i < v.puntuacion; i++) { %>
+                    <span>⭐</span>
+                <% } %>
+                <span class="puntuacion">(<%= v.puntuacion %>/5)</span>
+            </div>
+            <p class="comentario">"<%= v.comentario %>"</p>
         </div>
     <% }) %>
 <% } else { %>
-    <p>Aún no hay valoraciones para este evento.</p>
+    <p class="sin-valoraciones">Aún no hay valoraciones para este evento.</p>
 <% } %>
 
-<a href="/eventos/pasados"><button>Volver</button></a>
+<a href="/eventos/pasados"><button class="btn-volver">← Volver</button></a>

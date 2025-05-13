@@ -13,6 +13,7 @@ export class Usuario {
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
+    static #getEmpresasStmt = null;
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
@@ -22,6 +23,7 @@ export class Usuario {
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
+        this.#getEmpresasStmt = db.prepare('SELECT * FROM Usuarios WHERE rol = @rol');
     }
 
     static getUsuarioById(id){
@@ -30,6 +32,10 @@ export class Usuario {
         const { password, rol, nombre, apellidos, email, username, puntos } = usuario;
 
         return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
+    }
+
+    static getEmpresas(){
+        return this.#getEmpresasStmt.all({ rol: 'E' });
     }
 
     static getUsuarioByUsername(username) {
@@ -170,3 +176,6 @@ export class UsuarioYaExiste extends Error {
         this.name = 'UsuarioYaExiste';
     }
 }
+
+
+//Desarrollo de bucles: replicar el bucle tantas veces como pidan. asi tengo el bucle desarrollado 3 veces. quito las de salto y las que modifican el indice, quito instrucciones y renombro registros.
