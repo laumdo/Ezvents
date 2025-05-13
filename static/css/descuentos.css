@@ -116,3 +116,21 @@
     color: white;
 }
 
+@media (max-width: 600px) {
+    .descuento {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: center;
+    }
+  
+    .descuento img {
+      margin-right: 0;
+      margin-bottom: 10px;
+      width: 100%;
+      height: auto;
+    }
+  
+    .descuento-info {
+      align-items: center;
+    }
+  }

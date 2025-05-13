@@ -13,12 +13,10 @@
         </p>
         <p>Fecha: <%= evento.fecha %>
         </p>
-        <p>Hora: <%=evento.hora %></p>
         <p>Lugar: <%= evento.lugar %>
         </p>
         <p>Precio: <%= evento.precio %>€</p>
         <p>Edad minima: <%=evento.edad_minima %></p>
-        </p>
         <%if(session && (session.esAdmin || session.esEmpresa)){%>
             <p>Aforo: <%= evento.entradas_vendidas %> / <%= evento.aforo_maximo %></p>
         <% } else if ((evento.aforo_maximo - evento.entradas_vendidas) < (evento.aforo_maximo * 0.9)) { %>

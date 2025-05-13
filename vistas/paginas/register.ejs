@@ -1,9 +1,11 @@
+<link rel="stylesheet" href="/css/register.css">
+
 <form id="registro" name="registro" action="/usuarios/register" method="POST">
     <% if (error) { %>
         <div style="color: red; font-weight: bold;"><%= error %></div>
-      <% } %>
+        <% } %>
     <fieldset>
-        <legend>Datos a rellenar:</legend>
+        <legend>Registro de usuario:</legend>
 
         <!-- Nombre -->
         <div>
@@ -61,14 +63,14 @@
             <input type="password" name="passwordConfirmacion" required />
             <span class="error"></span>
             <% if (errores?.passwordConfirmacion) { %>
-                 <span style="color: red;"><%= errores.passwordConfirmacion.msg %></span>
+                    <span style="color: red;"><%= errores.passwordConfirmacion.msg %></span>
             <% } %>
         </div>
 
         <div>
             <label>Fecha de Nacimiento:</label>
             <input type="date" name="fecha_nacimiento" required 
-                   max="<%= new Date().toISOString().split('T')[0] %>" />
+                    max="<%= new Date().toISOString().split('T')[0] %>" />
         </div>
 
         <!-- Tipo de cuenta -->
@@ -98,5 +100,6 @@
         </p>
     </fieldset>
 </form>
+
 <script src="/js/fetch.js"></script>
 <script src="/js/04-registro.js"></script>
