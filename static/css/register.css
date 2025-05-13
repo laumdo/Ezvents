@@ -1,0 +1,100 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #ff7e5f, #6a11cb);
+    margin: 0;
+    padding: 0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  form#registro {
+    background: white;
+    margin-top: 40px;
+    width: 90%;
+    max-width: 600px;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  fieldset {
+    border: none;
+    padding: 0;
+  }
+  
+  legend {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  form#registro div {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form#registro label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  form#registro input[type="text"],
+  form#registro input[type="password"],
+  form#registro input[type="date"],
+  form#registro select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+  }
+  
+  form#registro input[type="submit"],
+  form#registro input[type="reset"] {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+  }
+  
+  form#registro input[type="submit"]:hover,
+  form#registro input[type="reset"]:hover {
+    background-color: #c0392b;
+  }
+  
+  .error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+  }
+  
+  .feedback {
+    font-size: 0.9em;
+    margin-top: 5px;
+  }
+  
+  p {
+    margin-top: 10px;
+  }
+  
+  @media screen and (max-width: 600px) {
+    form#registro {
+      padding: 20px;
+    }
+  
+    legend {
+      font-size: 1.2em;
+    }
+  }
+  

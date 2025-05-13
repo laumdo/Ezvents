@@ -49,3 +49,18 @@ h1 {
     background: rgba(231, 76, 60, 0.1);
     border-radius: 10px;
 }
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .user-info p {
+        font-size: 16px;
+    }
+}

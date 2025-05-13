@@ -153,3 +153,14 @@
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.6);
     transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
+
+@media (max-width: 600px) {
+    #calendar {
+      padding: 10px;
+      margin: 20px 10px;
+    }
+  
+    .fc-toolbar-title {
+      font-size: 1.3rem;
+    }
+  }
