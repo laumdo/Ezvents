@@ -122,7 +122,7 @@
         <div id="form-addDescuento" class="admin-form <%= form === 'addDescuento' ? '' : 'oculto' %>">
             <h2>Añadir Descuento</h2>
             <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
-                <% if (locals.error) { %>
+                <% if (form === 'addDescuento' && locals.error) { %>
                     <p><strong><%= locals.error %></strong></p>
                 <% } %>
                 
@@ -169,6 +169,10 @@
         <div id="form-deleteDescuento" class="admin-form <%= form === 'deleteDescuento' ? '' : 'oculto' %>">
             <h2>Eliminar Descuento</h2>
             <form action="/descuentos/eliminarDescuento" method="POST">
+                <% if (form === 'deleteDescuento' && locals.error) { %>
+                    <p class="error-msg"><strong><%= locals.error %></strong></p>
+                  <% } %>
+                  
                 <label>ID del descuento:</label>
                 <input type="number" name="id" required>
                 <%- helpers.error(formErrores, 'id') %>
@@ -181,12 +185,12 @@
         <div id="form-editDescuento" class="admin-form <%= form === 'editDescuento' ? '' : 'oculto' %>">
             <h2>Modificar Descuento</h2>
             <form action="/descuentos/modificarDescuento" method="POST" enctype="multipart/form-data">
-                <% if (locals.error) { %>
+                <% if (form === 'editDescuento' && locals.error) { %>
                     <p><strong><%= locals.error %></strong></p>
                 <% } %>
                 
                 <label>ID del descuento:</label>
-                <input type="number" name="id" required>
+                <input type="number" name="id" required value="<%= formDatos.id || '' %>"/>
                 <%- helpers.error(formErrores, 'id') %>
 
                 <label>Nuevo Titulo:</label>

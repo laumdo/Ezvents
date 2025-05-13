@@ -123,7 +123,9 @@ export function viewEventos(req, res) {
           contenido: 'paginas/admin',
           session: req.session,
           errores: errors.mapped(),
-          datos
+          datos,
+          activeSection: 'eventos',
+          activeForm:    'deleteEvento'
         });
       }
     
@@ -167,14 +169,18 @@ export function viewEventos(req, res) {
           idEvento: evt.id,
           fecha: evt.fecha,
           artistas: noContratados,
-          artistasContratados: contratados
+          artistasContratados: contratados,
+          activeSection: 'eventos',
+          activeForm:    'deleteEvento'
         });
       } catch (err) {
         if (err instanceof EventoNoEncontrado) {
           return res.status(404).render('pagina', {
             contenido: 'paginas/admin',
             session: req.session,
-            mensaje: err.message
+            mensaje: err.message,
+            activeSection: 'eventos',
+            activeForm:    'deleteEvento'
           });
         }
         next(err);

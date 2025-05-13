@@ -25,7 +25,7 @@ descuentosRouter.post(
     tieneRol(RolesEnum.ADMIN),
     upload.single('imagen'),
     body('titulo', 'El título no puede estar vacío').trim().notEmpty(),
-    body('titulo', 'El título debe tener como máximo 100 caracteres').isLength({ max: 50 }),
+    body('titulo', 'El título debe tener como máximo 50 caracteres').isLength({ max: 50 }),
     body('condiciones', 'Las condiciones no pueden estar vacías').trim().notEmpty(),
     body('puntos', 'Los puntos tienen que ser un entero mayor o igual a 0').isInt({ min: 0 }),
     body('interno').optional().isIn(['on']),       // checkbox
@@ -38,15 +38,19 @@ descuentosRouter.post('/eliminarDescuento',
     tieneRol(RolesEnum.ADMIN),
     body('id', 'ID inválido').trim().notEmpty().isInt({ min: 1 }),
     asyncHandler(eliminarDescuento),
-    asyncHandler(eliminarDescuento)
 );
 
 descuentosRouter.post('/modificarDescuento', 
     autenticado(), 
-    autenticado(),
+    //autenticado(),
     tieneRol(RolesEnum.ADMIN),
+
+    // primero multer para procesar multipart
+    upload.single('imagen'),
+
     // Validamos únicamente que id sea un entero >=1
     body('id', 'ID inválido').isInt({ min: 1 }),
+
     // El resto de campos son opcionales; si vienen, validamos su formato
     body('titulo').optional({ checkFalsy: true }).trim(),
     body('condiciones').optional({ checkFalsy: true }).trim(),
