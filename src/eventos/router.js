@@ -32,7 +32,7 @@ router.get('/buscarEvento',
   buscarEvento
 );
 
-eventosRouter.get('/pasados', viewEventosPasados);
+router.get('/pasados', viewEventosPasados);
 // Ver detalle de evento
 router.get('/:id',
   param('id').isInt().withMessage('ID inválido'),

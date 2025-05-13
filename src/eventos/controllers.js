@@ -5,14 +5,12 @@ import { Usuario } from '../usuarios/Usuario.js';
 import { Artista } from '../artista/Artista.js';
 import { EntradasUsuario } from '../entradasUsuario/EntradasUsuario.js';
 import { Valoraciones } from '../valoraciones/Valoracion.js';
-import { Artista } from '../artista/Artista.js';
-import { Usuario } from '../usuarios/Usuario.js';
 import { EventoArtista } from '../eventosArtistas/EventoArtista.js';
 
 export function viewEventos(req, res) {
     let eventos = Evento.getAll();
     const ahora = new Date();
-
+    
     eventos = eventos.filter(evento => {
         if (!evento.fecha || !evento.hora) return false;
         const [year, month, day] = evento.fecha.split('-').map(Number);
@@ -21,7 +19,6 @@ export function viewEventos(req, res) {
         return fechaEvento >= ahora;
     });
 
-    
 
     const ordenar = req.query.ordenar;
     if (ordenar) {
