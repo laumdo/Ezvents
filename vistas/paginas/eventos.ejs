@@ -1,0 +1,18 @@
+<div class="eventos">
+<% if (locals.eventos && locals.eventos.length > 0) { %>
+    <% locals.eventos.forEach(evento => { %>
+        <div class="evento">
+            <img src="/img/<%= evento.imagen %>" alt="<%= evento.nombre %>" width="300" height="auto">
+            <div class="evento-info">
+                <h3 class="evento-titulo"><%= evento.nombre %></h3>
+                <p class="evento-descripcion"><%= evento.descripcion %></p>
+                <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
+                <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
+                <button onclick="window.location.href='/foro/<%= evento.id %>'">Foro</button>
+            </div>
+        </div>
+    <% }) %>
+<% } else { %>
+    <p>Este artista no tiene próximos eventos.</p>
+<% } %>
+</div> 
