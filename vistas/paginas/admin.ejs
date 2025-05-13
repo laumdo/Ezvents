@@ -6,6 +6,15 @@
     <h1>Acceso Denegado</h1>
     <p>No tienes permisos para administrar la web.</p>
 <% } %>
+<% 
+  const section = typeof activeSection === 'string' ? activeSection : null;
+  const form    = typeof activeForm    === 'string' ? activeForm    : null;
+%>
+
+<% 
+  const formDatos   = typeof datos   !== 'undefined' ? datos   : {};
+  const formErrores = typeof errores !== 'undefined' ? errores : {};
+%>
 
 <!-- Menú de administración -->
 <div class="admin-menu">
@@ -25,7 +34,7 @@
     <!-- Formularios de eventos -->
     <div id="form-addEvento" class="admin-form oculto">
         <h2>Añadir Evento</h2>
-        <form action="/eventos/agregarEvento" method="POST">
+        <form action="/eventos/agregarEvento" method="POST" enctype="multipart/form-data">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
             <label>Descripción:</label>
@@ -38,6 +47,8 @@
             <input type="number" step="0.01" name="precio" required>
             <label>Aforo Máximo:</label>
             <input type="number" name="aforo_maximo" required>
+            <label>Edad minima:</label>
+            <input type="number" name="edad_minima" required>
             <label>Imagen:</label>
             <input type="file" name="imagen" accept="image/*">
             <label>Hora:</label>
@@ -51,7 +62,7 @@
     <!-- Formulario para eliminar evento -->
     <div id="form-deleteEvento" class="admin-form oculto">
         <h2>Eliminar Evento</h2>
-        <form action="/eventos/eliminarEvento" method="POST">
+        <form action="/eventos/eliminarEvento" method="POST" >
             <label>ID del evento:</label>
             <input type="number" name="id" required>
             <button type="submit">Eliminar Evento</button>
@@ -61,7 +72,7 @@
     <!-- Formulario para modificar evento -->
     <div id="form-editEvento" class="admin-form oculto">
         <h2>Modificar Evento</h2>
-        <form action="/eventos/modificarEvento" method="POST">
+        <form action="/eventos/modificarEvento" method="POST" enctype="multipart/form-data">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
 
@@ -83,6 +94,9 @@
             <label>Nuevo Aforo Máximo:</label>
             <input type="number" name="aforo_maximo">
 
+            <label>Nueva edad minima:</label>
+            <input type="number" name="edad_minima">
+            
             <label>Nueva Imagen:</label>
             <input type="file" name="imagen" accept="image/*">
 
@@ -104,53 +118,93 @@
     </div>
 
     <!-- Sección de gestión de descuentos -->
-    <div id="seccion-descuentos" class="admin-seccion oculto">
+    <div id="seccion-descuentos" class="admin-seccion <%= section === 'descuentos' ? '' : 'oculto' %>">
         <h2>Gestionar Descuentos</h2>
         <button onclick="mostrarFormulario('addDescuento')">Añadir Descuento</button>
         <button onclick="mostrarFormulario('deleteDescuento')">Eliminar Descuento</button>
         <button onclick="mostrarFormulario('editDescuento')">Modificar Descuento</button>
 
         <!-- Formularios de descuentos -->
-        <div id="form-addDescuento" class="admin-form oculto">
+        <div id="form-addDescuento" class="admin-form <%= form === 'addDescuento' ? '' : 'oculto' %>">
             <h2>Añadir Descuento</h2>
-            <form action="/descuentos/agregarDescuento" method="POST">
-                <label>Título:</label>
-                <input type="text" name="titulo" required>
+            <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
+                <% if (locals.error) { %>
+                    <p><strong><%= locals.error %></strong></p>
+                <% } %>
+                
+                <label>Título:</label>  
+                <input type="text" name="titulo" value="<%=formDatos.titulo %>"/>
+                <%- helpers.error(formErrores, 'titulo') %>
+
                 <label>Condiciones:</label>
-                <textarea name="condiciones" required></textarea>
+                <textarea name="condiciones"><%= formDatos.condiciones %></textarea>
+                <%- helpers.error(formErrores, 'condiciones') %>
+
                 <label>Puntos:</label>
-                <input type="number" name="puntos" required>
+                <input type="number" name="puntos" min="0" value="<%=formDatos.puntos %>"/>
+                <%- helpers.error(formErrores, 'puntos') %>
+
+                <label for="interno">
+                    <input id="interno" type="checkbox" name="interno" <%= formDatos.interno === 'on' ? 'checked' : '' %> />
+                    Descuento interno?
+                </label>
+
+                <div>
+                <label for="valor">Valor descuento (opcional, ej. 0.05 para 5%):</label>
+                  <input
+                    id="valor"
+                    type="number"
+                    name="valor"
+                    step="0.01"
+                    placeholder="Deja en blanco si no es interno"
+                    value="<%=formDatos.valor %>"
+                    />
+                <%- helpers.error(formErrores, 'valor') %>
+                </div>
+
+                <div>
                 <label>Imagen:</label>
                 <input type="file" name="imagen" accept="image/*">
+                </div>
+                
                 <button type="submit">Añadir Descuento</button>
             </form>
         </div>
 
         <!-- Formulario para eliminar descuento -->
-        <div id="form-deleteDescuento" class="admin-form oculto">
+        <div id="form-deleteDescuento" class="admin-form <%= form === 'deleteDescuento' ? '' : 'oculto' %>">
             <h2>Eliminar Descuento</h2>
             <form action="/descuentos/eliminarDescuento" method="POST">
                 <label>ID del descuento:</label>
                 <input type="number" name="id" required>
+                <%- helpers.error(formErrores, 'id') %>
+
                 <button type="submit">Eliminar Descuento</button>
             </form>
         </div>
 
         <!-- Formulario para modificar descuento -->
-        <div id="form-editDescuento" class="admin-form oculto">
+        <div id="form-editDescuento" class="admin-form <%= form === 'editDescuento' ? '' : 'oculto' %>">
             <h2>Modificar Descuento</h2>
-            <form action="/descuentos/modificarDescuento" method="POST">
+            <form action="/descuentos/modificarDescuento" method="POST" enctype="multipart/form-data">
+                <% if (locals.error) { %>
+                    <p><strong><%= locals.error %></strong></p>
+                <% } %>
+                
                 <label>ID del descuento:</label>
                 <input type="number" name="id" required>
+                <%- helpers.error(formErrores, 'id') %>
 
                 <label>Nuevo Titulo:</label>
                 <input type="text" name="titulo">
-                
+                <%- helpers.error(formErrores, 'titulo') %>
+
                 <label>Nuevas Condiciones:</label>
                 <textarea name="condiciones"></textarea>
                 
                 <label>Puntos:</label>
                 <input type="number" name="puntos">
+                <%- helpers.error(formErrores, 'puntos') %>
 
                 <label>Nueva Imagen:</label>
                 <input type="file" name="imagen" accept="image/*">
@@ -161,7 +215,7 @@
     </div>
 
     <div id="seccion-artistas" class="admin-seccion oculto">
-        <h2>Gestionar Descuentos</h2>
+        <h2>Gestionar Artistas</h2>
         <button onclick="mostrarFormulario('addArtista')">Añadir Artista</button>
         <button onclick="mostrarFormulario('deleteArtista')">Eliminar Artista</button>
         <button onclick="mostrarFormulario('editArtista')">Modificar Artista</button>
@@ -169,7 +223,7 @@
         <!--Añadir artista-->
         <div id="form-addArtista" class="admin-form oculto">
             <h2>Añadir Artista</h2>
-            <form action="/artista/agregarArtista" method="POST">
+            <form action="/artista/agregarArtista" method="POST" enctype="multipart/form-data">
                 <label>Nombre Artístico:</label>
                 <input type="text" name="nombreArtistico" required>
                 <label>Nombre:</label>
@@ -177,7 +231,7 @@
                 <label>Biografía:</label>
                 <input type="text" name="biografia" required>
                 <label>Nacimiento:</label>
-                <input type="text" name="nacimiento" required>
+                <input type="date" name="nacimiento" required>
                 <label>Género musical:</label>
                 <input type="text" name="genero" required>
                 <label>Canciones:</label>
@@ -201,7 +255,7 @@
         <!--Modificar artista-->
         <div id="form-editArtista" class="admin-form oculto">
             <h2>Modificar Artista</h2>
-            <form action="/artista/modificarArtista" method="POST">
+            <form action="/artista/modificarArtista" method="POST" enctype="multipart/form-data">
                 <label>ID del artista:</label>
                 <input type="number" name="id" required>
 
@@ -215,7 +269,7 @@
                 <input type="text" name="biografia">
 
                 <label>Nueva fecha de nacimiento:</label>
-                <input type="text" name="nacimiento">
+                <input type="date" name="nacimiento">
 
                 <label>Nuevo género musical:</label>
                 <input type="text" name="genero">

@@ -25,8 +25,9 @@ header {
     font-weight: bold;
     display: flex;
     align-items: center;
-    justify-content: center; /* Centra los elementos */
-    gap: 20px; /* Espaciado entre los elementos */
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 header a, header a:visited {
@@ -109,17 +110,9 @@ fieldset {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.submit-register{
-    text-align: center;
-    margin-top: 30px;
-}
-
-.pagar{
-    text-align: center;
-    margin-top: 30px;
-}
-
-.boton_pagar{
+.submit-register,
+.pagar,
+.boton_pagar {
     text-align: center;
     margin-top: 30px;
 }
@@ -153,12 +146,12 @@ button:hover {
 }
 
 img.logo1 {
-    width: 50px; /* Ajusta el tamaño según lo que necesites */
-    height: auto; /* Mantiene la proporción */
+    width: 50px;
+    height: auto;
 }
 
-h1{
-	flex-grow: 1; /* Hace que el título ocupe el espacio central */
+h1 {
+    flex-grow: 1;
     text-align: center;
     font-size: 36px;
     color: #ff5e62;
@@ -166,17 +159,15 @@ h1{
     text-transform: uppercase;
     letter-spacing: 2px;
     text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-
 }
 
 hr.separador {
     border: none;
     height: 4px;
-    background: #ff5e62; /* Color de la línea */
+    background: #ff5e62;
     margin: 10px 0;
 }
 
-/*Para mostrar los eventos*/
 .eventos, .artistas {
     display: flex;
     flex-wrap: wrap;
@@ -206,7 +197,6 @@ hr.separador {
     flex: 1;
     padding-left: 30px;
 }
-
 
 .evento-titulo {
     font-size: 1.5em;
@@ -243,11 +233,12 @@ hr.separador {
     height: auto;
     border-radius: 8px;
     margin-left: 20px;
-  }
+}
 
 .redes-sociales img {
     width: 40px;
 }
+
 .user-actions {
     display: flex;
     align-items: center;
@@ -285,7 +276,7 @@ hr.separador {
     font-weight: bold;
 }
 
-.boton_compra button{
+.boton_compra button {
     display: flex;
     justify-content: center;
     margin-top: 20px;
@@ -301,4 +292,53 @@ hr.separador {
 #filtros {
     display: none;
     transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    nav, aside, main {
+        width: 100%;
+        float: none;
+        margin-bottom: 20px;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    div#contenedor {
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .evento, .artista {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .evento-img, .evento-img img {
+        width: 100%;
+        height: auto;
+        margin: 0;
+    }
+
+    .evento-info {
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100% !important;
+        opacity: 1 !important;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
 }

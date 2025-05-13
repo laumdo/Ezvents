@@ -1,6 +1,6 @@
 import express from 'express';
 import { body } from 'express-validator';
-import { verCarrito, agregarAlCarrito, eliminarDelCarrito, actualizarCantidadCarrito } from './controllers.js';
+import { verCarrito, agregarAlCarrito, eliminarDelCarrito, actualizarCantidadCarrito,aplicarDescuento, descartarDescuento } from './controllers.js';
 import { autenticado, tieneRol } from '../middleware/auth.js';
 
 const carritoRouter = express.Router();
@@ -32,5 +32,9 @@ carritoRouter.post('/actualizar',
     body('accion').isIn(['sumar', 'restar']).withMessage('Acción inválida'),
     actualizarCantidadCarrito
 );
+
+
+carritoRouter.post('/aplicarDescuento',aplicarDescuento);
+carritoRouter.post('/descartarDescuento',descartarDescuento);
 
 export default carritoRouter;

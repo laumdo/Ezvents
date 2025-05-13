@@ -1,31 +1,42 @@
 import { param, validationResult } from 'express-validator';
 import { Artista } from "./Artista.js";
 
-export function viewArtistas(req, res){
+export function viewArtistas(req, res) {
     const artistas = Artista.getAll();
-    res.render('pagina', { contenido: 'paginas/artistas', session: req.session, artistas });    
+    res.render('pagina', { contenido: 'paginas/artistas', session: req.session, artistas });
 }
 
 export function viewArtista(req, res){
-    param('id').isInt().withMessage('ID de artista inválido');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).render('pagina', { contenido: 'paginas/error', mensaje: 'ID de evento inválido' });
+        res.setFlash('Id del evento inválido');
+        return res.redirect('/');
     }
 
     try{
         const artista = Artista.getArtistaById(req.params.id);
         res.render('pagina', { contenido: 'paginas/artista', session: req.session, artista });
     }catch(e){
-        res.status(404).render('pagina', { contenido: 'paginas/error', mensaje: 'Artista no encontrado' });
+        res.setFlash('Artista no encontrado');
+        res.redirect('/artista/');
     }
 
 }
 
-export function agregarArtista(req, res){//falta poner la imagen
+export function agregarArtista(req, res){
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        const mensajes = errores.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al agregar artista: ${mensajes}`);
+        return res.redirect('/');
+    }
+
     try{
         const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
-        const artista = new Artista(null, nombreArtistico, nombre, biografia, nacimiento, genero, canciones);
+        const imagen = req.file ? req.file.filename : 'defaultUser.png'; // Si no hay imagen, usa la predeterminada
+
+        const datos = {id: null, nombreArtistico: nombreArtistico, nombre: nombre, biografia: biografia, nacimiento: nacimiento, genero: genero, canciones: canciones, imagen: imagen};
+        const artista = new Artista(datos);
         artista.persist();
 
         res.setFlash('Artista creado con exito');
@@ -38,6 +49,13 @@ export function agregarArtista(req, res){//falta poner la imagen
 }
 
 export function modificarArtista(req, res){
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        const mensajes = errores.array().map(e => e.msg).join(', ');
+        res.setFlash(`Error al modificar artista: ${mensajes}`);
+        return res.redirect('/');
+    }
+
     try{
         const { id, nombreArtistico, nombre, biografia, nacimiento, genero, canciones } = req.body;
         const imagen = req.file ? req.file.filename : null;
@@ -64,6 +82,12 @@ export function modificarArtista(req, res){
 }
 
 export function eliminarArtista(req, res){
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        res.setFlash('Error al eliminar artista');
+        return res.redirect('/');
+    }
+
     try{
         const { id } = req.body;
         Artista.delete(id);
@@ -74,5 +98,3 @@ export function eliminarArtista(req, res){
         res.redirect('/artista/');
     }
 }
-
-//Buscar artista??

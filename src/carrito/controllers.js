@@ -1,13 +1,14 @@
 import { Carrito } from './Carrito.js';
 import { Evento } from '../eventos/Evento.js';
 import { matchedData, validationResult } from 'express-validator';
+import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
 
 export async function verCarrito(req, res) {
-    const id_usuario = req.session.usuario_id;
-
+    const usuario    = Usuario.getUsuarioByUsername(req.session.username);
+    const usuario_id = usuario.id;
     const entradas = Carrito.getCarrito(id_usuario);
     const id = entradas.map(e => e.id_evento);
-    const eventos = Evento.getEventoById(id);  // Debes implementar esto con `SELECT ... WHERE id IN (...)`
+    const eventos = Evento.getEventoById(id);
 
     const carrito = [];
     let precioTotal = 0;
@@ -30,7 +31,24 @@ export async function verCarrito(req, res) {
 
     precioTotal = Math.round(precioTotal * 100) / 100;
 
-    res.render('pagina', { contenido: 'paginas/carrito', session: req.session, carrito, precioTotal });
+    const todosDescuentos=DescuentosUsuario.obtenerPorUsuario(usuario_id);
+
+    const descuentosInternos=todosDescuentos.filter(c=>c.interno===1);
+    const cuponAplicado    = req.session.appliedCoupon||null;
+    let descuentoAplicado = 0;
+    if(cuponAplicado){
+        descuentoAplicado=precioTotal*cuponAplicado.valor;
+    }
+
+    res.render('pagina', { 
+        contenido: 'paginas/carrito', 
+        session: req.session, 
+        carrito, 
+        precioTotal,
+        descuentosInternos,
+        cuponAplicado,
+        descuentoAplicado
+     });
 }
 
 export function agregarAlCarrito(req, res) {
@@ -110,4 +128,27 @@ export function actualizarCantidadCarrito(req, res) {
     } catch (error) {
         res.status(500).render('pagina', { contenido: 'paginas/error', mensaje: 'Error al actualizar cantidad' });
     }
+}
+
+export function aplicarDescuento(req,res){
+    
+    const usuario_id=req.session.usuario_id;
+    const {codigo}=req.body;
+
+    const du = DescuentosUsuario.obtenerPorUsuario(usuario_id)
+             .find(x => x.codigo === codigo);
+
+    if (!du) {
+        req.flash('error', 'Cupón no válido');
+        return res.redirect('/carrito/carrito');
+    }
+
+    const descuento = Descuento.getDescuento(du.idDescuento);
+    req.session.appliedCoupon = descuento;
+    res.redirect('/carrito/carrito');
+}
+
+export function descartarDescuento(req, res) {
+  delete req.session.appliedCoupon;
+  return res.redirect('/carrito/carrito');
 }

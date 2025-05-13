@@ -1,4 +1,5 @@
 import { ErrorDatos } from "../db.js";
+import { getConnection } from "../db.js"
 import bcrypt from "bcryptjs";
 
 export const RolesEnum = Object.freeze({
@@ -7,7 +8,7 @@ export const RolesEnum = Object.freeze({
     EMPRESA: 'E'
 });
 
-export class Usuario {
+export class Usuario {  
     static #getByUsernameStmt = null;
     static #getByIdStmt = null;
     static #insertStmt = null;
@@ -20,7 +21,7 @@ export class Usuario {
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#getByIdStmt = db.prepare('SELECT * FROM Usuarios WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos)');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
         this.#getEmpresasStmt = db.prepare('SELECT * FROM Usuarios WHERE rol = @rol');
@@ -29,9 +30,9 @@ export class Usuario {
     static getUsuarioById(id){
         const usuario = this.#getByIdStmt.get({ id });
         if(usuario == undefined) throw new UsuarioNoEncontrado(id);
-        const { password, rol, nombre, apellidos, email, username, puntos } = usuario;
+        const { password, rol, nombre, apellidos, email, username, puntos,fecha_nacimiento } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos,fecha_nacimiento);
     }
 
     static getEmpresas(){
@@ -42,11 +43,42 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
-        const { password, rol, nombre, apellidos, email, id, puntos } = usuario;
+        const { password, rol, nombre, apellidos, email, id, puntos, fecha_nacimiento } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos, fecha_nacimiento);
+    }
+    
+    static existeUsername(username) {
+        const row = this.#getByUsernameStmt.get({ username });
+        return Boolean(row);
     }
 
+    /**
+   * Comprueba si ya existe un bonus de cumpleaños para hoy.
+   */
+  static hasBirthdayBonusToday(idUsuario) {
+    const db = getConnection();
+    const row = db.prepare(`
+      SELECT COUNT(*) as cnt
+      FROM PuntosUsuario 
+      WHERE idUsuario = ?
+        AND puntos = 200
+        AND DATE(fecha_obtencion) = DATE('now')
+    `).get(idUsuario);
+    return row.cnt > 0;
+  }
+
+  /**
+   * Inserta un record de puntos para el usuario (por cumpleaños).
+   */
+  static addBirthdayBonus(idUsuario) {
+    const db = getConnection();
+    const stmt = db.prepare(`
+      INSERT INTO PuntosUsuario(idUsuario, puntos, fecha_obtencion)
+      VALUES (?, ?, datetime('now'))
+    `);
+    stmt.run(idUsuario, 200);
+  }
     static #insert(usuario) {
         let result = null;
         try {
@@ -57,14 +89,20 @@ export class Usuario {
             const apellidos = usuario.apellidos;
             const email = usuario.email;
             const puntos = usuario.puntos || 0; // Agregamos los puntos
-            const datos = {username, password, nombre, apellidos, email, rol, puntos};
+            const fecha_nacimiento=usuario.fecha_nacimiento;
+            const datos = {username, password, nombre, apellidos, email, rol, puntos,fecha_nacimiento};
 
             result = this.#insertStmt.run(datos);
 
             usuario.#id = result.lastInsertRowid;
         } catch(e) { 
-            if (e.code === 'SQLITE_CONSTRAINT') {
-                throw new UsuarioYaExiste(usuario.#username);
+            if (e.code && e.code.startsWith('SQLITE_CONSTRAINT')) {
+                if (e.message.includes('Usuarios.username')) {
+                    throw new UsuarioYaExiste(usuario.#username);
+                }
+                if (e.message.includes('Usuarios.email')) {
+                    throw new EmailYaExiste(usuario.email);
+                }
             }
             throw new ErrorDatos('No se ha insertado el usuario', { cause: e });
         }
@@ -80,7 +118,8 @@ export class Usuario {
         const apellidos = usuario.apellidos;
         const email = usuario.email;
         const puntos = usuario.puntos; // Agregamos los puntos
-        const datos = { nombre: nombre, apellidos: apellidos, email: email, rol: rol, puntos: puntos, id: Number.parseInt(usuario.#id)};
+        const fecha_nacimiento=usuario.fecha_nacimiento;
+        const datos = { nombre, apellidos, email, rol, puntos,fecha_nacimiento, id: Number.parseInt(usuario.#id)};
 
         console.log("antes del stmt, datos: ", datos);
         try{
@@ -97,6 +136,29 @@ export class Usuario {
             throw new ErrorDatos('No se ha podido actualizar el usuario', { cause: e });
         }
     }
+
+    /*static addPoints(idUsuario, puntos) {
+        const db = getConnection();
+        const stmt = db.prepare(`
+          INSERT INTO PuntosUsuario (idUsuario, puntos)
+          VALUES (?, ?)
+        `);
+        stmt.run(idUsuario, puntos);
+      }
+    */
+      /**
+       * Suma sólo los puntos no caducados (últimos 40 días).
+       */
+      static getAvailablePoints(idUsuario) {
+        const db = getConnection();
+        const row = db.prepare(`
+          SELECT COALESCE(SUM(puntos),0) AS total
+          FROM PuntosUsuario
+          WHERE idUsuario = ?
+            AND fecha_obtencion >= datetime('now','-40 days')
+        `).get(idUsuario);
+        return row.total;
+      }
 
     static delete(id) {
         const result = this.#deleteStmt.run({ id });
@@ -125,8 +187,9 @@ export class Usuario {
     apellidos;
     email;
     puntos; // Nuevo atributo puntos
+    fecha_nacimiento;
 
-    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0) {
+    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0,fecha_nacimiento) {
         this.#username = username;
         this.#password = password;
         this.nombre = nombre;
@@ -135,6 +198,7 @@ export class Usuario {
         this.email = email;
         this.#id = id;
         this.puntos = puntos; // Inicializar con el valor pasado o 0
+        this.fecha_nacimiento=fecha_nacimiento;
     }
 
     get id() {
@@ -148,6 +212,17 @@ export class Usuario {
     get username() {
         return this.#username;
     }
+    
+    get age() {
+        const [y,m,d] = this.fechaNacimiento.split('-').map(Number);
+        const dob = new Date(y,m-1,d);
+        const diff = Date.now() - dob.getTime();
+        return Math.floor(diff / (1000*60*60*24*365.25));
+      }
+    
+      get isAdult() {
+        return this.age >= 18;
+      }
 
     persist() {
         console.log("persist");
@@ -178,4 +253,9 @@ export class UsuarioYaExiste extends Error {
 }
 
 
-//Desarrollo de bucles: replicar el bucle tantas veces como pidan. asi tengo el bucle desarrollado 3 veces. quito las de salto y las que modifican el indice, quito instrucciones y renombro registros.
+export class EmailYaExiste extends Error {
+    constructor(email, options) {
+        super(`Email ya existe: ${email}`, options);
+        this.name = 'EmailYaExiste';
+    }
+}

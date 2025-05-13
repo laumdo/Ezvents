@@ -17,7 +17,8 @@ export class EntradasUsuario {
     }
 
     static getEntradasByUsuario(id_usuario){
-        return this.#getAllStmt.all({id_usuario});
+        const rows = this.#getAllStmt.all({id_usuario});
+        return rows.map(row => new EntradasUsuario(row));
     }
 
     static #insert(id_usuario, id_evento, cantidad){
@@ -53,8 +54,8 @@ export class EntradasUsuario {
     idEvento;
     cantidad;
 
-    constructor(idUsuario, idEvento, cantidad){
-        this.#id = null;
+    constructor({id = null, idUsuario, idEvento, cantidad}){
+        this.#id = id;
         this.idUsuario = idUsuario;
         this.idEvento = idEvento;
         this.cantidad = cantidad;

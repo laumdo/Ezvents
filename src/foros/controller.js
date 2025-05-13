@@ -1,42 +1,69 @@
-import { escapeXML } from 'ejs';
+import { matchedData, validationResult } from 'express-validator';
 import { Foro } from './Foro.js';
+import { render } from '../utils/render.js';
 
 export const mostrarForo = (req, res) => {
-    const eventoId = req.params.id;  // Obtener el ID del evento
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        return render(req, res, 'paginas/error', {
+            mensaje: 'ID del evento inválido',
+            errores: errores.mapped()
+        });
+    }
+
+    const eventoId = parseInt(req.params.id, 10);
     const mensajes = Foro.getMensajesByEvento(eventoId);
-    
-    const params = {
-        contenido: 'paginas/foro',
-        session: req.session,
+
+    return render(req, res, 'paginas/foro', {
         mensajes,
-        evento_id: eventoId
-    };
-    
-    res.render('pagina', params);
+        evento_id: eventoId,
+        session: req.session
+    });
 };
 
 export const agregarMensaje = (req, res) => {
-    const { mensaje, parent_id } = req.body;  // Solo se obtiene el contenido del mensaje
-    const usuario = req.session.usuario;  // Usamos el usuario de la sesión
-    const eventoId = req.body.id;
-    const parentId = parent_id || null // si no es una respuesta, es nulo
-
-    if (usuario == null) {
-        return res.render('pagina', { contenido: 'paginas/error', mensaje: 'Debes iniciar sesión para escribir en el foro' });
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        const datos = matchedData(req, { includeOptionals: true });
+        return render(req, res, 'paginas/error', {
+            mensaje: 'Datos del mensaje no válidos',
+            errores: errores.mapped(),
+            datos
+        });
     }
 
-    // Agregar el mensaje sin parent_id
-    Foro.insertMensaje(usuario, mensaje, eventoId, parentId);
+    const { contenido, parent_id, idEvento } = matchedData(req, { includeOptionals: true });
+    const usuario = req.session.usuario;
+    const contenidoLimpio = contenido.trim();
+    if (!contenidoLimpio) {
+        return render(req, res, 'paginas/error', {
+            mensaje: 'El contenido del mensaje no puede estar vacío.'
+        });
+    }
 
-    // Redirigir al foro del evento
-    res.redirect(`/foro/${eventoId}`);
+    const parentId = parent_id ? parseInt(parent_id, 10) : null;
+
+    Foro.insertMensaje(usuario, contenidoLimpio, idEvento, parentId);
+
+    return res.redirect(`/foro/${idEvento}`);
 };
 
 export const eliminarMensaje = (req, res) => {
-    const { mensaje_id, id } = req.body;
-    const rol = req.session.rol;
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        return render(req, res, 'paginas/error', {
+            mensaje: 'Datos inválidos para eliminar el mensaje',
+            errores: errores.mapped()
+        });
+    }
 
-    Foro.borrarMensaje(mensaje_id);
-    res.redirect(`/foro/${id}`);
+    try {
+        const { idMensaje, idEvento } = matchedData(req);
+        Foro.borrarMensaje(idMensaje);
+        return res.redirect(`/foro/${idEvento}`);
+    } catch (error) {
+        return render(req, res, 'paginas/error', {
+            mensaje: 'Error al eliminar el mensaje del foro'
+        });
+    }
 };
-

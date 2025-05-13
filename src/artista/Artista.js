@@ -17,17 +17,45 @@ export class Artista{
         this.#getAllStmt = db.prepare('SELECT * FROM artista');
     }
 
+    static getArtistasById(id_artistas){
+        if(id_artistas.length === 0) return [];
+
+        const db = getConnection();
+
+        const placeholders = id_artistas.map(() => '?').join(', ');
+        const stmt = db.prepare(`SELECT * FROM artista WHERE id IN (${placeholders})`);
+        const rows = stmt.all(...id_artistas);
+
+        return rows.map(row => new Artista(row));
+    }
+
+    static getArtistaById(idArtista){
+        try{
+            const artista = this.#getByIdStmt.get({id: idArtista});
+            if(artista === undefined) throw new ErrorDatos('No se ha encontrado el artista', {id: idArtista});
+            
+            return new Artista(artista);
+        }catch(e){
+            throw new ErrorDatos('Error al buscar el artista', { cause: e});
+        }
+    }
+
+    static getAll(){
+        const rows = this.#getAllStmt.all();
+        return rows.map(row => new Artista(row));
+    }
+
     static #insert(artista){
         let result = null;
         try{
             const datos = { nombreArtistico: artista.nombreArtistico, nombre: artista.nombre, biografia: artista.biografia, nacimiento: artista.nacimiento, genero: artista.genero, canciones: artista.canciones, imagen: artista.imagen };
             result = this.#insertStmt.run(datos);
-            artista.#id = result.lastInsertRowid; // Asignar el ID al objeto artista
+            artista.#id = result.lastInsertRowid;
         }catch(e){
             throw new ErrorDatos('No se ha podido insertar el artista', { cause: e});
         }
         
-        return result.lastInsertRowid;//Ver si quiero poner esto o mejor modificar la bd
+        return result.lastInsertRowid;
     }
 
     static #update(artista){
@@ -45,27 +73,6 @@ export class Artista{
         return result;
     }
 
-    static getArtistaById(idArtista){
-        try{
-            const artista = this.#getByIdStmt.get({id: idArtista});
-            if(artista === undefined) throw new ErrorDatos('No se ha encontrado el artista', {id: idArtista});
-            
-            const { nombreArtistico, nombre, biografia, nacimiento, genero, canciones,imagen } = artista;
-            return new Artista(idArtista, nombreArtistico, nombre, biografia, nacimiento, genero, canciones, imagen);
-        }catch(e){
-            throw new ErrorDatos('Error al buscar el artista', { cause: e});
-        }
-    }
-
-    static getAll(){
-        try{
-            const artistas = this.#getAllStmt.all();
-            return artistas;
-        }catch(e){
-            throw new ErrorDatos('Error al buscar los artistas', { cause: e});
-        }
-    }
-
     #id;
     nombreArtistico;
     nombre;
@@ -75,7 +82,7 @@ export class Artista{
     canciones;
     imagen;
 
-    constructor(id = null, nombreArtistico, nombre, biografia,nacimiento, genero, canciones, imagen = null){
+    constructor({id = null, nombreArtistico, nombre, biografia,nacimiento, genero, canciones, imagen = null}){
         this.#id = id;
         this.nombreArtistico = nombreArtistico;
         this.nombre = nombre;

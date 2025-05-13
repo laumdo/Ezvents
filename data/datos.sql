@@ -31,4 +31,5 @@ INSERT INTO "eventos" ("id","nombre","descripcion","fecha","lugar","precio","afo
 INSERT INTO "eventos" ("id","nombre","descripcion","fecha","lugar","precio","aforo_maximo","entradas_vendidas","imagen") VALUES (15,'Opera','Fantasma de la opera','2025-03-20','Palacio Real',80.0,520,0,'default.png');
 INSERT INTO "eventos" ("id","nombre","descripcion","fecha","lugar","precio","aforo_maximo","entradas_vendidas","imagen") VALUES (16,'Bresh','Bresh ','2025-07-24','La Riviera',20.0,500,0,'default.png');
 INSERT INTO "eventos" ("id","nombre","descripcion","fecha","lugar","precio","aforo_maximo","entradas_vendidas","imagen") VALUES (17,'Monólogo','Monólogo Andreu Buenafuente','2025-10-10','Palacio Vista Alegre',45.0,200,NULL,NULL);
+INSERT INTO "Descuento" ("titulo", "condiciones", "puntos", "imagen", "interno","valor") VALUES ('5% próximo compra', '5%', 25, 'airbnb.png', 1,0.05);
 COMMIT;

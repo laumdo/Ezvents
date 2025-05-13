@@ -15,7 +15,7 @@ import {Carrito} from './carrito/Carrito.js';
 import foroRouter from './foros/router.js';
 import { Descuento } from './descuentos/Descuento.js';
 import { Usuario } from './usuarios/Usuario.js';
-import { Foro } from './foros/Foro.js'
+import { Foro } from './foros/Foro.js';
 import carritoRouter from './carrito/router.js';
 import {EntradasUsuario} from './entradasUsuario/EntradasUsuario.js';
 import entradasRouter from './entradasUsuario/router.js';
@@ -29,14 +29,17 @@ import artistaRouter from './artista/router.js';
 import { viewEventos } from './eventos/controllers.js';
 import { Valoraciones } from './valoraciones/Valoracion.js';
 import valoracionesRouter from './valoraciones/router.js';
+import apiRouter from './apiRouter.js';
 
 export const app = express();
 
 
-getConnection(); 
-Evento.initStatements(); 
-Carrito.initStatements();
-EntradasUsuario.initStatements();
+//getConnection(); 
+const db = getConnection();
+Usuario.initStatements(db);
+Evento.initStatements(db); 
+Carrito.initStatements(db);
+EntradasUsuario.initStatements(db);
 Foro.initStatements();
 Descuento.initStatements();
 DescuentosUsuario.initStatements();
@@ -46,13 +49,19 @@ Valoraciones.initStatements();
 
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
-
+app.use('/api', apiRouter);
 app.use(pinoMiddleware);
+app.use(pinoHttp(config.logger.http(logger)));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(session(config.session));
+app.use((req, res, next) => {
+    res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
+    next();
+});
 app.use(flashMessages);
-app.use(express.static('public'));
+// Sirve todo lo que haya en /static como archivos estáticos
+app.use(express.static('static'));
 app.use(express.json());
 
 app.use('/', express.static(config.recursos));
@@ -72,10 +81,7 @@ app.use('/eventosArtistas', eventosArtistasRouter);
 app.use('/artista', artistaRouter);
 app.use('/valoraciones', valoracionesRouter);
 
-app.use((req, res, next) => {
-    res.locals.session = req.session || {};  // Si session es undefined, asigna un objeto vacío
-    next();
-});
+
 app.get('/contacto', (req, res) => {
     const params = {
         contenido: 'paginas/contacto',
