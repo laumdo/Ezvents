@@ -55,17 +55,8 @@ export function agregarDescuento(req,res){
         req.log.info("Descuento '%s' creado por %s", titulo, req.session.username);
         const usuario = Usuario.getUsuarioByUsername(req.session.username);
         const descuentos = Descuento.getAll();
-        return render(req, res, 'paginas/admin', {
-            session: req.session,
-            mensaje: 'Descuento agregado con éxito',
-            descuentos,
-            puntosUsuario: usuario.puntos,
-            // flags para mantener la sección y formulario abiertos
-            activeSection: 'descuentos',
-            activeForm:    'addDescuento',
-            datos: {},
-            errores: {}
-        });
+        res.setFlash('Descuento creado con exito');
+        res.redirect('/descuentos/');
 
     } catch (e) {
         const datos = matchedData(req);
@@ -122,13 +113,8 @@ export function modificarDescuento(req,res){
         descuento.persist();
 
         req.log.info("Descuento %d modificado por %s", id, req.session.username);
-        return render(req, res,'pagina',{
-            contenido: 'paginas/admin',
-            session:req.session,
-            mensaje:'Descuento modificado con exito',
-            activeSection: 'descuentos',
-            activeForm:    'editDescuento',
-        });
+        res.setFlash('Descuento modificado con exito');
+        res.redirect('/descuentos/');
     } catch (e) {
         const datos = matchedData(req);
         req.log.warn("Error al modificar descuento %s: %s", datos.id, e.message);
@@ -174,13 +160,8 @@ export function eliminarDescuento(req,res){
         Descuento.delete(id);
 
         req.log.info("Descuento %d eliminado por %s", id, req.session.username);
-        return render(req, res,'pagina',{
-            contenido: 'paginas/admin',
-            session:req.session,
-            mensaje:'Descuento modificado con exito',
-            activeSection: 'descuentos',
-            activeForm:    'deleteDescuento',
-        });
+        res.setFlash('Descuento eliminado con exito');
+        res.redirect('/descuentos/');
     } catch (e) {
         req.log.warn("Error al eliminar descuento %s: %s", req.body.id, e.message);
         req.log.debug(e);

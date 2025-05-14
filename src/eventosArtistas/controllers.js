@@ -111,3 +111,14 @@ export function viewContratar(req, res){
         artistasContratados: artistasContratados
     });
 }
+
+export function terminar(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.setFlash('Error al ver contratar artistas');
+        res.redirect('/');
+    }
+
+    res.setFlash('Operación realizada con exito');
+    res.redirect('/');
+}
