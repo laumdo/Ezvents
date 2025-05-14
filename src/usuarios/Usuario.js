@@ -14,6 +14,7 @@ export class Usuario {
     static #insertStmt = null;
     static #updateStmt = null;
     static #deleteStmt = null;
+    static #getEmpresasStmt = null;
 
     static initStatements(db) {
         if (this.#getByUsernameStmt !== null) return;
@@ -23,6 +24,7 @@ export class Usuario {
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
         this.#updateStmt = db.prepare('UPDATE Usuarios SET email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
+        this.#getEmpresasStmt = db.prepare('SELECT * FROM Usuarios WHERE rol = @rol');
     }
 
     static getUsuarioById(id){
@@ -31,6 +33,10 @@ export class Usuario {
         const { password, rol, nombre, apellidos, email, username, puntos,fecha_nacimiento } = usuario;
 
         return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos,fecha_nacimiento);
+    }
+
+    static getEmpresas(){
+        return this.#getEmpresasStmt.all({ rol: 'E' });
     }
 
     static getUsuarioByUsername(username) {
@@ -208,11 +214,11 @@ export class Usuario {
     }
     
     get age() {
-        const [y,m,d] = this.fechaNacimiento.split('-').map(Number);
+        const [y,m,d] = this.fecha_nacimiento.split('-').map(Number);
         const dob = new Date(y,m-1,d);
         const diff = Date.now() - dob.getTime();
         return Math.floor(diff / (1000*60*60*24*365.25));
-      }
+    }
     
       get isAdult() {
         return this.age >= 18;
@@ -245,6 +251,7 @@ export class UsuarioYaExiste extends Error {
         this.name = 'UsuarioYaExiste';
     }
 }
+
 
 export class EmailYaExiste extends Error {
     constructor(email, options) {

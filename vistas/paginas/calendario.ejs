@@ -58,6 +58,42 @@
                 window.location.href = `/eventos/${eventoId}`;
             },
 
+            eventContent: function (arg) {
+                const viewType = calendar.view.type;
+                const container = document.createElement('div');
+
+                if (viewType === 'listDay') {
+                    container.classList.add('evento-dia');
+
+                    const tituloEl = document.createElement('div');
+                    tituloEl.classList.add('evento-titulo-dia');
+                    tituloEl.textContent = arg.event.title;
+
+                    container.appendChild(tituloEl);
+
+                } else {
+                    // Vista mensual y semanal: hora arriba, título abajo
+                    const hora = arg.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    container.classList.add('evento-container');
+
+                    const horaEl = document.createElement('div');
+                    horaEl.classList.add('evento-hora');
+                    horaEl.textContent = hora;
+
+                    const tituloEl = document.createElement('div');
+                    tituloEl.classList.add('evento-titulo');
+                    tituloEl.textContent = arg.event.title;
+
+                    container.appendChild(horaEl);
+                    container.appendChild(tituloEl);
+                }
+
+                return { domNodes: [container] };
+            },
+
+
+
+
             eventDidMount: function (info) {
                 if (calendar.view.type === 'listDay' && info.event.extendedProps.imagen) {
                     const img = document.createElement('img');

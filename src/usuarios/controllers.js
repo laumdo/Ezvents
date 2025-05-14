@@ -2,7 +2,6 @@ import { body, validationResult } from 'express-validator';
 import { Usuario, RolesEnum, UsuarioYaExiste, EmailYaExiste } from './Usuario.js';
 import { matchedData } from 'express-validator';
 import { DescuentosUsuario } from '../descuentosUsuario/DescuentosUsuario.js';
-import { DateTime } from 'luxon'; 
 import { render } from '../utils/render.js';
 
 

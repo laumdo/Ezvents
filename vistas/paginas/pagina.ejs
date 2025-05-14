@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('./partials/head.ejs') %>
+</head>
+
+<body>
+  <div id="contenedor">
+
+    <%- include('./partials/cabecera.ejs', { session: locals.session, esInicio: typeof esInicio !== 'undefined' ? esInicio : false }) %>
+
+    <!-- Nuevo contenedor para nav + main -->
+    <div id="cuerpo">
+
+      <%- include('./partials/sidebarIzq.ejs', { session: locals.session }) %>
+
+      <main>
+        <article>
+          <%- include(contenido, { 
+          session: typeof session !== 'undefined' ? session : null,
+          usuario: typeof usuario !== 'undefined' ? usuario : null,
+          descuentos: typeof descuentos !== 'undefined' ? descuentos : null,
+          error: typeof error !== 'undefined' ? error : null,
+          evento:  typeof evento  !== 'undefined' ? evento : null,
+          userAge: typeof userAge !== 'undefined' ? userAge : null,
+          helpers: typeof helpers !== 'undefined' ? helpers : null,
+          errores: typeof errores !== 'undefined' ? errores : {},
+          datos: typeof datos !== 'undefined' ? datos : {}
+        }) %>
+
+        </article>
+      </main>
+
+    </div> <!-- Fin del cuerpo -->
+
+    <%- include('./partials/pie.ejs') %>
+
+  </div> <!-- Fin del contenedor -->
+</body>
+</html>

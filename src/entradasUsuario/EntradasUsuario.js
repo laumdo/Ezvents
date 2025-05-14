@@ -62,7 +62,9 @@ export class EntradasUsuario {
     }
 
     persist() {
-        if (this.#id === null) return EntradasUsuario.#insert(this);
+        const existe = EntradasUsuario.#checkStmt.get({ id_usuario, id_evento });
+        
+        if (this.#id === null && existe.count === 0) return EntradasUsuario.#insert(this);
         return EntradasUsuario.#update(this);
     }
 }

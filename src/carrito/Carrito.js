@@ -34,11 +34,47 @@ export class Carrito {
     static agregarEvento(id_usuario, id_evento, precio) {
         const existe = this.#checkStmt.get({id_usuario, id_evento});
         if(existe.count === 0){
-            this.#insertStmt.run({ id_usuario, id_evento, precio });
+            this.#insert(id_usuario, id_evento, precio);
         }else{
             this.#updateCantidadStmt.run({ id_usuario, id_evento });
         }
 
+    }
+
+    static #insert(id_usuario, id_evento, precio){
+            let result = null;
+            try{
+                result = this.#insertStmt.run({id_usuario, id_evento, precio});
+            }catch(e){
+                throw new ErrorDatos('No se ha podido añadir el evento al carrito', { cause: e});
+            }
+            return result;
+    }
+    static #update(carrito){
+        const datos = { id_usuario: carrito.id_usuario, id_evento: carrito.id_evento };
+        
+        const result = this.#updateCantidadStmt.run(datos);
+        if(result.changes === 0) throw new ErrorDatos('Error al actualizar el carrito');
+        return result;
+    }
+
+    #id;
+    id_usuario;
+    id_evento;
+    precio;
+    cantidad;
+
+    constructor(id = null, id_usuario, id_evento, precio, cantidad = 0){
+        this.#id = id;
+        this.id_usuario = id_usuario;
+        this.id_evento = id_evento;
+        this.precio = precio;
+        this.cantidad = cantidad;
+    }
+
+    persist(){
+            if(this.#id === null) return Carrito.#insert(this);
+            return Carrito.#update(this);
     }
 
     static deleteById(id) {
