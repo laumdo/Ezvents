@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/gestion.css">
+
 <% if (session && session.esEmpresa) { %>
     <div class="bienvenida">
         <h1>Consola de Administración</h1>
@@ -30,7 +32,7 @@
     <!-- Formulario para añadir evento -->
     <div id="form-add" class="admin-form oculto">
         <h2>Añadir Evento</h2>
-        <form action="/eventos/agregarEvento" method="post">
+        <form action="/eventos/agregarEvento" method="post" enctype="multipart/form-data">
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
             <%- helpers.error(formErrores, 'nombre') %>
@@ -82,7 +84,7 @@
 
     <div id="form-edit" class="admin-form oculto">
         <h2>Modificar Evento</h2>
-        <form action="/eventos/modificarEvento" method="POST">
+        <form action="/eventos/modificarEvento" method="POST" enctype="multipart/form-data">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
             <%- helpers.error(formErrores, 'id') %>

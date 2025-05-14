@@ -26,10 +26,11 @@ import { EventoArtista } from './eventosArtistas/EventoArtista.js';
 import eventosArtistasRouter from "./eventosArtistas/router.js";
 import { Artista } from './artista/Artista.js';
 import artistaRouter from './artista/router.js';
-import { viewEventos } from './eventos/controllers.js';
+import { apiEventos, viewEventos } from './eventos/controllers.js';
 import { Valoraciones } from './valoraciones/Valoracion.js';
 import valoracionesRouter from './valoraciones/router.js';
 import apiRouter from './apiRouter.js';
+import * as helpers from './utils/helpers.js';  // crea aquí tu módulo de helpers
 
 export const app = express();
 
@@ -47,6 +48,8 @@ EventoArtista.initStatements();
 Artista.initStatements();
 Valoraciones.initStatements();
 
+app.use('/eventos/api/eventos', apiEventos);
+app.locals.helpers = helpers;
 app.set('view engine', 'ejs');
 app.set('views', config.vistas);
 app.use('/api', apiRouter);

@@ -21,8 +21,8 @@ export class Usuario {
 
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#getByIdStmt = db.prepare('SELECT * FROM Usuarios WHERE id = @id');
-        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos, fecha_nacimiento = @fecha_nacimiento WHERE id = @id');
+        this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento, fecha_ultimo_bonus) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento, @fecha_ultimo_bonus)');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos, fecha_nacimiento = @fecha_nacimiento,fecha_ultimo_bonus=@fecha_ultimo_bonus WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
         this.#getEmpresasStmt = db.prepare('SELECT * FROM Usuarios WHERE rol = @rol');
     }
@@ -30,9 +30,9 @@ export class Usuario {
     static getUsuarioById(id){
         const usuario = this.#getByIdStmt.get({ id });
         if(usuario == undefined) throw new UsuarioNoEncontrado(id);
-        const { password, rol, nombre, apellidos, email, username, puntos,fecha_nacimiento } = usuario;
+        const { password, rol, nombre, apellidos, email, username, puntos,fecha_nacimiento,fecha_ultimo_bonus } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos,fecha_nacimiento);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos,fecha_nacimiento,fecha_ultimo_bonus);
     }
 
     static getEmpresas(){
@@ -43,9 +43,9 @@ export class Usuario {
         const usuario = this.#getByUsernameStmt.get({ username });
         if (usuario === undefined) throw new UsuarioNoEncontrado(username);
 
-        const { password, rol, nombre, apellidos, email, id, puntos, fecha_nacimiento } = usuario;
+        const { password, rol, nombre, apellidos, email, id, puntos, fecha_nacimiento,fecha_ultimo_bonus } = usuario;
 
-        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos, fecha_nacimiento);
+        return new Usuario(username, password, nombre, apellidos, email, rol, id, puntos, fecha_nacimiento,fecha_ultimo_bonus);
     }
     
     static existeUsername(username) {
@@ -57,27 +57,22 @@ export class Usuario {
    * Comprueba si ya existe un bonus de cumpleaños para hoy.
    */
   static hasBirthdayBonusToday(idUsuario) {
-    const db = getConnection();
-    const row = db.prepare(`
-      SELECT COUNT(*) as cnt
-      FROM PuntosUsuario 
-      WHERE idUsuario = ?
-        AND puntos = 200
-        AND DATE(fecha_obtencion) = DATE('now')
-    `).get(idUsuario);
-    return row.cnt > 0;
+    const usuario = this.getUsuarioById(idUsuario);
+    const hoy = new Date().toISOString().slice(0,10);
+    return usuario.fecha_ultimo_bonus === hoy;
   }
 
   /**
    * Inserta un record de puntos para el usuario (por cumpleaños).
    */
   static addBirthdayBonus(idUsuario) {
-    const db = getConnection();
-    const stmt = db.prepare(`
-      INSERT INTO PuntosUsuario(idUsuario, puntos, fecha_obtencion)
-      VALUES (?, ?, datetime('now'))
-    `);
-    stmt.run(idUsuario, 200);
+    const usuario = this.getUsuarioById(idUsuario);
+  const hoy = new Date().toISOString().slice(0,10);
+
+  usuario.puntos = (usuario.puntos || 0) + 200;
+  usuario.fecha_ultimo_bonus = hoy;    // ← AÑADE ESTA LÍNEA
+  usuario.persist();
+  return usuario;
   }
     static #insert(usuario) {
         let result = null;
@@ -90,7 +85,8 @@ export class Usuario {
             const email = usuario.email;
             const puntos = usuario.puntos || 0; // Agregamos los puntos
             const fecha_nacimiento=usuario.fecha_nacimiento;
-            const datos = {username, password, nombre, apellidos, email, rol, puntos,fecha_nacimiento};
+            const fecha_ultimo_bonus= usuario.fecha_ultimo_bonus;
+            const datos = {username, password, nombre, apellidos, email, rol, puntos,fecha_nacimiento,fecha_ultimo_bonus};
 
             result = this.#insertStmt.run(datos);
 
@@ -120,6 +116,7 @@ export class Usuario {
             rol: usuario.rol,
             puntos: usuario.puntos,
             fecha_nacimiento: usuario.fecha_nacimiento,
+            fecha_ultimo_bonus: usuario.fecha_ultimo_bonus,
             id: Number.parseInt(usuario.#id)
         };
         
@@ -137,19 +134,6 @@ export class Usuario {
             throw new ErrorDatos('No se ha podido actualizar el usuario', { cause: e });
         }
     }
-
-    /*static addPoints(idUsuario, puntos) {
-        const db = getConnection();
-        const stmt = db.prepare(`
-          INSERT INTO PuntosUsuario (idUsuario, puntos)
-          VALUES (?, ?)
-        `);
-        stmt.run(idUsuario, puntos);
-      }
-    */
-      /**
-       * Suma sólo los puntos no caducados (últimos 40 días).
-       */
       static getAvailablePoints(idUsuario) {
         const db = getConnection();
         const row = db.prepare(`
@@ -189,8 +173,9 @@ export class Usuario {
     email;
     puntos; // Nuevo atributo puntos
     fecha_nacimiento;
+    fecha_ultimo_bonus;
 
-    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0,fecha_nacimiento) {
+    constructor(username, password, nombre, apellidos, email, rol = RolesEnum.USUARIO, id = null, puntos = 0,fecha_nacimiento,fecha_ultimo_bonus=null) {
         this.#username = username;
         this.#password = password;
         this.nombre = nombre;
@@ -200,6 +185,7 @@ export class Usuario {
         this.#id = id;
         this.puntos = puntos; // Inicializar con el valor pasado o 0
         this.fecha_nacimiento=fecha_nacimiento;
+        this.fecha_ultimo_bonus=fecha_ultimo_bonus;
     }
 
     get id() {

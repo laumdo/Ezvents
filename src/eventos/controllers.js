@@ -1,4 +1,3 @@
-//import { param, validationResult } from 'express-validator';
 import { validationResult, matchedData } from "express-validator";
 import { Evento } from "./Evento.js";
 import { Usuario } from "../usuarios/Usuario.js";
