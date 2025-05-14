@@ -25,11 +25,10 @@
 <!-- Botón para mostrar/ocultar filtros -->
 <button type="button" id="mostrar-filtros">Mostrar/Ocultar Filtros</button>
 
-  
 
 <!-- Filtros (por defecto están ocultos) -->
 <div id="filtros" style="display: none;">
-    <form action="/eventos" method="get">
+    <form action="/eventos" method="get" class="filtros">
         <label for="fechaFiltroTipo">Fecha:</label>
         <select name="fechaTipo" id="fechaFiltroTipo" onchange="cambiarCamposFecha()">
           <option value="">-- Seleccionar --</option>

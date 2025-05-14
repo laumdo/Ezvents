@@ -154,3 +154,12 @@ textarea {
     font-style: italic;
     margin-top: 1em;
 }
+
+.info-evento {
+    text-align: center;
+  }
+  
+  .evento-fecha, .evento-precio {
+    display: block;
+    margin: 10px 0;
+  }

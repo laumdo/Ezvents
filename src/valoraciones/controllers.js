@@ -1,6 +1,7 @@
 import { Valoraciones } from './Valoracion.js';
 import { Evento } from '../eventos/Evento.js';
-import { Usuario } from '../usuarios/Usuario.js'
+import { Usuario } from '../usuarios/Usuario.js';
+import { validationResult } from 'express-validator';
 
 export function viewValoraciones(req, res){
     const { id_evento } = req.params;
@@ -23,11 +24,30 @@ export function viewValoraciones(req, res){
         session: req.session, valoraciones, evento, media });
 }
 
-export function anadirValoracion(req, res){
+export function anadirValoracion(req, res) {
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+        return res.status(400).render('pagina', {
+            contenido: 'paginas/valorar',
+            session: req.session,
+            evento: Evento.getEventoById(req.body.id_evento),
+            errores: errores.array()
+        });
+    }
+
     try {
         const { id_evento, puntuacion, comentario } = req.body;
         const id_usuario = req.session && req.session.usuario_id;
-        const nuevaValoracion = new Valoraciones(null, id_evento, id_usuario, puntuacion, comentario, new Date());
+
+        const nuevaValoracion = new Valoraciones(
+            null,
+            parseInt(id_evento),
+            id_usuario,
+            parseInt(puntuacion),
+            comentario,
+            new Date()
+        );
+
         nuevaValoracion.persist();
         res.redirect('/eventos/pasados');
     } catch (err) {

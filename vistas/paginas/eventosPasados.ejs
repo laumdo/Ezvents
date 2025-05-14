@@ -10,10 +10,6 @@
 
             <label for="ordenar">Ordenar por:</label>
             <select name="ordenar" id="ordenar" onchange="this.form.submit()">
-                <option value="fecha_asc" <%= query.ordenar === 'fecha_asc' ? 'selected' : '' %>>Fecha ↑</option>
-                <option value="fecha_desc" <%= query.ordenar === 'fecha_desc' ? 'selected' : '' %>>Fecha ↓</option>
-                <option value="nombre_asc" <%= query.ordenar === 'nombre_asc' ? 'selected' : '' %>>Nombre A-Z</option>
-                <option value="nombre_desc" <%= query.ordenar === 'nombre_desc' ? 'selected' : '' %>>Nombre Z-A</option>
                 <option value="precio_asc" <%= query.ordenar === 'precio_asc' ? 'selected' : '' %>>Precio ↑</option>
                 <option value="precio_desc" <%= query.ordenar === 'precio_desc' ? 'selected' : '' %>>Precio ↓</option>
                 <option value="valoracion_asc" <%= query.ordenar === 'valoracion_asc' ? 'selected' : '' %>>Valoración ↑</option>

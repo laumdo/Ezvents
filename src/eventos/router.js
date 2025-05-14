@@ -25,6 +25,8 @@ const router = express.Router();
 // Ver eventos y calendario
 router.get('/', viewEventos);
 router.get('/calendario', viewCalendario);
+router.get('/api/eventos', apiEventos);
+
 
 // Buscar evento por nombre
 router.get('/buscarEvento',

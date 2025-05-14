@@ -55,7 +55,14 @@
             },
             eventClick: function (info) {
                 const eventoId = info.event.id;
-                window.location.href = `/eventos/${eventoId}`;
+                const fechaEvento = new Date(info.event.start);
+                const ahora = new Date();
+
+                if (fechaEvento < ahora) {
+                    window.location.href = `/valoraciones/valoraciones/${eventoId}`;
+                } else {
+                    window.location.href = `/eventos/${eventoId}`;
+                }
             },
 
             eventContent: function (arg) {
@@ -72,7 +79,6 @@
                     container.appendChild(tituloEl);
 
                 } else {
-                    // Vista mensual y semanal: hora arriba, título abajo
                     const hora = arg.event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
                     container.classList.add('evento-container');
 
@@ -132,7 +138,6 @@
                 if (info.event.extendedProps.tieneEntrada) {
                     info.el.classList.add('evento-con-entrada');
 
-                    // Tooltip personalizado
                     const tooltip = document.createElement('div');
                     tooltip.className = 'custom-tooltip';
                     tooltip.innerText = '🎟️ Ya tienes entrada para este evento';

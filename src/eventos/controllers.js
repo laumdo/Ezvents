@@ -419,15 +419,10 @@ export function viewEventosPasados(req, res) {
            const [campo, direccion] = ordenar.split('_');
    
            eventosConInfo.sort((a, b) => {
-               let valA, valB;
-   
-               if (campo === 'nombre') {
-                   valA = a.nombre.toLowerCase();
-                   valB = b.nombre.toLowerCase();
-               } else if (campo === 'fecha') {
-                   valA = new Date(`${a.fecha}T${a.hora}`);
-                   valB = new Date(`${b.fecha}T${b.hora}`);
-               } else if (campo === 'precio') {
+            let valA = a[campo];
+            let valB = b[campo];
+
+            if (campo === 'precio') {
                    valA = parseFloat(a.precio);
                    valB = parseFloat(b.precio);
                } else if (campo === 'valoracion') {

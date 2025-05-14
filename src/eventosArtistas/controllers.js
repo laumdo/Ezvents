@@ -34,7 +34,15 @@ export function viewEventosDelArtista(req, res){
     const idsEventos = EventoArtista.getEventsIdsByArtist(id_artista);
 
     const asistenciasMap = Evento.getEventosById(idsEventos);
-    const asistencias = Object.values(asistenciasMap);//Paso el mapa a array
+    let asistencias = Object.values(asistenciasMap);//Paso el mapa a array
+    const ahora = new Date();
+    asistencias = asistencias.filter(evento => {
+        if (!evento.fecha || !evento.hora) return false;
+        const [year, month, day] = evento.fecha.split('-').map(Number);
+        const [hour, minute] = evento.hora.split(':').map(Number);
+        const fechaEvento = new Date(year, month - 1, day, hour, minute);
+        return fechaEvento >= ahora;
+    });
     
     res.render('pagina', {contenido: 'paginas/eventos', session: req.session, eventos: asistencias});
 }

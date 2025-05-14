@@ -13,9 +13,13 @@
                     <form action="/carrito/actualizar" method="POST" class="form-cantidad">
                         <input type="hidden" name="id_evento" value="<%= evento.id %>">
                         <div class="cantidad-control">
-                          <button type="submit" name="accion" value="restar">-</button>
-                          <span><%= evento.cantidad %></span>
-                          <button type="submit" name="accion" value="sumar">+</button>
+                            <td>
+                                <button class="btn-restar" data-id="<%= evento.id %>">-</button>
+                                <span class="cantidad" data-id="<%= evento.id %>"><%= evento.cantidad %></span>
+                                <button class="btn-sumar" data-id="<%= evento.id %>">+</button>
+                            </td> 
+                            <div class="precio-unitario oculto" data-id="<%= evento.id %>"><%= evento.precio %></div>
+                            <div class="subtotal oculto" data-id="<%= evento.id %>"><%= evento.precio * evento.cantidad %></div>
                         </div>
                     </form>
                     
@@ -23,6 +27,8 @@
                         <input type="hidden" name="id_evento" value="<%= evento.id %>">
                         <button type="submit">Eliminar</button>
                     </form>
+
+                    <p class="max-entradas">Max. 8 entradas.</p>
                     
                 </div>
                 <div class="evento-img">
@@ -32,38 +38,134 @@
         <% }); %>
     </ul>
 
-    <% if (descuentosInternos.length > 0) { %>
-        <section class="mis-cupones">
+    <script>
+        document.querySelectorAll('.btn-sumar, .btn-restar').forEach(boton => {
+          boton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const eventoId = boton.dataset.id;
+            const accion = boton.classList.contains('btn-sumar') ? 'sumar' : 'restar';
+        
+            const cantidadSpan = document.querySelector(`.cantidad[data-id="${eventoId}"]`);
+            const precioUnitario = parseFloat(document.querySelector(`.precio-unitario[data-id="${eventoId}"]`).textContent);
+            let cantidadActual = parseInt(cantidadSpan.textContent);
+        
+            if (accion === 'sumar' && cantidadActual >= 8) {
+            return;
+        }
+
+            const nuevaCantidad = accion === 'sumar' ? cantidadActual + 1 : cantidadActual - 1;
+        
+            const res = await fetch('/carrito/actualizar', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ id_evento: eventoId, accion })
+            });
+        
+            const data = await res.json();
+        
+            if (data.success) {
+              if (nuevaCantidad <= 0) {
+                location.reload();
+              } else {
+                cantidadSpan.textContent = nuevaCantidad;
+                const subtotal = precioUnitario * nuevaCantidad;
+                document.querySelector(`.subtotal[data-id="${eventoId}"]`).textContent = subtotal.toFixed(2);
+              }
+              actualizarTotalCarrito();
+            } else {
+              alert('Error al actualizar el carrito');
+            }
+          });
+        });
+
+        function actualizarTotalCarrito() {
+            let total = 0;
+            document.querySelectorAll('.subtotal').forEach(sub => {
+                total += parseFloat(sub.textContent);
+            });
+
+            const totalSpan = document.getElementById('totalCarrito');
+            const original = total.toFixed(2);
+
+            const descuentoElement = document.querySelector('.precio-total p[data-porcentaje-descuento]');
+            if (descuentoElement) {
+                const porcentaje = parseFloat(descuentoElement.dataset.porcentajeDescuento);
+                const descuento = (total * porcentaje).toFixed(2);
+                totalSpan.textContent = (total - descuento).toFixed(2);
+                document.querySelector('.precio-total del').textContent = `${original}€`;
+                descuentoElement.textContent = `Descuento: -${descuento}€`;
+            } else {
+                totalSpan.textContent = original;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.form-aplicar-descuento').forEach(form => {
+                form.addEventListener('submit', async e => {
+                    e.preventDefault();
+                    console.log('SE EJECUTA EL SUBMIT'); 
+                    const formData = new FormData(form);
+                    const codigo = formData.get('codigo');
+
+                    const res = await fetch('/carrito/aplicarDescuento', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ codigo })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.success) {
+                        document.querySelector('.precio-total').innerHTML = `
+                            <p>Total original: <del>${data.precioTotal}€</del></p>
+                            <p data-porcentaje-descuento="${data.porcentaje}">Descuento: -${data.descuentoAplicado}€</p>
+                            <h3>Total a pagar: <span id="totalCarrito">${data.totalConDescuento} €</span></h3>
+                            <form action="/carrito/descartarDescuento" method="POST" style="display:inline">
+                                <button type="submit">Descartar cupón</button>
+                            </form>
+                        `;
+                        const cupones = document.getElementById('seccionCupones');
+    if (cupones) {
+        cupones.style.display = 'none';
+    }
+                    } else {
+                        alert(data.error || 'Error al aplicar descuento');
+                    }
+                });
+            });
+        });
+
+    </script>
+
+    <% if (descuentosInternos.length > 0) { %> <!-- Añadir la condición para ocultar cuando el descuento está activo -->
+        <section class="mis-cupones" id="seccionCupones">
             <h3>Dispones de los siguientes cupones para aplicar a la compra</h3>
             <p>Recuerda: sólo puedes aplicar uno!</p>
             <ul class="descuentos-internos">
                 <% descuentosInternos.forEach(desc => { %>
                 <li>
-                    <strong><%= desc.titulo %></strong> – <%= desc.condiciones %>
-                    <form action="/carrito/aplicarDescuento" method="POST" style="display:inline">
+                    <%= desc.titulo %> – <%= desc.condiciones %>
+                    <form class="form-aplicar-descuento" style="display:inline">
                         <input type="hidden" name="codigo" value="<%= desc.codigo %>">
                         <button type="submit">Aplicar</button>
-                    </form>
+                    </form>                      
                 </li>
                 <% }) %>
             </ul>
         </section>
-    <% } %>
+    <% } %> <!-- Fin del bloque de cupones -->
 
     <div class="precio-total" style="margin-top: 20px;">
-        <% if (cuponAplicado) { %>
-            <p>Total original: <del><%= precioTotal.toFixed(2) %>€</del></p>
-            <p>Descuento: -<%= descuentoAplicado.toFixed(2) %>€</p>
-            <h3>Total a pagar: <%= (precioTotal - descuentoAplicado).toFixed(2) %> €</h3>
-            <form action="/carrito/descartarDescuento" method="POST" style="display:inline">
-                <button type="submit">Descartar cupón</button>
-            </form>
-        <% } else { %>
-            <h3>Total a pagar: <%= precioTotal.toFixed(2) %> €</h3>
-        <% } %>
+        <h3>Total a pagar: <span id="totalCarrito"><%= precioTotal.toFixed(2) %></span> €</h3>
     </div>
     <div class="boton_compra">
         <button onclick="window.location.href='/entradasUsuario/comprar'">Finalizar compra</button>
     </div>
+      
+
 <% } %>
 </div>

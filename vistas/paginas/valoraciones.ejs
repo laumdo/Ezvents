@@ -1,7 +1,10 @@
 <link rel="stylesheet" href="/css/valoraciones.css">
 
 <h2 class="titulo-opiniones">Opiniones sobre "<%= evento.nombre %>"</h2>
-
+<div class="info-evento">
+    <p class="evento-fecha"><%=evento.fecha%> 📅</p>
+    <p class="evento-fecha"><%=evento.precio%> 💰</p>
+  </div>
 <h4 class="media-valoracion">Valoración media: <span class="media-numero"><%= media %> ★</span></h4>
 
 <% if (valoraciones.length > 0) { %>

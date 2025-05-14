@@ -189,6 +189,25 @@ export class Evento {
     return new Evento(row);
   }
 
+  static getEventosById(entradas) {
+    if (entradas.length === 0) return {};
+
+    const db = getConnection();
+
+    const placeholders = entradas.map(() => "?").join(", ");
+    const stmt = db.prepare(
+      `SELECT * FROM eventos WHERE id IN (${placeholders})`
+    );
+    const rows = stmt.all(...entradas);
+
+    const map = {};
+    for (const row of rows) {
+      map[row.id] = new Evento(row);
+    }
+
+    return map;
+  }
+
   /** Busca eventos cuyo nombre contenga el texto (insensible a mayúsculas) */
   static searchByName(texto) {
     const like = `%${texto}%`;
