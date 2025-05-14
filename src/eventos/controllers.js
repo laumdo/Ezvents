@@ -6,6 +6,7 @@ import { Artista } from "../artista/Artista.js";
 import { EntradasUsuario } from "../entradasUsuario/EntradasUsuario.js";
 import { Valoraciones } from "../valoraciones/Valoracion.js";
 import { EventoArtista } from "../eventosArtistas/EventoArtista.js";
+import { error } from "../utils/helpers.js";
 
 export function viewEventos(req, res) {
   let eventos = Evento.getAll();
@@ -167,12 +168,23 @@ export async function agregarEvento(req, res, next) {
       "Intento de añadir evento con datos inválidos"
     );
     const datos = matchedData(req);
-    return res.status(400).render("pagina", {
+    if(req.session.esEmpresa){
+      return res.status(400).render("pagina", {
+      contenido: "paginas/empresa",
+      session: req.session,
+      errores: errors.mapped(),
+      datos,
+      helpers: { error }
+    });
+    }else{
+      return res.status(400).render("pagina", {
       contenido: "paginas/admin",
       session: req.session,
       errores: errors.mapped(),
       datos,
+      helpers: { error }
     });
+    }
   }
 
   const {
@@ -220,14 +232,28 @@ export async function modificarEvento(req, res, next) {
       "Intento de modificar evento con datos inválidos"
     );
     const datos = matchedData(req);
-    return res.status(400).render("pagina", {
+
+    if(req.session.esEmpresa){
+      return res.status(400).render("pagina", {
+      contenido: "paginas/empresa",
+      session: req.session,
+      errores: errors.mapped(),
+      datos,
+      helpers: { error },
+      activeSection: "eventos",
+      activeForm: "editEvento",
+    });
+    }else{
+      return res.status(400).render("pagina", {
       contenido: "paginas/admin",
       session: req.session,
       errores: errors.mapped(),
       datos,
+      helpers: { error },
       activeSection: "eventos",
-      activeForm: "deleteEvento",
+      activeForm: "edittEvento",
     });
+    }
   }
 
   const {
@@ -242,15 +268,17 @@ export async function modificarEvento(req, res, next) {
     edad_minima,
   } = matchedData(req);
 
-  let evento = Evento.getEventoById(id);
+  console.log("id", id);
+  let evt = Evento.getEventoById(id);
 
-  if (req.session.esEmpresa && evento.idEmpresa !== req.session.usuario_id) {
+  if (req.session.esEmpresa && evt.idEmpresa !== req.session.usuario_id) {
     res.setFlash("No tienes permisos para modificar este evento");
     return res.redirect("/contenido/empresa");
   }
 
   try {
-    const evt = Evento.getEventoById(id);
+    console.log("hola");
+    console.log("Evento encontrado:", evt);
     evt.nombre = nombre ?? evt.nombre;
     evt.descripcion = descripcion ?? evt.descripcion;
     evt.fecha = fecha ?? evt.fecha;
@@ -259,8 +287,10 @@ export async function modificarEvento(req, res, next) {
     evt.precio = precio ?? evt.precio;
     evt.aforo_maximo = aforo_maximo ?? evt.aforo_maximo;
     evt.edad_minima =
-      edad_minima !== undefined ? parseInt(edad_minima, 10) : evt.edad_minima;
+    edad_minima !== undefined ? parseInt(edad_minima, 10) : evt.edad_minima;
     if (req.file) evt.imagen = req.file.filename;
+
+    console.log("Evento modificado:", evt);
 
     await evt.persist();
 
@@ -283,11 +313,21 @@ export async function eliminarEvento(req, res, next) {
   // permisos…
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).render("pagina", {
+    if(req.session.esEmpresa){
+      return res.status(400).render("pagina", {
+      contenido: "paginas/empresa",
+      session: req.session,
+      errores: errors.mapped(),
+      helpers: { error }
+    });
+    }else{
+      return res.status(400).render("pagina", {
       contenido: "paginas/admin",
       session: req.session,
       errores: errors.mapped(),
+      helpers: { error }
     });
+    }
   }
   const { id } = matchedData(req, { locations: ["body"] });
   const evento = Evento.getEventoById(id);

@@ -38,7 +38,7 @@ artistasRouter.post("/agregarArtista",
   body('nacimiento', 'La fecha de nacimiento no puede ser vacía').trim().notEmpty(),
   body('nacimiento', 'La fecha de nacimiento no es válida').isDate(),
   body('genero', 'El género no puede ser vacío').trim().notEmpty(),
-  body('genero', 'El género no puede contener números').matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/),
+  body('genero', 'El género no puede contener números').matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s,&]+$/),
   body('canciones', 'Las canciones no pueden ser vacías').trim().notEmpty(),
   agregarArtista
 );
@@ -53,7 +53,7 @@ artistasRouter.post("/modificarArtista",
   body('nombre', 'El nombre no puede contener números').optional({ checkFalsy: true }).trim().matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/),
   body('biografia').optional({ checkFalsy: true }).trim(),
   body('nacimiento').optional({ checkFalsy: true }).trim().isDate(),
-  body('genero', 'El género no puede contener números').optional({ checkFalsy: true }).trim().matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/),
+  body('genero', 'El género no puede contener números').optional({ checkFalsy: true }).trim().matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s,&]+$/),
   body('canciones').optional({ checkFalsy: true }).trim(),
   modificarArtista
 );
