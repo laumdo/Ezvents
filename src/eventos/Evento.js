@@ -62,7 +62,7 @@ export class Evento {
 
   /** Devuelve todas las filas como instancias de Evento */
   static getAll() {
-    return this.#getAllStmt.all(); //.map(row => new Evento(row));
+    return this.#getAllStmt.all();
   }
 
   /** Recupera un evento o lanza si no existe */

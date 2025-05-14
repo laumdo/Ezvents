@@ -32,17 +32,18 @@ export async function doLogin(req, res) {
         const usuario = await Usuario.login(username, password);
        
         //verficar cumpleaños
-        // --- Nuevo bonus de cumpleaños registrado en PuntosUsuario ---
-    if (usuario.fecha_nacimiento) {
-          const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
-          const hoy = new Date();
-          const esCumple = m === hoy.getMonth() + 1 && d === hoy.getDate();
-          if (esCumple && !Usuario.hasBirthdayBonusToday(usuario.id)) {
-            Usuario.addBirthdayBonus(usuario.id);
-            res.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
-          }
-    }
-        // mensaje genérico si no era cumpleaños
+        // --- Nuevo bonus de cumpleaños---
+        if (usuario.fecha_nacimiento) {
+            const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
+            const hoy = new Date();
+            const esCumple = m === hoy.getMonth() + 1 && d === hoy.getDate();
+            const todayStr = hoy.toISOString().slice(0,10);
+          
+            if (esCumple && !Usuario.hasBirthdayBonusToday(usuario.id)) {
+                Usuario.addBirthdayBonus(usuario.id);
+                res.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
+            }
+        }
         if (!req.session.flashMsg) {
             res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         }
@@ -174,7 +175,6 @@ export function viewDatos(req, res) {
         descuentosUsuario=null;
     }
 
-    //const puntosUsuario = usuario.puntos;
     const puntosUsuario=Usuario.getAvailablePoints(usuario.id);
     res.render('pagina', { contenido: 'paginas/datos', 
         session: req.session, 
@@ -258,17 +258,6 @@ export function modificarUsuario(req, res){
     }
 }
 
-/*export async function doRegister(req, res) {
-    const result = validationResult(req);
-    if (! result.isEmpty()) {
-        const errores = result.mapped();
-        const datos = matchedData(req);
-        return render(req, res, 'paginas/register', {
-            datos,
-            errores
-        });
-    }
-}*/
 export async function doRegister(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -303,7 +292,7 @@ export async function doRegister(req, res) {
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
       
-        const nuevoUsuario = new Usuario(username,null, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
+        const nuevoUsuario = new Usuario(username,null, nombre, apellidos, email, rol,null,0,fecha_nacimiento,null);
         nuevoUsuario.password=password;
         nuevoUsuario.persist();
   
@@ -318,7 +307,7 @@ export async function doRegister(req, res) {
   
         return res.redirect('/');
     } catch (e) {
-        let error = 'No se ha podido crear el usuario'; // Esto son errores que no son de express-validator como que el usuario o el correo ya estén registrados
+        let error = 'No se ha podido crear el usuario';
         if (e instanceof UsuarioYaExiste) {
             error = 'El nombre de usuario ya está utilizado';
         } else if (e instanceof EmailYaExiste) {

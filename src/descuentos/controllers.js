@@ -248,7 +248,7 @@ export async function canjearDescuento(req, res, next) {
         });
 
     } catch (err) {
-        // Dejar que el handler de errores lo procese
+
         return next(err);
     }
 }
