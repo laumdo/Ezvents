@@ -19,8 +19,10 @@ export function viewArtista(req, res){
         const artista = Artista.getArtistaById(id);
         res.render('pagina', { contenido: 'paginas/artista', session: req.session, artista });
     }catch(e){
-        res.setFlash('Artista no encontrado');
-        res.redirect('/artista/');
+        return res.status(404).render("pagina", {
+        contenido: "paginas/error",
+        mensaje: "Artista no encontrado",
+        });
     }
 
 }
@@ -44,8 +46,10 @@ export function agregarArtista(req, res){
         res.setFlash('Artista creado con exito');
         res.redirect('/artista/');
     }catch(e){
-        res.setFlash('Error al crear el artista');
-        res.redirect('/artista/');
+        return res.status(400).render("pagina", {
+        contenido: "paginas/error",
+        mensaje: "Datos inválidos",
+        });
 
     }
 }
@@ -77,9 +81,10 @@ export function modificarArtista(req, res){
         res.setFlash('Artista modificado con exito');
         res.redirect('/artista/');
     }catch(e){
-        console.error('Error en modificarArtista:', e);
-        res.setFlash('Error al modificar el artista');
-        res.redirect('/artista/');
+        return res.status(400).render("pagina", {
+        contenido: "paginas/error",
+        mensaje: "Datos inválidos",
+        });
     }
 }
 
@@ -95,7 +100,9 @@ export function eliminarArtista(req, res){
         res.setFlash('Artista eliminado con exito');
         res.redirect('/artista/');
     }catch(e){
-        res.setFlash('Error al eliminar artista');
-        res.redirect('/artista/');
+        return res.status(404).render("pagina", {
+        contenido: "paginas/error",
+        mensaje: "Artista no encontrado",
+        });
     }
 }
