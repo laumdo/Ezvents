@@ -8,33 +8,20 @@ import { validationResult } from 'express-validator';
 
 export function viewEntradas(req, res){
     const usuario_id = req.session.usuario_id;
-    
+
     const entradas = EntradasUsuario.getEntradasByUsuario(usuario_id);
 
     const ids_eventos = entradas.map(entrada => entrada.idEvento);
 
-    let eventosMap = Evento.getEventosById(ids_eventos);
-    let eventosArray = Object.values(eventosMap);
-    const ahora = new Date();
-    eventosArray = eventosArray.filter(evento => {
-        if (!evento.fecha || !evento.hora) return false;
-        const [year, month, day] = evento.fecha.split('-').map(Number);
-        const [hour, minute] = evento.hora.split(':').map(Number);
-        const fechaEvento = new Date(year, month - 1, day, hour, minute);
-        return fechaEvento >= ahora;
-    });
-    const eventos = entradas.map(entrada => {
-        const evento = eventosArray[entrada.idEvento];
-        if(evento){
-            return {
-                ...evento,
-                cantidad: entrada.cantidad
-            };
-        }
-        return null;
-        
-    }).filter(evento => evento !== null);
+    const eventosMap = Evento.getEventosById(ids_eventos);
 
+    const eventos = entradas.map(entrada => {
+        const evento = eventosMap[entrada.idEvento];
+        return {
+            ...evento,
+            cantidad: entrada.cantidad
+        };
+    });
 
     res.render('pagina', {contenido: 'paginas/entradas', session: req.session, eventos});
 }
