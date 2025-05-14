@@ -6,6 +6,7 @@
             <div class="evento-info">
                 <h3 class="evento-titulo"><%= evento.nombre %></h3>
                 <p class="evento-fecha"><strong>Fecha:</strong> <%= evento.fecha %></p>
+                <p class="evento-lugar"><strong>Lugar:</strong> <%= evento.lugar %></p>
                 <p class="evento-precio">Precio: <%= evento.precio %></p>
                 <button onclick="window.location.href='/eventos/<%= evento.id %>'">Saber más</button>
                 <button onclick="window.location.href='/foro/<%= evento.id %>'">Foro</button>
