@@ -1,6 +1,9 @@
 <% if (session && session.esEmpresa) { %>
-    <h1>Bienvenido a la Consola de Empresa</h1>
-    <p>Aquí podras añadir nuevos eventos con sus respectivas caracteristicas, atrayendo la atencion de los usuarios.</p>
+    <div class="bienvenida">
+        <h1>Consola de Administración</h1>
+        <p>Tienes los permisos necesarios para administrar la web.</p>
+    </div>
+    <div class= "selectOpt">Selecciona una opción:</div>
 <% } else { %>
     <h1>Acceso Denegado</h1>
     <p>No tienes permisos para administrar la web.</p>
