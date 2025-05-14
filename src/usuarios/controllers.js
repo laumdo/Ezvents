@@ -91,7 +91,7 @@ export function agregarUsuario(req, res){
     try{
         const{username, password,nombre,rol}=req.body;
         const nuevoUsuario= new Usuario(null,username,password,nombre,rol);
-        usuario.persist();
+        nuevoUsuario.persist();
 
         res.redirect('/usuarios');
 
@@ -198,17 +198,36 @@ export function viewModificarUsuario(req, res) {
         usuario = null; 
     }
 
-    res.render('pagina', { contenido: 'paginas/modificarUsuario', 
-        session: req.session, 
-        usuario
-     });
+    res.render('pagina', {contenido: 'paginas/modificarUsuario', 
+    session: req.session,
+    usuario,
+    datos: {},
+    errores: {},
+    error: null});
 }
 
 export function modificarUsuario(req, res){
+    console.log("modificarUsuario");
     try{
-        const {username, password, nombre, apellidos, email, rol} = req.body;
+        const {username, password, nombre, apellidos, email, rol, fecha_nacimiento} = req.body;
         let usuario = Usuario.getUsuarioById(req.session.usuario_id);
         if(!usuario) throw new UsuarioNoEncontrado(req.session.usuario_id);
+        console.log("usuario: ", usuario);
+
+        if(username && username !== usuario.username){//CAMBIAR SI NO HAGO LO DEL AJAX
+            usuario.username = username;
+            req.session.username = username;
+        }else{
+            usuario.username = usuario.username;
+        }
+        console.log("username: ", usuario.username);
+
+        if (password && password.trim() !== "") {
+            usuario.password = password; // Hashear contraseña
+        }else{
+            usuario.password = usuario.password;
+        }
+        console.log("contrasena");
 
         let rolEnum = null;
         if (rol === 'empresa') {
@@ -219,16 +238,17 @@ export function modificarUsuario(req, res){
             rolEnum = RolesEnum.USUARIO;
         }
 
-        //usuario.username = username || usuario.username;
-        console.log("ok 1");
-        //usuario.password = bcrypt.hashSync(password) || usuario.password;
-        console.log("ok 2");
         usuario.nombre = nombre || usuario.nombre;
         usuario.apellidos = apellidos || usuario.apellidos;
         usuario.email = email || usuario.email;
         usuario.rol = rolEnum || usuario.rol;
+        usuario.fecha_nacimiento = fecha_nacimiento || usuario.fecha_nacimiento;
 
+        console.log("usuario: ", usuario);
+
+        console.log("va a llamar a persist");
         usuario.persist();
+        console.log("ha llamado a persist");
 
         res.setFlash('Usuario modificado con éxito');
         res.redirect('/');

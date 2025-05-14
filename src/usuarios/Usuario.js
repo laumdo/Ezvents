@@ -22,7 +22,7 @@ export class Usuario {
         this.#getByUsernameStmt = db.prepare('SELECT * FROM Usuarios WHERE username = @username');
         this.#getByIdStmt = db.prepare('SELECT * FROM Usuarios WHERE id = @id');
         this.#insertStmt = db.prepare('INSERT INTO Usuarios(username, password, nombre, email, apellidos, rol, puntos,fecha_nacimiento) VALUES (@username, @password, @nombre, @email, @apellidos, @rol, @puntos,@fecha_nacimiento)');
-        this.#updateStmt = db.prepare('UPDATE Usuarios SET email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos WHERE id = @id');
+        this.#updateStmt = db.prepare('UPDATE Usuarios SET username = @username, password = @password, email = @email, apellidos = @apellidos, rol = @rol, nombre = @nombre, puntos = @puntos, fecha_nacimiento = @fecha_nacimiento WHERE id = @id');
         this.#deleteStmt = db.prepare('DELETE FROM Usuarios WHERE id = @id'); 
         this.#getEmpresasStmt = db.prepare('SELECT * FROM Usuarios WHERE rol = @rol');
     }
@@ -111,17 +111,18 @@ export class Usuario {
 
     static #update(usuario) {
         console.log("update");
-        //const username = usuario.#username;
-        //const password = usuario.#password;
-        const nombre = usuario.nombre;
-        const rol = usuario.rol;
-        const apellidos = usuario.apellidos;
-        const email = usuario.email;
-        const puntos = usuario.puntos; // Agregamos los puntos
-        const fecha_nacimiento=usuario.fecha_nacimiento;
-        const datos = { nombre, apellidos, email, rol, puntos,fecha_nacimiento, id: Number.parseInt(usuario.#id)};
-
-        console.log("antes del stmt, datos: ", datos);
+        const datos = {
+            username: usuario.username,
+            password: usuario.password,
+            nombre: usuario.nombre,
+            apellidos: usuario.apellidos,
+            email: usuario.email,
+            rol: usuario.rol,
+            puntos: usuario.puntos,
+            fecha_nacimiento: usuario.fecha_nacimiento,
+            id: Number.parseInt(usuario.#id)
+        };
+        
         try{
             const result = this.#updateStmt.run(datos);
 
@@ -205,12 +206,20 @@ export class Usuario {
         return this.#id;
     }
 
+    set username(nuevoUsername) {
+        this.#username = nuevoUsername;
+    }
+
     set password(nuevoPassword) {
         this.#password = bcrypt.hashSync(nuevoPassword);
     }
 
     get username() {
         return this.#username;
+    }
+
+    get password() {
+        return this.#password;
     }
     
     get age() {

@@ -15,9 +15,15 @@ usuariosRouter.post('/login', autenticado(null, '/usuarios/home'),
 usuariosRouter.get('/logout', doLogout);
 
 usuariosRouter.get('/datos', viewDatos);
-usuariosRouter.get('/viewModificarUsuario', viewModificarUsuario);
 usuariosRouter.post('/eliminarUsuario', eliminarUsuario);
-usuariosRouter.post('/modificarUsuario', modificarUsuario);
+
+
+usuariosRouter.get('/viewModificarUsuario', viewModificarUsuario);
+usuariosRouter.post('/modificarUsuario',
+    body('username', 'Sólo puede contener números y letras').optional({ checkFalsy: true }).trim().matches(/^[A-Z0-9]*$/i),
+    body('password', 'La contraseña no tiene entre 6 y 10 caracteres').optional({ checkFalsy: true }).trim().isLength({ min: 6, max: 10 }),
+    modificarUsuario
+);
 
 
 // Rutas de registro
