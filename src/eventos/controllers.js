@@ -336,7 +336,8 @@ export async function eliminarEvento(req, res, next) {
   }
   try {
     Evento.delete(id);
-    return res.redirect("/eventos");
+    res.setFlash('Evento eliminado con éxito');
+    return res.redirect('/');
   } catch (err) {
     if (err instanceof EventoNoEncontrado) {
       return res.status(404).render("pagina", {
