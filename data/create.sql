@@ -65,4 +65,9 @@ ALTER TABLE Usuarios ADD COLUMN fecha_nacimiento TEXT NOT NULL ;
 ALTER TABLE eventos ADD COLUMN edad_minima INTEGER NOT NULL DEFAULT 18;
 ALTER TABLE entradasUsuario
   ADD COLUMN fecha_compra TEXT NOT NULL DEFAULT 10-10-2000;
+
+ALTER TABLE Usuarios
+ADD COLUMN fecha_ultimo_bonus TEXT NULL;
+
 COMMIT;
+
