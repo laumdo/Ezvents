@@ -1,29 +1,94 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #ff7e5f, #6a11cb);
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
 .container {
+    width: 80%;
+    margin: auto;
+    background: white;
     padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    color: #e74c3c;
+}
+
+.user-info {
+    background: #f7f7f7;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .user-info p {
-    margin: 5px 0;
+    font-size: 18px;
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
 }
 
-.boton_entradas {
-    margin: 20px 0;
+.user-info p:last-child {
+    border-bottom: none;
+}
+
+.user-info strong {
+    color: #e74c3c;
+}
+
+.no-user {
     text-align: center;
+    color: #e74c3c;
+    font-weight: bold;
+    padding: 15px;
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 10px;
 }
 
-.boton_entradas button {
-    padding: 10px 20px;
-    background-color: #007bff;
+/* Para que el contenido se vea bien en dispositivos pequeños */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+
+    .user-info p {
+        font-size: 16px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .no-user {
+        font-size: 16px;
+    }
+}
+
+/* Estilo para botones de eliminar y modificar cuenta */
+.eliminar-cuenta button,
+.modificar-cuenta button {
+    padding: 10px 15px;
+    background-color: #dc3545;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
 }
 
-.boton_entradas button:hover {
-    background-color: #0056b3;
+.eliminar-cuenta button:hover,
+.modificar-cuenta button:hover {
+    background-color: #b52a38;
 }
 
+/* Contenedor de los descuentos */
 .user-discounts {
     margin-top: 30px;
 }
@@ -32,6 +97,7 @@
     margin-bottom: 10px;
 }
 
+/* Estilo para los descuentos */
 .descuento-card {
     display: flex;
     align-items: center;
@@ -54,46 +120,13 @@
     border-radius: 8px;
 }
 
-.eliminar-cuenta {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
+/* Para que se vean bien en dispositivos pequeños */
+@media (max-width: 768px) {
+    .descipcion-info {
+        font-size: 14px;
+    }
 
-.modificar-cuenta {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.eliminar-cuenta button {
-    padding: 10px 15px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.modificar-cuenta button {
-    padding: 10px 15px;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.eliminar-cuenta button:hover {
-    background-color: #b52a38;
-}
-
-.modificar-cuenta button:hover {
-    background-color: #b52a38;
-}
-
-.no-user {
-    color: red;
-    font-weight: bold;
-    text-align: center;
+    .descuento-img img {
+        max-width: 100px;
+    }
 }

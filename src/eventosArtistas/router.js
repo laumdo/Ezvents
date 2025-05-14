@@ -1,6 +1,6 @@
 import express from 'express';
 import { param, body } from 'express-validator';
-import { viewCartelera, viewEventosDelArtista, agregarArtistaAEvento, viewContratar, eliminarArtistaEvento} from './controllers.js';
+import { viewCartelera, viewEventosDelArtista, agregarArtistaAEvento, viewContratar, eliminarArtistaEvento, terminar} from './controllers.js';
 import { autenticado, tieneAdminEmpresa } from '../middleware/auth.js';
 
 const eventosArtistasRouter = express.Router();//PONER ROL EMPRESA O ADMIN
@@ -36,6 +36,12 @@ eventosArtistasRouter.post('/eliminar'
     , body('id_artista', 'El id del artista debe ser un número entero').isInt()
     , body('id_evento', 'El id del evento debe ser un número entero').isInt()
     , eliminarArtistaEvento
+);
+
+eventosArtistasRouter.post('/terminar'
+    , autenticado()
+    , tieneAdminEmpresa()
+    , terminar
 );
 
 

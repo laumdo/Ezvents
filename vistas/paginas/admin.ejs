@@ -1,10 +1,16 @@
+<link rel="stylesheet" href="/css/gestion.css">
+
 <% if (session && session.esAdmin) { %>
-    <h1>Bienvenido a la Consola de Administración</h1>
-    <p>Tienes los permisos necesarios para administrar la web.</p>
-    <p>Selecciona una opción:</p>
+    <div class="bienvenida">
+        <h1>Consola de Administración</h1>
+        <p>Tienes los permisos necesarios para administrar la web.</p>
+    </div>
+    <div class= "selectOpt">Selecciona una opción:</div>
 <% } else { %>
-    <h1>Acceso Denegado</h1>
-    <p>No tienes permisos para administrar la web.</p>
+    <div class="acceso-denegado">
+        <h1>Acceso Denegado</h1>
+        <p>No tienes permisos para administrar la web.</p>
+    </div>
 <% } %>
 <% 
   const section = typeof activeSection === 'string' ? activeSection : null;
@@ -35,36 +41,55 @@
     <div id="form-addEvento" class="admin-form oculto">
         <h2>Añadir Evento</h2>
         <form action="/eventos/agregarEvento" method="POST" enctype="multipart/form-data">
+            <% if (locals.error) { %>
+                <p><%= locals.error %></p>
+            <% } %>
+
             <label>Nombre:</label>
             <input type="text" name="nombre" required>
+            <%- helpers.error(formErrores, 'nombre') %>
+
             <label>Descripción:</label>
             <textarea name="descripcion" required></textarea>
+            <%- helpers.error(formErrores, 'descripcion') %>
+
             <label>Fecha:</label>
             <input type="date" name="fecha" required>
+            <%- helpers.error(formErrores, 'fecha') %>
+
+            <label>Hora:</label>
+            <input type="time" name="hora" required>
+            <%- helpers.error(formErrores, 'hora') %>
+
             <label>Lugar:</label>
             <input type="text" name="lugar" required>
+            <%- helpers.error(formErrores, 'lugar') %>
+
             <label>Precio:</label>
             <input type="number" step="0.01" name="precio" required>
+            <%- helpers.error(formErrores, 'precio') %>
+
             <label>Aforo Máximo:</label>
             <input type="number" name="aforo_maximo" required>
-            <label>Edad minima:</label>
+            <%- helpers.error(formErrores, 'aforo_maximo') %>
+
+            <label>Edad mínima:</label>
             <input type="number" name="edad_minima" required>
+            <%- helpers.error(formErrores, 'edad_minima') %>
+
             <label>Imagen:</label>
             <input type="file" name="imagen" accept="image/*">
-            <label>Hora:</label>
-            <input type="time" name="hora">
-
             <button type="submit">Añadir Evento</button>
         </form>
-    </div>
     </div>
 
     <!-- Formulario para eliminar evento -->
     <div id="form-deleteEvento" class="admin-form oculto">
         <h2>Eliminar Evento</h2>
-        <form action="/eventos/eliminarEvento" method="POST" >
+        <form action="/eventos/eliminarEvento" method="POST">
             <label>ID del evento:</label>
             <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
             <button type="submit">Eliminar Evento</button>
         </form>
     </div>
@@ -73,36 +98,48 @@
     <div id="form-editEvento" class="admin-form oculto">
         <h2>Modificar Evento</h2>
         <form action="/eventos/modificarEvento" method="POST" enctype="multipart/form-data">
+            <% if (locals.error) { %>
+                <p><%= locals.error %></p>
+            <% } %>
+
             <label>ID del evento:</label>
             <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
 
             <label>Nuevo Nombre:</label>
             <input type="text" name="nombre">
-            
+            <%- helpers.error(formErrores, 'nombre') %>
+
             <label>Nueva Descripción:</label>
             <textarea name="descripcion"></textarea>
-            
+            <%- helpers.error(formErrores, 'descripcion') %>
+
             <label>Nueva Fecha:</label>
             <input type="date" name="fecha">
-            
-            <label>Nuevo Lugar:</label>
-            <input type="text" name="lugar">
-            
-            <label>Nuevo Precio:</label>
-            <input type="number" step="0.01" name="precio">
-            
-            <label>Nuevo Aforo Máximo:</label>
-            <input type="number" name="aforo_maximo">
-
-            <label>Nueva edad minima:</label>
-            <input type="number" name="edad_minima">
-            
-            <label>Nueva Imagen:</label>
-            <input type="file" name="imagen" accept="image/*">
+            <%- helpers.error(formErrores, 'fecha') %>
 
             <label>Nueva Hora:</label>
             <input type="time" name="hora">
+            <%- helpers.error(formErrores, 'hora') %>
 
+            <label>Nuevo Lugar:</label>
+            <input type="text" name="lugar">
+            <%- helpers.error(formErrores, 'lugar') %>
+
+            <label>Nuevo Precio:</label>
+            <input type="number" step="0.01" name="precio">
+            <%- helpers.error(formErrores, 'precio') %>
+
+            <label>Nuevo Aforo Máximo:</label>
+            <input type="number" name="aforo_maximo">
+            <%- helpers.error(formErrores, 'aforo_maximo') %>
+
+            <label>Nueva Edad mínima:</label>
+            <input type="number" name="edad_minima">
+            <%- helpers.error(formErrores, 'edad_minima') %>
+
+            <label>Nueva Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
             <button type="submit">Modificar Evento</button>
         </form>
     </div>
@@ -113,182 +150,206 @@
         <form action="/usuarios/eliminarUsuario" method="POST">
             <label>Nombre del usuario:</label>
             <input type="text" name="nombre" required>
+            <%- helpers.error(formErrores, 'nombre') %>
             <button type="submit">Eliminar Usuario</button>
         </form>
     </div>
+</div>
 
-    <!-- Sección de gestión de descuentos -->
-    <div id="seccion-descuentos" class="admin-seccion <%= section === 'descuentos' ? '' : 'oculto' %>">
-        <h2>Gestionar Descuentos</h2>
-        <button onclick="mostrarFormulario('addDescuento')">Añadir Descuento</button>
-        <button onclick="mostrarFormulario('deleteDescuento')">Eliminar Descuento</button>
-        <button onclick="mostrarFormulario('editDescuento')">Modificar Descuento</button>
+<!-- Sección de gestión de descuentos -->
+<div id="seccion-descuentos" class="admin-seccion <%= section === 'descuentos' ? '' : 'oculto' %>">
+    <h2>Gestionar Descuentos</h2>
+    <button onclick="mostrarFormulario('addDescuento')">Añadir Descuento</button>
+    <button onclick="mostrarFormulario('deleteDescuento')">Eliminar Descuento</button>
+    <button onclick="mostrarFormulario('editDescuento')">Modificar Descuento</button>
 
-        <!-- Formularios de descuentos -->
-        <div id="form-addDescuento" class="admin-form <%= form === 'addDescuento' ? '' : 'oculto' %>">
-            <h2>Añadir Descuento</h2>
-            <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
-                <% if (form === 'addDescuento' && locals.error) { %>
-                    <p><strong><%= locals.error %></strong></p>
-                <% } %>
-                
-                <label>Título:</label>  
-                <input type="text" name="titulo" value="<%=formDatos.titulo %>"/>
-                <%- helpers.error(formErrores, 'titulo') %>
+    <!-- Formularios de descuentos -->
+    <div id="form-addDescuento" class="admin-form <%= form === 'addDescuento' ? '' : 'oculto' %>">
+        <h2>Añadir Descuento</h2>
+        <form action="/descuentos/agregarDescuento" method="POST" enctype="multipart/form-data">
+            <% if (locals.error) { %>
+                <p>><%= locals.error %></p>
+            <% } %>
 
-                <label>Condiciones:</label>
-                <textarea name="condiciones"><%= formDatos.condiciones %></textarea>
-                <%- helpers.error(formErrores, 'condiciones') %>
+            <label>Título:</label>  
+            <input type="text" name="titulo" value="<%=formDatos.titulo %>"/>
+            <%- helpers.error(formErrores, 'titulo') %>
 
-                <label>Puntos:</label>
-                <input type="number" name="puntos" min="0" value="<%=formDatos.puntos %>"/>
-                <%- helpers.error(formErrores, 'puntos') %>
+            <label>Condiciones:</label>
+            <textarea name="condiciones"><%= formDatos.condiciones %></textarea>
+            <%- helpers.error(formErrores, 'condiciones') %>
 
-                <label for="interno">
-                    <input id="interno" type="checkbox" name="interno" <%= formDatos.interno === 'on' ? 'checked' : '' %> />
-                    Descuento interno?
-                </label>
+            <label>Puntos:</label>
+            <input type="number" name="puntos" min="0" value="<%=formDatos.puntos %>"/>
+            <%- helpers.error(formErrores, 'puntos') %>
 
-                <div>
-                <label for="valor">Valor descuento (opcional, ej. 0.05 para 5%):</label>
-                  <input
-                    id="valor"
-                    type="number"
-                    name="valor"
-                    step="0.01"
-                    placeholder="Deja en blanco si no es interno"
-                    value="<%=formDatos.valor %>"
-                    />
-                <%- helpers.error(formErrores, 'valor') %>
-                </div>
+            <label for="interno">
+                <input id="interno" type="checkbox" name="interno" <%= formDatos.interno === 'on' ? 'checked' : '' %> />
+                Descuento interno?
+            </label>
 
-                <div>
-                <label>Imagen:</label>
-                <input type="file" name="imagen" accept="image/*">
-                </div>
-                
-                <button type="submit">Añadir Descuento</button>
-            </form>
-        </div>
+            <div>
+            <label for="valor">Valor descuento (opcional, ej. 0.05 para 5%):</label>
+              <input
+                id="valor"
+                type="number"
+                name="valor"
+                step="0.01"
+                placeholder="Deja en blanco si no es interno"
+                value="<%=formDatos.valor %>"
+                />
+            <%- helpers.error(formErrores, 'valor') %>
+            </div>
 
-        <!-- Formulario para eliminar descuento -->
-        <div id="form-deleteDescuento" class="admin-form <%= form === 'deleteDescuento' ? '' : 'oculto' %>">
-            <h2>Eliminar Descuento</h2>
-            <form action="/descuentos/eliminarDescuento" method="POST">
-                <% if (form === 'deleteDescuento' && locals.error) { %>
-                    <p class="error-msg"><strong><%= locals.error %></strong></p>
-                  <% } %>
-                  
-                <label>ID del descuento:</label>
-                <input type="number" name="id" required>
-                <%- helpers.error(formErrores, 'id') %>
+            <div>
+            <label>Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+            </div>
 
-                <button type="submit">Eliminar Descuento</button>
-            </form>
-        </div>
-
-        <!-- Formulario para modificar descuento -->
-        <div id="form-editDescuento" class="admin-form <%= form === 'editDescuento' ? '' : 'oculto' %>">
-            <h2>Modificar Descuento</h2>
-            <form action="/descuentos/modificarDescuento" method="POST" enctype="multipart/form-data">
-                <% if (form === 'editDescuento' && locals.error) { %>
-                    <p><strong><%= locals.error %></strong></p>
-                <% } %>
-                
-                <label>ID del descuento:</label>
-                <input type="number" name="id" required value="<%= formDatos.id || '' %>"/>
-                <%- helpers.error(formErrores, 'id') %>
-
-                <label>Nuevo Titulo:</label>
-                <input type="text" name="titulo">
-                <%- helpers.error(formErrores, 'titulo') %>
-
-                <label>Nuevas Condiciones:</label>
-                <textarea name="condiciones"></textarea>
-                
-                <label>Puntos:</label>
-                <input type="number" name="puntos">
-                <%- helpers.error(formErrores, 'puntos') %>
-
-                <label>Nueva Imagen:</label>
-                <input type="file" name="imagen" accept="image/*">
-
-                <button type="submit">Modificar Descuento</button>
-            </form>
-        </div>
+            <button type="submit">Añadir Descuento</button>
+        </form>
     </div>
 
-    <div id="seccion-artistas" class="admin-seccion oculto">
-        <h2>Gestionar Artistas</h2>
-        <button onclick="mostrarFormulario('addArtista')">Añadir Artista</button>
-        <button onclick="mostrarFormulario('deleteArtista')">Eliminar Artista</button>
-        <button onclick="mostrarFormulario('editArtista')">Modificar Artista</button>
+    <!-- Formulario para eliminar descuento -->
+    <div id="form-deleteDescuento" class="admin-form <%= form === 'deleteDescuento' ? '' : 'oculto' %>">
+        <h2>Eliminar Descuento</h2>
+        <form action="/descuentos/eliminarDescuento" method="POST">
+            <label>ID del descuento:</label>
+            <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
 
-        <!--Añadir artista-->
-        <div id="form-addArtista" class="admin-form oculto">
-            <h2>Añadir Artista</h2>
-            <form action="/artista/agregarArtista" method="POST" enctype="multipart/form-data">
-                <label>Nombre Artístico:</label>
-                <input type="text" name="nombreArtistico" required>
-                <label>Nombre:</label>
-                <input type="text" name="nombre" required>
-                <label>Biografía:</label>
-                <input type="text" name="biografia" required>
-                <label>Nacimiento:</label>
-                <input type="date" name="nacimiento" required>
-                <label>Género musical:</label>
-                <input type="text" name="genero" required>
-                <label>Canciones:</label>
-                <input type="text" name="canciones" required>
-                <label>Imagen:</label>
-                <input type="file" name="imagen" accept="image/*">
-                <button type="submit">Añadir Artista</button>
-            </form>
-        </div>
-
-        <!--Eliminar artista-->
-        <div id="form-deleteArtista" class="admin-form oculto">
-            <h2>Eliminar Artista</h2>
-            <form action="/artista/eliminarArtista" method="POST">
-                <label>ID del artista:</label>
-                <input type="number" name="id" required>
-                <button type="submit">Eliminar Artista</button>
-            </form>
-        </div>
-
-        <!--Modificar artista-->
-        <div id="form-editArtista" class="admin-form oculto">
-            <h2>Modificar Artista</h2>
-            <form action="/artista/modificarArtista" method="POST" enctype="multipart/form-data">
-                <label>ID del artista:</label>
-                <input type="number" name="id" required>
-
-                <label>Nuevo nombre artístico:</label>
-                <input type="text" name="nombreArtistico">
-                
-                <label>Nuevo nombre:</label>
-                <input type="text" name="nombre">
-                
-                <label>Nueva biografía:</label>
-                <input type="text" name="biografia">
-
-                <label>Nueva fecha de nacimiento:</label>
-                <input type="date" name="nacimiento">
-
-                <label>Nuevo género musical:</label>
-                <input type="text" name="genero">
-
-                <label>Nueva/s canciones populares:</label>
-                <input type="text" name="canciones">
-
-                <label>Nueva Imagen:</label>
-                <input type="file" name="imagen" accept="image/*">
-
-                <button type="submit">Modificar Artista</button>
-            </form>
-        </div>
-
+            <button type="submit">Eliminar Descuento</button>
+        </form>
     </div>
+
+    <!-- Formulario para modificar descuento -->
+    <div id="form-editDescuento" class="admin-form <%= form === 'editDescuento' ? '' : 'oculto' %>">
+        <h2>Modificar Descuento</h2>
+        <form action="/descuentos/modificarDescuento" method="POST" enctype="multipart/form-data">
+            <% if (locals.error) { %>
+                <p><%= locals.error %></p>
+            <% } %>
+
+            <label>ID del descuento:</label>
+            <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
+
+            <label>Nuevo Titulo:</label>
+            <input type="text" name="titulo">
+            <%- helpers.error(formErrores, 'titulo') %>
+
+            <label>Nuevas Condiciones:</label>
+            <textarea name="condiciones"></textarea>
+
+            <label>Puntos:</label>
+            <input type="number" name="puntos">
+            <%- helpers.error(formErrores, 'puntos') %>
+
+            <label>Nueva Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+
+            <button type="submit">Modificar Descuento</button>
+        </form>
+    </div>
+</div>
+
+<div id="seccion-artistas" class="admin-seccion oculto">
+    <h2>Gestionar Artistas</h2>
+    <button onclick="mostrarFormulario('addArtista')">Añadir Artista</button>
+    <button onclick="mostrarFormulario('deleteArtista')">Eliminar Artista</button>
+    <button onclick="mostrarFormulario('editArtista')">Modificar Artista</button>
+
+    <!--Añadir artista-->
+    <div id="form-addArtista" class="admin-form oculto">
+        <h2>Añadir Artista</h2>
+        <form action="/artista/agregarArtista" method="POST" enctype="multipart/form-data">
+            <% if (locals.error) { %>
+                <p><%= locals.error %></p>
+            <% } %>
+
+            <label>Nombre Artístico:</label>
+            <input type="text" name="nombreArtistico" required>
+            <%- helpers.error(formErrores, 'nombreArtistico') %>
+
+            <label>Nombre:</label>
+            <input type="text" name="nombre" required>
+            <%- helpers.error(formErrores, 'nombre') %>
+
+            <label>Biografía:</label>
+            <textarea name="biografia"></textarea>
+
+            <label>Nacimiento:</label>
+            <input type="date" name="nacimiento" required>
+            <%- helpers.error(formErrores, 'nacimiento') %>
+
+            <label>Género musical:</label>
+            <input type="text" name="genero" required>
+            <%- helpers.error(formErrores, 'genero') %>
+
+            <label>Canciones:</label>
+            <input type="text" name="canciones" required>
+            <%- helpers.error(formErrores, 'canciones') %>
+
+            <label>Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+            <button type="submit">Añadir Artista</button>
+        </form>
+    </div>
+
+    <!--Eliminar artista-->
+    <div id="form-deleteArtista" class="admin-form oculto">
+        <h2>Eliminar Artista</h2>
+        <form action="/artista/eliminarArtista" method="POST">
+            <label>ID del artista:</label>
+            <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
+            <button type="submit">Eliminar Artista</button>
+        </form>
+    </div>
+
+    <!--Modificar artista-->
+    <div id="form-editArtista" class="admin-form oculto">
+        <h2>Modificar Artista</h2>
+        <form action="/artista/modificarArtista" method="POST" enctype="multipart/form-data">
+            <% if (locals.error) { %>
+                <p><%= locals.error %></p>
+            <% } %>
+            
+            <label>ID del artista:</label>
+            <input type="number" name="id" required>
+            <%- helpers.error(formErrores, 'id') %>
+
+            <label>Nuevo nombre artístico:</label>
+            <input type="text" name="nombreArtistico">
+            <%- helpers.error(formErrores, 'nombreArtistico') %>
+
+            <label>Nuevo nombre:</label>
+            <input type="text" name="nombre">
+            <%- helpers.error(formErrores, 'nombre') %>
+
+            <label>Nueva biografía:</label>
+            <textarea name="biografia"></textarea>
+            <%- helpers.error(formErrores, 'biografia') %>
+
+            <label>Nueva fecha de nacimiento:</label>
+            <input type="date" name="nacimiento">
+            <%- helpers.error(formErrores, 'nacimiento') %>
+
+            <label>Nuevo género musical:</label>
+            <input type="text" name="genero">
+            <%- helpers.error(formErrores, 'genero') %>
+
+            <label>Nueva/s canciones populares:</label>
+            <input type="text" name="canciones">
+            <%- helpers.error(formErrores, 'canciones') %>
+
+            <label>Nueva Imagen:</label>
+            <input type="file" name="imagen" accept="image/*">
+
+            <button type="submit">Modificar Artista</button>
+        </form>
+    </div>
+</div>
 
 <script>
     function mostrarSeccion(seccion) {
@@ -303,10 +364,3 @@
         document.getElementById('form-' + id).classList.remove('oculto');
     }
 </script>
-
-<style>
-    .oculto { display: none; }
-    .admin-menu { margin-bottom: 20px; }
-    .admin-seccion { margin-top: 20px; }
-    .admin-form { border: 1px solid #ddd; padding: 10px; margin-top: 10px; }
-</style>

@@ -32,17 +32,18 @@ export async function doLogin(req, res) {
         const usuario = await Usuario.login(username, password);
        
         //verficar cumpleaños
-        // --- Nuevo bonus de cumpleaños registrado en PuntosUsuario ---
-    if (usuario.fecha_nacimiento) {
-          const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
-          const hoy = new Date();
-          const esCumple = m === hoy.getMonth() + 1 && d === hoy.getDate();
-          if (esCumple && !Usuario.hasBirthdayBonusToday(usuario.id)) {
-            Usuario.addBirthdayBonus(usuario.id);
-            res.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
-          }
-    }
-        // mensaje genérico si no era cumpleaños
+        // --- Nuevo bonus de cumpleaños---
+        if (usuario.fecha_nacimiento) {
+            const [y, m, d] = usuario.fecha_nacimiento.split('-').map(Number);
+            const hoy = new Date();
+            const esCumple = m === hoy.getMonth() + 1 && d === hoy.getDate();
+            const todayStr = hoy.toISOString().slice(0,10);
+          
+            if (esCumple && !Usuario.hasBirthdayBonusToday(usuario.id)) {
+                Usuario.addBirthdayBonus(usuario.id);
+                res.setFlash(`🎂 ¡Feliz cumpleaños, ${usuario.nombre}! Te hemos regalado 200 puntos.`);
+            }
+        }
         if (!req.session.flashMsg) {
             res.setFlash(`Encantado de verte de nuevo: ${usuario.nombre}`);
         }
@@ -91,7 +92,7 @@ export function agregarUsuario(req, res){
     try{
         const{username, password,nombre,rol}=req.body;
         const nuevoUsuario= new Usuario(null,username,password,nombre,rol);
-        usuario.persist();
+        nuevoUsuario.persist();
 
         res.redirect('/usuarios');
 
@@ -174,7 +175,6 @@ export function viewDatos(req, res) {
         descuentosUsuario=null;
     }
 
-    //const puntosUsuario = usuario.puntos;
     const puntosUsuario=Usuario.getAvailablePoints(usuario.id);
     res.render('pagina', { contenido: 'paginas/datos', 
         session: req.session, 
@@ -191,24 +191,38 @@ export function viewModificarUsuario(req, res) {
 
     let usuario = null;
     try {
-        console.log(req.session.username);
-        usuario = Usuario.getUsuarioById(req.session.usuario_id);
+        usuario = Usuario.getUsuarioByUsername(req.session.username);
     } catch (e) {
         console.error("Error obteniendo usuario:", e);
         usuario = null; 
     }
 
-    res.render('pagina', { contenido: 'paginas/modificarUsuario', 
-        session: req.session, 
-        usuario
-     });
+    res.render('pagina', {contenido: 'paginas/modificarUsuario', 
+    session: req.session,
+    usuario,
+    datos: {},
+    errores: {},
+    error: null});
 }
 
 export function modificarUsuario(req, res){
     try{
-        const {username, password, nombre, apellidos, email, rol} = req.body;
+        const {username, password, nombre, apellidos, email, rol, fecha_nacimiento} = req.body;
         let usuario = Usuario.getUsuarioById(req.session.usuario_id);
         if(!usuario) throw new UsuarioNoEncontrado(req.session.usuario_id);
+
+        if(username && username !== usuario.username){//CAMBIAR SI NO HAGO LO DEL AJAX
+            usuario.username = username;
+            req.session.username = username;
+        }else{
+            usuario.username = usuario.username;
+        }
+
+        if (password && password.trim() !== "") {
+            usuario.password = password; // Hashear contraseña
+        }
+
+        req.session.nombre = usuario.nombre;
 
         let rolEnum = null;
         if (rol === 'empresa') {
@@ -219,15 +233,13 @@ export function modificarUsuario(req, res){
             rolEnum = RolesEnum.USUARIO;
         }
 
-        //usuario.username = username || usuario.username;
-        console.log("ok 1");
-        //usuario.password = bcrypt.hashSync(password) || usuario.password;
-        console.log("ok 2");
         usuario.nombre = nombre || usuario.nombre;
         usuario.apellidos = apellidos || usuario.apellidos;
         usuario.email = email || usuario.email;
         usuario.rol = rolEnum || usuario.rol;
+        usuario.fecha_nacimiento = fecha_nacimiento || usuario.fecha_nacimiento;
 
+        
         usuario.persist();
 
         res.setFlash('Usuario modificado con éxito');
@@ -238,17 +250,6 @@ export function modificarUsuario(req, res){
     }
 }
 
-/*export async function doRegister(req, res) {
-    const result = validationResult(req);
-    if (! result.isEmpty()) {
-        const errores = result.mapped();
-        const datos = matchedData(req);
-        return render(req, res, 'paginas/register', {
-            datos,
-            errores
-        });
-    }
-}*/
 export async function doRegister(req, res) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
@@ -283,7 +284,7 @@ export async function doRegister(req, res) {
     try {
       // Crear un nuevo usuario y persistirlo en la base de datos
       
-        const nuevoUsuario = new Usuario(username,null, nombre, apellidos, email, rol,null,0,fecha_nacimiento);
+        const nuevoUsuario = new Usuario(username,null, nombre, apellidos, email, rol,null,0,fecha_nacimiento,null);
         nuevoUsuario.password=password;
         nuevoUsuario.persist();
   
@@ -298,7 +299,7 @@ export async function doRegister(req, res) {
   
         return res.redirect('/');
     } catch (e) {
-        let error = 'No se ha podido crear el usuario'; // Esto son errores que no son de express-validator como que el usuario o el correo ya estén registrados
+        let error = 'No se ha podido crear el usuario';
         if (e instanceof UsuarioYaExiste) {
             error = 'El nombre de usuario ya está utilizado';
         } else if (e instanceof EmailYaExiste) {

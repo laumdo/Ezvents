@@ -46,3 +46,22 @@
         <p>No hay promociones disponibles.</p>
     <% } %>
 </div>
+
+<%
+const flashMsg = getAndClearFlash();
+if(flashMsg){
+%>
+<dialog id="flashModal">
+    <form method="dialog">
+        <p><%= flashMsg %></p>
+        <button>Cerrar</button>
+    </form>
+</dialog>
+<% } %>
+<script>
+    const flashModal = document.getElementById('flashModal');
+    if (flashModal) {
+        flashModal.showModal();
+    }
+
+</script>

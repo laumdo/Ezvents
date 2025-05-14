@@ -64,3 +64,20 @@ body {
 .evento-boton:hover {
     background: #ff9966;
 }
+
+@media (max-width: 650px) {
+    .evento {
+      flex-direction: column;
+      width: 90%;
+      text-align: center;
+    }
+  
+    .evento-img {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  
+    .evento-info {
+      padding-left: 0;
+    }
+  }

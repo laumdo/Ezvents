@@ -42,7 +42,6 @@ descuentosRouter.post('/eliminarDescuento',
 
 descuentosRouter.post('/modificarDescuento', 
     autenticado(), 
-    //autenticado(),
     tieneRol(RolesEnum.ADMIN),
 
     // primero multer para procesar multipart

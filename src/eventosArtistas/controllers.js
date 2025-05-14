@@ -1,8 +1,7 @@
 import { Evento } from "../eventos/Evento.js";
 import { EventoArtista } from './EventoArtista.js';
 import { Artista } from "../artista/Artista.js";
-import { validationResult } from 'express-validator';
-import { flashMessages } from '../middleware/flash.js';
+import { validationResult, matchedData } from 'express-validator';
 
 export function viewCartelera(req, res){
     const errors = validationResult(req);
@@ -12,7 +11,7 @@ export function viewCartelera(req, res){
         return res.redirect('/');
     }
 
-    const id_evento = req.params.id_evento;
+    const {id_evento} = matchedData(req);
     
     const idsArtistas = EventoArtista.getArtistIdsByEvent(id_evento);
 
@@ -29,7 +28,7 @@ export function viewEventosDelArtista(req, res){
         return res.redirect('/');
     }
 
-    const id_artista = req.params.id_artista;
+    const {id_artista} = matchedData(req);
 
     const idsEventos = EventoArtista.getEventsIdsByArtist(id_artista);
 
@@ -56,8 +55,7 @@ export function agregarArtistaAEvento(req, res){
     }
 
     try{
-        const id_artista = req.body.id_artista;
-        const id_evento = req.body.id_evento;
+        const {id_artista, id_evento} = matchedData(req);
 
         const datos = { idArtista: id_artista, idEvento: id_evento };
         const artistaEvento = new EventoArtista(datos);
@@ -79,8 +77,7 @@ export function eliminarArtistaEvento(req, res){
     }
 
     try{
-        const id_artista = req.body.id_artista;
-        const id_evento = req.body.id_evento;
+        const {id_artista, id_evento} = matchedData(req);
         
         EventoArtista.eliminarArtista(id_artista, id_evento);
 
@@ -98,7 +95,7 @@ export function viewContratar(req, res){
         res.redirect('/');
     }
 
-    const id_evento = req.params.id_evento;
+    const {id_evento} = matchedData(req);
 
     const artistas = Artista.getAll();
     const idsContratados = EventoArtista.getArtistIdsByEvent(id_evento);
@@ -121,4 +118,15 @@ export function viewContratar(req, res){
         artistas: artistasNoContratados,
         artistasContratados: artistasContratados
     });
+}
+
+export function terminar(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.setFlash('Error al ver contratar artistas');
+        res.redirect('/');
+    }
+
+    res.setFlash('Operación realizada con exito');
+    res.redirect('/');
 }

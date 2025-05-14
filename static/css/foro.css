@@ -63,6 +63,7 @@ body {
     color: #444;
 }
 
+
 .mensaje .respuesta-form button {
     background: #e74c3c;
     color: white;
@@ -141,3 +142,14 @@ body {
 .mensaje.empresa p strong {
   color: #217dbb;                   
 }
+
+@media (max-width: 600px) {
+    .form-publicar button {
+      font-size: 1em;
+      padding: 8px 10px;
+    }
+  
+    .mensaje .respuesta-form textarea {
+      height: 60px;
+    }
+  }

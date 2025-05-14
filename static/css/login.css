@@ -1,0 +1,107 @@
+/* login.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #ff7e5f, #6a11cb);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    /*align-items: center;*/
+    flex-direction: column; /* Esto asegura que los elementos estén alineados en columna */
+    min-height: 100vh;
+  }
+  
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Alinea el formulario en el centro horizontalmente */
+    align-items: center;
+    flex-direction: column; /* Alinea los elementos (como el título y formulario) en columna */
+  }
+  
+  h1 {
+    text-align: center;
+    color: #e74c3c;
+    margin-bottom: 20px; /* Espacio entre el título y el formulario */
+  }
+  
+  form {
+    background-color: white;
+    padding: 30px 25px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;  /* El formulario tiene un ancho máximo de 400px */
+    box-sizing: border-box;
+  }
+  
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 25;
+  }
+  
+  legend {
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #c0392b;
+  }
+  
+  register {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    color: #6a11cb;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  register {
+    text-decoration: underline;
+  }
+  
+  .error-message {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    padding: 10px 15px;
+    margin: 10px auto;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+  }
+  

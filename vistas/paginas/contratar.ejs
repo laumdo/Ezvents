@@ -6,6 +6,8 @@
     - Redirigir a esta pagina web -> debería hacer un viewContratar? es que no se como redirigir ahi con los datos de los eventos (hecho)
 -->
 
+<link rel="stylesheet" href="/css/contratar.css">
+
 <h2>Artistas disponibles</h2>
 <div class="artistas">
     <h2>Artistas Contratados</h2>
@@ -26,7 +28,9 @@
             </div>
         <% }) %>
     <% } else { %>
-        <p>No hay artistas contratados aún.</p>
+        <div>
+            <p>No hay artistas contratados aún.</p>
+        </div>
     <% } %>
 
     <h2>Contratar Nuevo Artista</h2>
@@ -47,18 +51,14 @@
             </div>
         <% }) %>
     <% } else { %>
-        <p>No hay artistas disponibles para contratar.</p>
+        <div>
+            <p>No hay artistas disponibles para contratar.</p>
+        </div>
     <% } %>
 
 
 </div>
 
-<div style="text-align: center; margin-top: 40px;">
-    <button style="padding: 10px 20px; font-size: 16px; cursor: pointer;" onclick="window.location.href='/'">Finalizar</button>
-</div>
-
-<!--
-<div class="modificar-cuenta">
-    <button onclick="window.location.href='/'">Finalizar</button>
-</div>
--->
+<form action="/eventosArtistas/terminar" method="POST" style="text-align: center; margin-top: 40px;">
+    <button type="submit">Contratar</button>
+</form>
