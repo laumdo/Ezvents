@@ -191,8 +191,7 @@ export function viewModificarUsuario(req, res) {
 
     let usuario = null;
     try {
-        console.log(req.session.username);
-        usuario = Usuario.getUsuarioById(req.session.usuario_id);
+        usuario = Usuario.getUsuarioByUsername(req.session.username);
     } catch (e) {
         console.error("Error obteniendo usuario:", e);
         usuario = null; 
@@ -207,12 +206,10 @@ export function viewModificarUsuario(req, res) {
 }
 
 export function modificarUsuario(req, res){
-    console.log("modificarUsuario");
     try{
         const {username, password, nombre, apellidos, email, rol, fecha_nacimiento} = req.body;
         let usuario = Usuario.getUsuarioById(req.session.usuario_id);
         if(!usuario) throw new UsuarioNoEncontrado(req.session.usuario_id);
-        console.log("usuario: ", usuario);
 
         if(username && username !== usuario.username){//CAMBIAR SI NO HAGO LO DEL AJAX
             usuario.username = username;
@@ -220,14 +217,12 @@ export function modificarUsuario(req, res){
         }else{
             usuario.username = usuario.username;
         }
-        console.log("username: ", usuario.username);
 
         if (password && password.trim() !== "") {
             usuario.password = password; // Hashear contraseña
-        }else{
-            usuario.password = usuario.password;
         }
-        console.log("contrasena");
+
+        req.session.nombre = usuario.nombre;
 
         let rolEnum = null;
         if (rol === 'empresa') {
@@ -244,11 +239,8 @@ export function modificarUsuario(req, res){
         usuario.rol = rolEnum || usuario.rol;
         usuario.fecha_nacimiento = fecha_nacimiento || usuario.fecha_nacimiento;
 
-        console.log("usuario: ", usuario);
-
-        console.log("va a llamar a persist");
+        
         usuario.persist();
-        console.log("ha llamado a persist");
 
         res.setFlash('Usuario modificado con éxito');
         res.redirect('/');
